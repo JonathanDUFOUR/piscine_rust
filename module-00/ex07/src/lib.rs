@@ -11,16 +11,6 @@
 /// * `true` - The character was found in the string.
 /// * `false` - The character was not found in the string.
 ///
-/// # Examples
-///
-/// ```
-/// use ex07::strchr;
-///
-/// let mut i: usize = 0;
-///
-/// assert_eq!(strchr(b"Hello World!", b'o', &i), true);
-/// assert_eq!(i, 4);
-/// ```
 fn strchr(haystack: &[u8], needle: u8, i: &mut usize) -> bool {
 	*i = 0;
 
@@ -46,16 +36,6 @@ fn strchr(haystack: &[u8], needle: u8, i: &mut usize) -> bool {
 /// * `true` - The character was found in the string.
 /// * `false` - The character was not found in the string.
 ///
-/// # Examples
-///
-/// ```
-/// use ex07::strrchr;
-///
-/// let mut i: usize = 0;
-///
-/// assert_eq!(strrchr(b"Hello World!", b'o', &i), true);
-/// assert_eq!(i, 7);
-/// ```
 fn strrchr(haystack: &[u8], needle: u8, i: &mut usize) -> bool {
 	*i = haystack.len();
 
@@ -81,45 +61,29 @@ fn strrchr(haystack: &[u8], needle: u8, i: &mut usize) -> bool {
 /// * true - The needle was found in the haystack.
 /// * false - The needle was not found in the haystack.
 ///
-/// # Examples
-///
-/// ```
-/// use ex07::strstr;
-///
-/// let mut i;
-///
-/// if (strstr(b"Hello World!", b"World", &i) {
-/// 	println!("Found at index {i}");
-/// }
-/// ```
 fn strstr(haystack: &[u8], needle: &[u8], i: &mut usize) -> bool {
 	if needle.is_empty() {
 		*i = 0;
 		return true;
 	}
 
-	if haystack.len() < needle.len() {
+	if needle.len() > haystack.len() {
 		return false;
 	}
 
 	let mut arr: [usize; 256] = [needle.len(); 256];
-	let needle_last_index: usize = needle.len() - 1;
-
-	*i = 0;
-	while *i < needle_last_index {
-		arr[needle[*i] as usize] = needle_last_index - *i;
-		*i += 1;
+	for j in 0..needle.len() - 1 {
+		arr[needle[j] as usize] = needle.len() - j - 1;
 	}
 
-	let diff: usize = haystack.len() - needle.len();
-
-	while *i <= diff {
-		if haystack[*i + needle_last_index] == needle[needle_last_index]
-			&& haystack[*i..*i + needle_last_index] == needle[..needle_last_index]
+	*i = 0;
+	while *i <= (haystack.len() - needle.len()) {
+		if haystack[*i + needle.len() - 1] == needle[needle.len() - 1]
+			&& haystack[*i..*i + needle.len() - 1] == needle[..needle.len() - 1]
 		{
 			return true;
 		}
-		*i += arr[haystack[*i + needle_last_index] as usize];
+		*i += arr[haystack[*i + needle.len() - 1] as usize];
 	}
 	return false;
 }
@@ -140,7 +104,8 @@ fn strstr(haystack: &[u8], needle: &[u8], i: &mut usize) -> bool {
 ///
 /// ```
 /// use ex07::strpcmp;
-/// const b: bool = strpcmp(b"Hello World!", b"He*o*rld");
+///
+/// assert_eq!(strpcmp(b"Hello World!", b"He*o*rld*"), true);
 /// ```
 pub fn strpcmp(query: &[u8], pattern: &[u8]) -> bool {
 	let mut i0: usize = 0;
@@ -177,14 +142,6 @@ pub fn strpcmp(query: &[u8], pattern: &[u8]) -> bool {
 	}
 	return true;
 }
-
-//	pattern	*ab*
-//	     i0	 ^
-//	     i2	   ^
-
-//	  query	abc
-//	     i1	^
-//	     i3	^
 
 #[cfg(test)]
 mod test {
@@ -343,24 +300,21 @@ mod test {
 
 		assert_eq!(
 			strstr(
-				b"What if we look for the end of the string?",
-				b"string?",
+				b"What if we look for the beginning of the string?",
+				b"What if",
 				&mut i
 			),
 			true
 		);
-		assert_eq!(i, 34);
+		assert_eq!(i, 0);
 	}
 
 	#[test]
 	fn strstr_08() {
 		let mut i: usize = 0;
 
-		assert_eq!(
-			strstr(b"And what about the beginning?", b"And ", &mut i),
-			true
-		);
-		assert_eq!(i, 0);
+		assert_eq!(strstr(b"And what about the end?", b" end?", &mut i), true);
+		assert_eq!(i, 18);
 	}
 
 	#[test]
