@@ -45,62 +45,62 @@ mod test {
 	use super::*;
 
 	#[test]
-	fn test_add_00() {
+	fn add_00() {
 		assert_eq!(add(&0, 0), 0);
 	}
 
 	#[test]
-	fn test_add_01() {
+	fn add_01() {
 		assert_eq!(add(&0, 1), 1);
 	}
 
 	#[test]
-	fn test_add_02() {
+	fn add_02() {
 		assert_eq!(add(&1, 0), 1);
 	}
 
 	#[test]
-	fn test_add_03() {
+	fn add_03() {
 		assert_eq!(add(&1, 1), 2);
 	}
 
 	#[test]
-	fn test_add_04() {
+	fn add_04() {
 		assert_eq!(add(&-1, 1), 0);
 	}
 
 	#[test]
-	fn test_add_05() {
+	fn add_05() {
 		assert_eq!(add(&1, -1), 0);
 	}
 
 	#[test]
-	fn test_add_06() {
+	fn add_06() {
 		assert_eq!(add(&-1, -1), -2);
 	}
 
 	#[test]
-	fn test_add_07() {
+	fn add_07() {
 		assert_eq!(add(&i32::MAX, 0), i32::MAX);
 	}
 
 	#[test]
-	fn test_add_08() {
+	fn add_08() {
 		assert_eq!(add(&i32::MIN, 0), i32::MIN);
 	}
 
 	#[test]
-	fn test_add_09() {
+	fn add_09() {
 		assert_eq!(add(&i32::MAX, i32::MIN), -1);
 	}
 
 	#[test]
-	fn test_add_10() {
+	fn add_10() {
 		assert_eq!(add(&i32::MIN, i32::MAX), -1);
 	}
 
 	#[test]
-	fn test_add_assign_00() {
+	fn add_assign_00() {
 		let mut a: i32 = 0;
 
 		add_assign(&mut a, 0);
@@ -108,7 +108,7 @@ mod test {
 	}
 
 	#[test]
-	fn test_add_assign_01() {
+	fn add_assign_01() {
 		let mut a: i32 = 0;
 
 		add_assign(&mut a, 1);
@@ -116,7 +116,7 @@ mod test {
 	}
 
 	#[test]
-	fn test_add_assign_02() {
+	fn add_assign_02() {
 		let mut a: i32 = 1;
 
 		add_assign(&mut a, 0);
@@ -124,7 +124,7 @@ mod test {
 	}
 
 	#[test]
-	fn test_add_assign_03() {
+	fn add_assign_03() {
 		let mut a: i32 = 1;
 
 		add_assign(&mut a, 1);
@@ -132,7 +132,7 @@ mod test {
 	}
 
 	#[test]
-	fn test_add_assign_04() {
+	fn add_assign_04() {
 		let mut a: i32 = -1;
 
 		add_assign(&mut a, 1);
@@ -140,7 +140,7 @@ mod test {
 	}
 
 	#[test]
-	fn test_add_assign_05() {
+	fn add_assign_05() {
 		let mut a: i32 = 1;
 
 		add_assign(&mut a, -1);
@@ -148,7 +148,7 @@ mod test {
 	}
 
 	#[test]
-	fn test_add_assign_06() {
+	fn add_assign_06() {
 		let mut a: i32 = -1;
 
 		add_assign(&mut a, -1);
@@ -156,7 +156,7 @@ mod test {
 	}
 
 	#[test]
-	fn test_add_assign_07() {
+	fn add_assign_07() {
 		let mut a: i32 = i32::MAX;
 
 		add_assign(&mut a, 0);
@@ -164,7 +164,7 @@ mod test {
 	}
 
 	#[test]
-	fn test_add_assign_08() {
+	fn add_assign_08() {
 		let mut a: i32 = i32::MIN;
 
 		add_assign(&mut a, 0);
@@ -172,7 +172,7 @@ mod test {
 	}
 
 	#[test]
-	fn test_add_assign_09() {
+	fn add_assign_09() {
 		let mut a: i32 = i32::MAX;
 
 		add_assign(&mut a, i32::MIN);
@@ -180,7 +180,7 @@ mod test {
 	}
 
 	#[test]
-	fn test_add_assign_10() {
+	fn add_assign_10() {
 		let mut a: i32 = i32::MIN;
 
 		add_assign(&mut a, i32::MAX);
