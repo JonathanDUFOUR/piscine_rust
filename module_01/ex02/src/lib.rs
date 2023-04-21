@@ -35,6 +35,7 @@ mod tests {
 	fn pure_black() {
 		let name: &str = {
 			let color: [u8; 3] = [0, 0, 0];
+
 			color_name(&color)
 		};
 
@@ -45,6 +46,7 @@ mod tests {
 	fn pure_white() {
 		let name: &str = {
 			let color: [u8; 3] = [255, 255, 255];
+
 			color_name(&color)
 		};
 
@@ -55,6 +57,7 @@ mod tests {
 	fn pure_red() {
 		let name: &str = {
 			let color: [u8; 3] = [255, 0, 0];
+
 			color_name(&color)
 		};
 
@@ -65,6 +68,7 @@ mod tests {
 	fn pure_green() {
 		let name: &str = {
 			let color: [u8; 3] = [0, 255, 0];
+
 			color_name(&color)
 		};
 
@@ -75,6 +79,7 @@ mod tests {
 	fn pure_blue() {
 		let name: &str = {
 			let color: [u8; 3] = [0, 0, 255];
+
 			color_name(&color)
 		};
 
@@ -85,6 +90,7 @@ mod tests {
 	fn perfect_grey() {
 		let name: &str = {
 			let color: [u8; 3] = [128, 128, 128];
+
 			color_name(&color)
 		};
 
@@ -96,6 +102,7 @@ mod tests {
 		for blue in 1..31 {
 			let name: &str = {
 				let color: [u8; 3] = [0, 0, blue];
+
 				color_name(&color)
 			};
 
@@ -105,6 +112,7 @@ mod tests {
 			for blue in 0..31 {
 				let name: &str = {
 					let color: [u8; 3] = [0, green, blue];
+
 					color_name(&color)
 				};
 
@@ -116,6 +124,7 @@ mod tests {
 				for blue in 0..31 {
 					let name: &str = {
 						let color: [u8; 3] = [red, green, blue];
+
 						color_name(&color)
 					};
 
@@ -130,6 +139,7 @@ mod tests {
 		for blue in 1..128 {
 			let name: &str = {
 				let color: [u8; 3] = [u8::MAX, 0, blue];
+
 				color_name(&color)
 			};
 
@@ -139,6 +149,7 @@ mod tests {
 			for blue in 0..128 {
 				let name: &str = {
 					let color: [u8; 3] = [u8::MAX, green, blue];
+
 					color_name(&color)
 				};
 
@@ -150,6 +161,7 @@ mod tests {
 				for blue in 0..128 {
 					let name: &str = {
 						let color: [u8; 3] = [red, green, blue];
+
 						color_name(&color)
 					};
 
@@ -164,6 +176,7 @@ mod tests {
 		for blue in 1..128 {
 			let name: &str = {
 				let color: [u8; 3] = [0, u8::MAX, blue];
+
 				color_name(&color)
 			};
 
@@ -173,6 +186,7 @@ mod tests {
 			for blue in 0..128 {
 				let name: &str = {
 					let color: [u8; 3] = [red, u8::MAX, blue];
+
 					color_name(&color)
 				};
 
@@ -184,6 +198,7 @@ mod tests {
 				for blue in 0..128 {
 					let name: &str = {
 						let color: [u8; 3] = [red, green, blue];
+
 						color_name(&color)
 					};
 
@@ -198,6 +213,7 @@ mod tests {
 		for green in 1..128 {
 			let name: &str = {
 				let color: [u8; 3] = [0, green, u8::MAX];
+
 				color_name(&color)
 			};
 
@@ -207,6 +223,7 @@ mod tests {
 			for green in 0..128 {
 				let name: &str = {
 					let color: [u8; 3] = [red, green, u8::MAX];
+
 					color_name(&color)
 				};
 
@@ -218,6 +235,7 @@ mod tests {
 				for blue in 129..u8::MAX {
 					let name: &str = {
 						let color: [u8; 3] = [red, green, blue];
+
 						color_name(&color)
 					};
 
@@ -236,36 +254,42 @@ mod tests {
 
 					name = {
 						let color: [u8; 3] = [a, b, c];
+
 						color_name(&color)
 					};
 					assert_eq!(name, "unknown");
 
 					name = {
 						let color: [u8; 3] = [a, c, b];
+
 						color_name(&color)
 					};
 					assert_eq!(name, "unknown");
 
 					name = {
 						let color: [u8; 3] = [b, a, c];
+
 						color_name(&color)
 					};
 					assert_eq!(name, "unknown");
 
 					name = {
 						let color: [u8; 3] = [b, c, a];
+
 						color_name(&color)
 					};
 					assert_eq!(name, "unknown");
 
 					name = {
 						let color: [u8; 3] = [c, a, b];
+
 						color_name(&color)
 					};
 					assert_eq!(name, "unknown");
 
 					name = {
 						let color: [u8; 3] = [c, b, a];
+
 						color_name(&color)
 					};
 					assert_eq!(name, "unknown");
@@ -279,36 +303,42 @@ mod tests {
 
 					name = {
 						let color: [u8; 3] = [a, b, c];
+
 						color_name(&color)
 					};
 					assert_eq!(name, "unknown");
 
 					name = {
 						let color: [u8; 3] = [a, c, b];
+
 						color_name(&color)
 					};
 					assert_eq!(name, "unknown");
 
 					name = {
 						let color: [u8; 3] = [b, a, c];
+
 						color_name(&color)
 					};
 					assert_eq!(name, "unknown");
 
 					name = {
 						let color: [u8; 3] = [b, c, a];
+
 						color_name(&color)
 					};
 					assert_eq!(name, "unknown");
 
 					name = {
 						let color: [u8; 3] = [c, a, b];
+
 						color_name(&color)
 					};
 					assert_eq!(name, "unknown");
 
 					name = {
 						let color: [u8; 3] = [c, b, a];
+
 						color_name(&color)
 					};
 					assert_eq!(name, "unknown");
