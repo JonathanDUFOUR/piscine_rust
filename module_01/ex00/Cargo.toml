@@ -1,0 +1,6 @@
+[package]
+name		=	"ex00"
+version		=	"0.1.0"
+authors		=	["Jonathan DUFOUR"]
+edition		=	"2021"
+description	=	"Implementation of the addition in two different ways using references"
