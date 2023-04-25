@@ -3,4 +3,4 @@ name		=	"ex05"
 version		=	"0.1.0"
 authors		=	["Jonathan DUFOUR"]
 edition		=	"2021"
-description	=	"Implementation of a boxes sorting algorithm"
+description	=	"Implementation of function to remove duplicate elements in a vector"
