@@ -41,30 +41,6 @@ test() {
 	done
 }
 
-column_number_1() {
-	echo -ne ${COLOR_TEST_CATEGORY} > /dev/stderr
-	echo '[ COLUMN NUMBER 1 ]'
-	echo -ne ${COLOR_RESET} > /dev/stderr
-}
-
-column_number_5() {
-	echo -ne ${COLOR_TEST_CATEGORY} > /dev/stderr
-	echo '[ COLUMN NUMBER 5 ]'
-	echo -ne ${COLOR_RESET} > /dev/stderr
-}
-
-column_number_19() {
-	echo -ne ${COLOR_TEST_CATEGORY} > /dev/stderr
-	echo '[ COLUMN NUMBER 19 ]'
-	echo -ne ${COLOR_RESET} > /dev/stderr
-}
-
-column_number_42() {
-	echo -ne ${COLOR_TEST_CATEGORY} > /dev/stderr
-	echo '[ COLUMN NUMBER 42 ]'
-	echo -ne ${COLOR_RESET} > /dev/stderr
-}
-
 mkdir -p ${OUTPUT_DIR}
 
 test 0
