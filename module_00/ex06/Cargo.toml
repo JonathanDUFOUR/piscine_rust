@@ -1,7 +1,9 @@
 [package]
-name = "ex06"
-version = "0.1.0"
-edition = "2021"
+name		=	"piscine_rust_module_00_ex06"
+version		=	"0.1.0"
+authors		=	["Jonathan DUFOUR"]
+edition		=	"2021"
+description	=	"A classical `guess the number` game"
 
 [dependencies]
-ftkit="0.1.12"
+ftkit		=	"0.1.12"

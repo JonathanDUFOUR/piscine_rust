@@ -1,5 +1,5 @@
 [package]
-name		=	"ex00"
+name		=	"piscine_rust_module_01_ex00"
 version		=	"0.1.0"
 authors		=	["Jonathan DUFOUR"]
 edition		=	"2021"

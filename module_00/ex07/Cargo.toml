@@ -1,7 +1,9 @@
 [package]
-name = "ex07"
-version = "0.1.0"
-edition = "2021"
+name		=	"piscine_rust_module_00_ex07"
+version		=	"0.1.0"
+authors		=	["Jonathan DUFOUR"]
+edition		=	"2021"
+description	=	"A little program designed to find out every Friday 13th"
 
 [dependencies]
-ftkit="0.1.12"
+ftkit		=	"0.1.12"

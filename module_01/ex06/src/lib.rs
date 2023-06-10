@@ -1,4 +1,4 @@
-fn are_digits(n: &[u8]) -> bool {
+fn __are_digits_only(n: &[u8]) -> bool {
 	for &c in n {
 		if !c.is_ascii_digit() {
 			return false;
@@ -7,7 +7,7 @@ fn are_digits(n: &[u8]) -> bool {
 	return true;
 }
 
-fn most_significant_digit(n: &[u8]) -> usize {
+fn __most_significant_digit(n: &[u8]) -> usize {
 	for i in 0..n.len() {
 		if n[i] != b'0' {
 			return i;
@@ -36,15 +36,18 @@ fn most_significant_digit(n: &[u8]) -> usize {
 /// ```
 pub fn big_add(a: &[u8], b: &[u8]) -> Vec<u8> {
 	assert!(!a.is_empty() && !b.is_empty(), "Empty input");
-	assert!(are_digits(a) && are_digits(b), "Input contains non-digits");
+	assert!(
+		__are_digits_only(a) && __are_digits_only(b),
+		"Input contains non-digits"
+	);
 
 	let mut sum: u8;
 	let mut carry: u8 = 0;
 	let mut result: Vec<u8> = Vec::new();
 	let mut lsd_a: usize = a.len() - 1; // least significant digit in a
 	let mut lsd_b: usize = b.len() - 1; // least significant digit in b
-	let msd_a: usize = most_significant_digit(a); // most significant digit in a
-	let msd_b: usize = most_significant_digit(b); // most significant digit in b
+	let msd_a: usize = __most_significant_digit(a); // most significant digit in a
+	let msd_b: usize = __most_significant_digit(b); // most significant digit in b
 
 	if lsd_a - msd_a < lsd_b - msd_b {
 		while msd_a < lsd_a {

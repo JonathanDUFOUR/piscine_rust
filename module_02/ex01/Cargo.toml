@@ -1,0 +1,6 @@
+[package]
+name		=	"piscine_rust_module_02_ex01"
+version		=	"0.1.0"
+authors		=	["Jonathan DUFOUR"]
+edition		=	"2021"
+description	=	"Designing our first structures, methods, and associated functions"
