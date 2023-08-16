@@ -171,8 +171,10 @@ impl Color {
 #[cfg(test)]
 mod tests {
 	use super::*;
+	use ntest::timeout;
 
 	#[test]
+	#[timeout(25)]
 	fn new_00() {
 		assert_eq!(
 			Color::new(0x00, 0x00, 0x00),
@@ -185,6 +187,7 @@ mod tests {
 	}
 
 	#[test]
+	#[timeout(25)]
 	fn new_01() {
 		assert_eq!(
 			Color::new(0xff, 0xff, 0xff),
@@ -197,6 +200,7 @@ mod tests {
 	}
 
 	#[test]
+	#[timeout(25)]
 	fn new_02() {
 		assert_eq!(
 			Color::new(0x11, 0x22, 0x33),
@@ -209,6 +213,7 @@ mod tests {
 	}
 
 	#[test]
+	#[timeout(25)]
 	fn new_03() {
 		assert_eq!(
 			Color::new(0x12, 0x34, 0x56),
@@ -221,6 +226,7 @@ mod tests {
 	}
 
 	#[test]
+	#[timeout(25)]
 	fn new_04() {
 		assert_eq!(
 			Color::new(0x78, 0x9a, 0xbc),
@@ -233,36 +239,43 @@ mod tests {
 	}
 
 	#[test]
+	#[timeout(25)]
 	fn constant_red() {
 		assert_eq!(Color::RED, Color::new(0xff, 0x00, 0x00));
 	}
 
 	#[test]
+	#[timeout(25)]
 	fn constant_green() {
 		assert_eq!(Color::GREEN, Color::new(0x00, 0xff, 0x00));
 	}
 
 	#[test]
+	#[timeout(25)]
 	fn constant_blue() {
 		assert_eq!(Color::BLUE, Color::new(0x00, 0x00, 0xff));
 	}
 
 	#[test]
+	#[timeout(25)]
 	fn constant_white() {
 		assert_eq!(Color::WHITE, Color::new(0xff, 0xff, 0xff));
 	}
 
 	#[test]
+	#[timeout(100)]
 	fn closest_mix_00() {
 		assert_eq!(Color::WHITE.closest_mix(&[], 0), Color::WHITE);
 	}
 
 	#[test]
+	#[timeout(100)]
 	fn closest_mix_01() {
 		assert_eq!(Color::WHITE.closest_mix(&[], u32::MAX), Color::WHITE);
 	}
 
 	#[test]
+	#[timeout(100)]
 	fn closest_mix_02() {
 		assert_eq!(
 			Color::WHITE.closest_mix(
@@ -277,6 +290,7 @@ mod tests {
 	}
 
 	#[test]
+	#[timeout(100)]
 	fn closest_mix_03() {
 		assert_eq!(
 			Color::WHITE.closest_mix(
@@ -291,16 +305,19 @@ mod tests {
 	}
 
 	#[test]
+	#[timeout(100)]
 	fn closest_mix_04() {
 		assert_eq!(Color::RED.closest_mix(&[], 0), Color::WHITE);
 	}
 
 	#[test]
+	#[timeout(100)]
 	fn closest_mix_05() {
 		assert_eq!(Color::RED.closest_mix(&[], u32::MAX), Color::WHITE);
 	}
 
 	#[test]
+	#[timeout(100)]
 	fn closest_mix_06() {
 		assert_eq!(
 			Color::RED.closest_mix(
@@ -315,6 +332,7 @@ mod tests {
 	}
 
 	#[test]
+	#[timeout(5000)]
 	fn closest_mix_07() {
 		assert_eq!(
 			Color::new(0xfe, 0xfe, 0xfe).closest_mix(
@@ -330,6 +348,7 @@ mod tests {
 	}
 
 	#[test]
+	#[timeout(500)]
 	fn closest_mix_08() {
 		assert_eq!(
 			Color::RED.closest_mix(
@@ -347,6 +366,7 @@ mod tests {
 	}
 
 	#[test]
+	#[timeout(1000)]
 	fn closest_mix_09() {
 		assert_eq!(
 			Color::new(0x80, 0x80, 0x80).closest_mix(
@@ -375,6 +395,7 @@ mod tests {
 	}
 
 	#[test]
+	#[timeout(250)]
 	fn closest_mix_10() {
 		assert_eq!(
 			Color::new(0x91, 0x1f, 0x3d).closest_mix(
@@ -391,6 +412,7 @@ mod tests {
 	}
 
 	#[test]
+	#[timeout(3000)]
 	fn closest_mix_11() {
 		assert_eq!(
 			Color::new(0x33, 0x02, 0xd1).closest_mix(
@@ -406,6 +428,7 @@ mod tests {
 	}
 
 	#[test]
+	#[timeout(1000)]
 	fn closest_mix_12() {
 		assert_eq!(
 			Color::new(0x58, 0xe4, 0x0a).closest_mix(
