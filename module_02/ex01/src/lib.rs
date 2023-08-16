@@ -11,8 +11,11 @@ impl Point {
 	/// * `x` - The x coordinate of the point to create.
 	/// * `y` - The y coordinate of the point to create.
 	///
-	/// # Examples
+	/// # Returns
 	///
+	/// The newly created Point instance.
+	///
+	/// # Examples
 	/// ```
 	/// use piscine_rust_module_02_ex01::Point;
 	///
@@ -27,8 +30,11 @@ impl Point {
 
 	/// Create a new Point instance with coordinates (0, 0).
 	///
-	/// # Examples
+	/// # Returns
 	///
+	/// The newly created Point instance.
+	///
+	/// # Examples
 	/// ```
 	/// use piscine_rust_module_02_ex01::Point;
 	///
@@ -36,6 +42,7 @@ impl Point {
 	///
 	/// assert_eq!(p.x, 0.0);
 	/// assert_eq!(p.y, 0.0);
+	/// ```
 	pub fn zero() -> Self {
 		return Self { x: 0.0, y: 0.0 };
 	}
@@ -46,8 +53,11 @@ impl Point {
 	///
 	/// * `other` - The other point to calculate the distance with.
 	///
-	/// # Examples
+	/// # Returns
 	///
+	/// The distance between the two points.
+	///
+	/// # Examples
 	/// ```
 	/// use piscine_rust_module_02_ex01::Point;
 	///
@@ -90,7 +100,6 @@ impl Point {
 	/// * `dy` - The y coordinate to translate the point by.
 	///
 	/// # Examples
-	///
 	/// ```
 	/// use piscine_rust_module_02_ex01::Point;
 	///
