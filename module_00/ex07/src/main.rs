@@ -1,5 +1,5 @@
+use ex07::strpcmp;
 use ftkit::ARGS;
-use piscine_rust_module_00_ex07::strpcmp;
 
 fn main() {
 	if ARGS.len() == 3 {

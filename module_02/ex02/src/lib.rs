@@ -21,7 +21,7 @@ impl PizzaStatus {
 	/// # Examples
 	///
 	/// ```
-	/// use piscine_rust_module_02_ex02::PizzaStatus;
+	/// use ex02::PizzaStatus;
 	///
 	/// let status: PizzaStatus = PizzaStatus::from_delivery_time(42);
 	///
@@ -47,7 +47,7 @@ impl PizzaStatus {
 	/// # Examples
 	///
 	/// ```
-	/// use piscine_rust_module_02_ex02::PizzaStatus;
+	/// use ex02::PizzaStatus;
 	///
 	/// let status: PizzaStatus = PizzaStatus::Ordered;
 	///

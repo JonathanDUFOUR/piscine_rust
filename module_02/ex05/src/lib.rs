@@ -110,7 +110,7 @@ impl Color {
 	///
 	/// # Examples
 	/// ```
-	/// use piscine_rust_module_02_ex05::Color;
+	/// use ex05::Color;
 	///
 	/// let color: Color = Color::new(255, 0, 0);
 	/// assert_eq!(color, Color::RED);
@@ -134,7 +134,7 @@ impl Color {
 	///
 	/// # Examples
 	/// ```
-	/// use piscine_rust_module_02_ex05::Color;
+	/// use ex05::Color;
 	///
 	/// assert_eq!(Color::RED.closest_mix(&[], 100), Color::WHITE);
 	/// assert_eq!(Color::RED.closest_mix(&[(Color::RED, 255)], 0), Color::WHITE);

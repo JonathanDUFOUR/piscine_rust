@@ -17,7 +17,7 @@ impl Point {
 	///
 	/// # Examples
 	/// ```
-	/// use piscine_rust_module_02_ex01::Point;
+	/// use ex01::Point;
 	///
 	/// let p: Point = Point::new(1.0, 2.0);
 	///
@@ -36,7 +36,7 @@ impl Point {
 	///
 	/// # Examples
 	/// ```
-	/// use piscine_rust_module_02_ex01::Point;
+	/// use ex01::Point;
 	///
 	/// let p: Point = Point::zero();
 	///
@@ -59,7 +59,7 @@ impl Point {
 	///
 	/// # Examples
 	/// ```
-	/// use piscine_rust_module_02_ex01::Point;
+	/// use ex01::Point;
 	///
 	/// let p0: Point = Point::new(1.0, 2.0);
 	/// let p1: Point = Point::new(2.0, 1.0);
@@ -101,7 +101,7 @@ impl Point {
 	///
 	/// # Examples
 	/// ```
-	/// use piscine_rust_module_02_ex01::Point;
+	/// use ex01::Point;
 	///
 	/// let mut p: Point = Point::new(1.0, 2.0);
 	///
