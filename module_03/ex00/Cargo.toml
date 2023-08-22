@@ -1,0 +1,9 @@
+[package]
+name		=	"ex00"
+version		=	"0.1.0"
+authors		=	["Jonathan DUFOUR"]
+edition		=	"2021"
+description	=	""
+
+[dependencies]
+ftkit		=	"0.1.12"

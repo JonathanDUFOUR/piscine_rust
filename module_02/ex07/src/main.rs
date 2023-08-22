@@ -85,25 +85,24 @@ impl Board {
 	#[inline(always)]
 	fn new(width: usize, height: usize, percentage: u8) -> Self {
 		#[inline(always)]
-		fn random_index(vec_size: usize) -> usize {
+		fn random_index(len: usize) -> usize {
 			use ftkit::random_number;
-			return ((random_number(0..i32::MAX) as u32 + random_number(0..i32::MAX) as u32)
-				as usize * (random_number(0..i32::MAX) as u32
-				+ random_number(0..i32::MAX) as u32) as usize)
-				% vec_size;
+			return (random_number(i32::MIN..i32::MAX) as u32 as usize
+				* random_number(i32::MIN..i32::MAX) as u32 as usize)
+				% len;
 		}
 
 		return Self {
 			width,
 			height,
 			cells: {
-				let vec_size: usize = width * height;
-				let alive_cell_count: usize = percentage as usize * vec_size / 100;
-				let mut cells: Vec<Cell> = vec![Cell::Dead; vec_size];
+				let vec_len: usize = width * height;
+				let alive_cell_count: usize = percentage as usize * vec_len / 100;
+				let mut cells: Vec<Cell> = vec![Cell::Dead; vec_len];
 
 				for _ in 0..alive_cell_count {
 					loop {
-						let i: usize = random_index(vec_size);
+						let i: usize = random_index(vec_len);
 
 						if cells[i] == Cell::Dead {
 							cells[i] = Cell::Alive;
