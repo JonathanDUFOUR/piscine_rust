@@ -6,15 +6,16 @@
 /// * `b` - The second number.
 ///
 /// # Examples
-///
 /// ```
 /// use::ex01::min;
 ///
 /// const A: i32 = 1;
 /// const B: i32 = 2;
+///
 /// assert_eq!(min(&A, &B), &A);
 /// assert_eq!(min(&B, &A), &A);
 /// ```
+#[allow(dead_code)]
 pub fn min<'lifetime>(a: &'lifetime i32, b: &'lifetime i32) -> &'lifetime i32 {
 	if a < b {
 		a
