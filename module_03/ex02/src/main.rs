@@ -2,21 +2,21 @@ struct John;
 
 use std::fmt;
 impl std::fmt::Display for John {
-	fn fmt(self: &Self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		if f.precision() == Some(0) {
-			write!(f, "Don't try to silence me!")
+	fn fmt(self: &Self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+		if formatter.precision() == Some(0) {
+			write!(formatter, "Don't try to silence me!")
 		} else {
-			f.pad("Hey! I'm John.")
+			formatter.pad("Hey! I'm John.")
 		}
 	}
 }
 
 impl std::fmt::Debug for John {
-	fn fmt(self: &Self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+	fn fmt(self: &Self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
 		write!(
-			f,
+			formatter,
 			"John, the man himself.{}",
-			if f.alternate() {
+			if formatter.alternate() {
 				" He's awesome AND formidable."
 			} else {
 				""
