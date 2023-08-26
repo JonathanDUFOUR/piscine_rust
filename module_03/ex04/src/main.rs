@@ -3,6 +3,7 @@ use std::fmt::Debug;
 use std::fmt::Display;
 use std::fmt::Formatter;
 
+#[derive(PartialEq)]
 enum TimeParseError {
 	MissingColon,
 	InvalidLength,
@@ -105,20 +106,22 @@ impl Display for Time {
 }
 
 fn main() {
-	let a: Time = "12:20".parse().unwrap();
-	let b: Time = "15:14".parse().unwrap();
+	const RED: &str = "\x1b[38;2;255;0;0m";
+	const GREEN: &str = "\x1b[38;2;0;255;0m";
+	const RESET: &str = "\x1b[0m";
 
-	println!("{a}");
-	println!("{b}");
+	println!("Tests:");
 
-	for c in "Hello World".as_bytes() {
-		println!("{}", c);
+	/* Test error cases */
+	{
+		println!("\tError cases:");
+		println!(
+			"\t\t{:>0}: {}",
+			"\"\"",
+			match "".parse::<Time>() {
+				Err(TimeParseError::MissingColon) => format!("{GREEN}[OK]{RESET}"),
+				_ => format!("{RED}[KO]{RESET}"),
+			}
+		);
 	}
-
-	let err1: TimeParseError = "12.20".parse::<Time>().unwrap_err();
-	let err2: TimeParseError = "12:2".parse::<Time>().unwrap_err();
-	let err3: TimeParseError = "12:2a".parse::<Time>().unwrap_err();
-	println!("error: {err1}");
-	println!("error: {err2}");
-	println!("error: {err3}");
 }
