@@ -38,6 +38,7 @@ impl Display for TimeParseError {
 	}
 }
 
+#[derive(PartialEq)]
 struct Time {
 	hours: u32,
 	minutes: u32,
@@ -62,7 +63,7 @@ impl std::str::FromStr for Time {
 		if colon_index == s_bytes.len() {
 			return Err(Self::Err::MissingColon);
 		}
-		if s_bytes[..colon_index].len() > 2 || s_bytes[colon_index + 1..].len() != 2 {
+		if s_bytes[..colon_index].len() != 2 || s_bytes[colon_index + 1..].len() != 2 {
 			return Err(Self::Err::InvalidLength);
 		}
 		for i in 0..colon_index {
@@ -114,14 +115,49 @@ fn main() {
 
 	/* Test error cases */
 	{
+		let padding: usize = 8;
+		let tests: [(&str, TimeParseError); 27] = [
+			("", TimeParseError::MissingColon),
+			(" ", TimeParseError::MissingColon),
+			("1", TimeParseError::MissingColon),
+			("1234", TimeParseError::MissingColon),
+			("abcde", TimeParseError::MissingColon),
+			(":", TimeParseError::InvalidLength),
+			("::", TimeParseError::InvalidLength),
+			("a:", TimeParseError::InvalidLength),
+			(":a", TimeParseError::InvalidLength),
+			("12:", TimeParseError::InvalidLength),
+			(":12", TimeParseError::InvalidLength),
+			("1:23", TimeParseError::InvalidLength),
+			("12:3", TimeParseError::InvalidLength),
+			("12:345", TimeParseError::InvalidLength),
+			("123:45", TimeParseError::InvalidLength),
+			("12:3a", TimeParseError::InvalidNumber),
+			("12:+4", TimeParseError::InvalidNumber),
+			("12:-4", TimeParseError::InvalidNumber),
+			("1b:34", TimeParseError::InvalidNumber),
+			("+2:34", TimeParseError::InvalidNumber),
+			("-2:34", TimeParseError::InvalidNumber),
+			("12:60", TimeParseError::InvalidNumber),
+			("12:84", TimeParseError::InvalidNumber),
+			("12:99", TimeParseError::InvalidNumber),
+			("24:34", TimeParseError::InvalidNumber),
+			("42:34", TimeParseError::InvalidNumber),
+			("99:34", TimeParseError::InvalidNumber),
+		];
+
 		println!("\tError cases:");
-		println!(
-			"\t\t{:>0}: {}",
-			"\"\"",
-			match "".parse::<Time>() {
-				Err(TimeParseError::MissingColon) => format!("{GREEN}[OK]{RESET}"),
-				_ => format!("{RED}[KO]{RESET}"),
-			}
-		);
+		for test in tests {
+			println!(
+				"\t\t{:>padding$}: {}",
+				format!("\"{}\"", test.0),
+				if test.0.parse::<Time>() == Err(test.1) {
+					format!("{GREEN}[OK]{RESET}")
+				} else {
+					format!("{RED}[KO]{RESET}")
+				},
+				padding = padding,
+			);
+		}
 	}
 }
