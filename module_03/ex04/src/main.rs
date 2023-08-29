@@ -5,9 +5,9 @@ use std::fmt::Formatter;
 
 #[derive(PartialEq)]
 enum TimeParseError {
-	MissingColon,
 	InvalidLength,
 	InvalidNumber,
+	MissingColon,
 }
 
 impl Debug for TimeParseError {
@@ -48,45 +48,50 @@ impl std::str::FromStr for Time {
 	type Err = TimeParseError;
 
 	fn from_str(s: &str) -> Result<Self, Self::Err> {
-		let s_bytes: &[u8] = s.as_bytes();
-		let colon_index = {
-			let mut i: usize = 0;
-			while i < s_bytes.len() {
-				if s_bytes[i] == b':' {
-					break;
+		#[inline(always)]
+		fn find(s: &[u8], c: u8, n: usize) -> Option<usize> {
+			for i in 0..n {
+				if s[i] == c {
+					return Some(i);
 				}
-				i += 1;
 			}
-			i
+			None
+		}
+
+		const EXPECTED_LEN: usize = 5;
+		const EXPECTED_COLON_INDEX: usize = 2;
+
+		let bytes: &[u8] = s.as_bytes();
+		let len: usize = bytes.len();
+		let colon_index: usize = match find(bytes, b':', len) {
+			Some(ok) => ok,
+			None => return Err(Self::Err::MissingColon),
 		};
 
-		if colon_index == s_bytes.len() {
-			return Err(Self::Err::MissingColon);
-		}
-		if s_bytes[..colon_index].len() != 2 || s_bytes[colon_index + 1..].len() != 2 {
+		if len != EXPECTED_LEN || colon_index != EXPECTED_COLON_INDEX {
 			return Err(Self::Err::InvalidLength);
 		}
-		for i in 0..colon_index {
-			if !s_bytes[i].is_ascii_digit() {
+
+		for i in 0..EXPECTED_COLON_INDEX {
+			if !bytes[i].is_ascii_digit() {
 				return Err(Self::Err::InvalidNumber);
 			}
 		}
-		for i in colon_index + 1..s.len() {
-			if !s_bytes[i].is_ascii_digit() {
+		for i in EXPECTED_COLON_INDEX + 1..EXPECTED_LEN {
+			if !bytes[i].is_ascii_digit() {
 				return Err(Self::Err::InvalidNumber);
 			}
 		}
 
-		let hours: u32 = match s[..colon_index].parse() {
-			Ok(ok) => ok,
-			_ => return Err(Self::Err::InvalidNumber),
-		};
-		let minutes: u32 = match s[colon_index + 1..].parse() {
-			Ok(ok) => ok,
-			_ => return Err(Self::Err::InvalidNumber),
-		};
+		let hours: u32 = s[..EXPECTED_COLON_INDEX].parse().unwrap();
 
-		if hours > 23 || minutes > 59 {
+		if hours > 23 {
+			return Err(Self::Err::InvalidNumber);
+		}
+
+		let minutes: u32 = s[EXPECTED_COLON_INDEX + 1..].parse().unwrap();
+
+		if minutes > 59 {
 			return Err(Self::Err::InvalidNumber);
 		}
 
@@ -116,14 +121,13 @@ fn main() {
 	/* Test error cases */
 	{
 		let padding: usize = 8;
-		let tests: [(&str, TimeParseError); 27] = [
+		let tests: [(&str, TimeParseError); 26] = [
 			("", TimeParseError::MissingColon),
-			(" ", TimeParseError::MissingColon),
-			("1", TimeParseError::MissingColon),
+			("12", TimeParseError::MissingColon),
 			("1234", TimeParseError::MissingColon),
-			("abcde", TimeParseError::MissingColon),
+			("12.34", TimeParseError::MissingColon),
+			("abcdef", TimeParseError::MissingColon),
 			(":", TimeParseError::InvalidLength),
-			("::", TimeParseError::InvalidLength),
 			("a:", TimeParseError::InvalidLength),
 			(":a", TimeParseError::InvalidLength),
 			("12:", TimeParseError::InvalidLength),
@@ -152,6 +156,106 @@ fn main() {
 				"\t\t{:>padding$}: {}",
 				format!("\"{}\"", test.0),
 				if test.0.parse::<Time>() == Err(test.1) {
+					format!("{GREEN}[OK]{RESET}")
+				} else {
+					format!("{RED}[KO]{RESET}")
+				},
+				padding = padding,
+			);
+		}
+	}
+
+	println!();
+
+	/* Test valid cases */
+	{
+		let padding: usize = 8;
+		let tests: [(&str, Time); 11] = [
+			(
+				"00:00",
+				Time {
+					hours: 0,
+					minutes: 0,
+				},
+			),
+			(
+				"00:01",
+				Time {
+					hours: 0,
+					minutes: 1,
+				},
+			),
+			(
+				"00:59",
+				Time {
+					hours: 0,
+					minutes: 59,
+				},
+			),
+			(
+				"01:00",
+				Time {
+					hours: 1,
+					minutes: 0,
+				},
+			),
+			(
+				"01:01",
+				Time {
+					hours: 1,
+					minutes: 1,
+				},
+			),
+			(
+				"01:59",
+				Time {
+					hours: 1,
+					minutes: 59,
+				},
+			),
+			(
+				"23:00",
+				Time {
+					hours: 23,
+					minutes: 0,
+				},
+			),
+			(
+				"23:01",
+				Time {
+					hours: 23,
+					minutes: 1,
+				},
+			),
+			(
+				"23:59",
+				Time {
+					hours: 23,
+					minutes: 59,
+				},
+			),
+			(
+				"12:34",
+				Time {
+					hours: 12,
+					minutes: 34,
+				},
+			),
+			(
+				"21:42",
+				Time {
+					hours: 21,
+					minutes: 42,
+				},
+			),
+		];
+
+		println!("\tValid cases:");
+		for test in tests {
+			println!(
+				"\t\t{:>padding$}: {}",
+				format!("\"{}\"", test.0),
+				if test.0.parse::<Time>() == Ok(test.1) {
 					format!("{GREEN}[OK]{RESET}")
 				} else {
 					format!("{RED}[KO]{RESET}")
