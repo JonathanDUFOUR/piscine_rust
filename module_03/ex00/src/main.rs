@@ -10,38 +10,37 @@ fn choose<T>(values: &[T]) -> &T {
 	return &values[random_index(values.len())];
 }
 
-fn main() {
-	#[inline(always)]
-	fn unit_test<T: PartialEq>(values: &[T]) -> Result<(), (&str, &T)> {
-		for target in values {
-			let mut has_been_chosen: bool = false;
+fn unit_test<T: PartialEq>(values: &[T]) -> Result<(), (&str, &T)> {
+	for target in values {
+		let mut has_been_chosen: bool = false;
 
-			for _ in 0..values.len() * 42 {
-				let chosen: &T = choose(&values);
+		for _ in 0..values.len() * 42 {
+			let chosen: &T = choose(&values);
 
-				if chosen == target {
-					has_been_chosen = true;
+			if chosen == target {
+				has_been_chosen = true;
+				break;
+			}
+
+			let mut is_chosen_part_of_values: bool = false;
+			for value in values {
+				if chosen == value {
+					is_chosen_part_of_values = true;
 					break;
 				}
-
-				let mut is_chosen_part_of_values: bool = false;
-				for value in values {
-					if chosen == value {
-						is_chosen_part_of_values = true;
-						break;
-					}
-				}
-				if !is_chosen_part_of_values {
-					return Err(("chosen value is not part of the values", chosen));
-				}
 			}
-			if !has_been_chosen {
-				return Err(("value has never been chosen", target));
+			if !is_chosen_part_of_values {
+				return Err(("chosen value is not part of the values", chosen));
 			}
 		}
-		return Ok(());
+		if !has_been_chosen {
+			return Err(("value has never been chosen", target));
+		}
 	}
+	return Ok(());
+}
 
+fn main() {
 	{
 		let values: [u8; 42] = [
 			0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,

@@ -1,22 +1,22 @@
 [package]
-name			=	"module00-ex04"
-version			=	"1.56.0"
-authors			=	["you"]
-edition			=	"2021"
-description		=	"my answer to the fifth exercise of the first module of 42's Rust Piscine"
-publish			=	false
-default-run		=	"module00-ex04"
+name		=	"module00-ex04"
+version		=	"1.56.0"
+authors		=	["you"]
+edition		=	"2021"
+description	=	"my answer to the fifth exercise of the first module of 42's Rust Piscine"
+publish		=	false
+default-run	=	"module00-ex04"
 
 [[bin]]
-name			=	"other"
-path			=	"src/other.rs"
+name	=	"other"
+path	=	"src/other.rs"
 
 [[bin]]
-name			=	"test-overflows"
-path			=	"src/overflow.rs"
+name	=	"test-overflows"
+path	=	"src/overflow.rs"
 
 [profile.release]
-strip			=	"symbols"
+strip	=	"symbols"
 
 [profile.no-overflows]
 inherits		=	"dev"
