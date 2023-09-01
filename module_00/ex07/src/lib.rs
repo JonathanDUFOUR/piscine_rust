@@ -145,7 +145,6 @@ pub fn strpcmp(query: &[u8], pattern: &[u8]) -> bool {
 
 #[cfg(test)]
 mod test {
-
 	use super::*;
 
 	#[test]
@@ -273,10 +272,7 @@ mod test {
 	fn strstr_04() {
 		let mut i: usize = 0;
 
-		assert_eq!(
-			strstr(b"Is it still working now?", b"working", &mut i),
-			true
-		);
+		assert_eq!(strstr(b"Is it still working now?", b"working", &mut i), true);
 		assert_eq!(i, 12)
 	}
 
@@ -299,11 +295,7 @@ mod test {
 		let mut i: usize = 0;
 
 		assert_eq!(
-			strstr(
-				b"What if we look for the beginning of the string?",
-				b"What if",
-				&mut i
-			),
+			strstr(b"What if we look for the beginning of the string?", b"What if", &mut i),
 			true
 		);
 		assert_eq!(i, 0);

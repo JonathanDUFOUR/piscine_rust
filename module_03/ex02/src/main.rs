@@ -1,8 +1,10 @@
+use std::fmt;
+use std::fmt::{Binary, Debug, Display, Formatter};
+
 struct John;
 
-use std::fmt;
-impl std::fmt::Display for John {
-	fn fmt(self: &Self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl Display for John {
+	fn fmt(self: &Self, formatter: &mut Formatter<'_>) -> fmt::Result {
 		if formatter.precision() == Some(0) {
 			write!(formatter, "Don't try to silence me!")
 		} else {
@@ -11,8 +13,8 @@ impl std::fmt::Display for John {
 	}
 }
 
-impl std::fmt::Debug for John {
-	fn fmt(self: &Self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl Debug for John {
+	fn fmt(self: &Self, formatter: &mut Formatter<'_>) -> fmt::Result {
 		write!(
 			formatter,
 			"John, the man himself.{}",
@@ -25,8 +27,8 @@ impl std::fmt::Debug for John {
 	}
 }
 
-impl std::fmt::Binary for John {
-	fn fmt(self: &Self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl Binary for John {
+	fn fmt(self: &Self, f: &mut Formatter<'_>) -> fmt::Result {
 		write!(f, "Bip Boop?")
 	}
 }

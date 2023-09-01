@@ -1,3 +1,5 @@
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
+
 #[derive(Debug, Eq, PartialEq)]
 pub struct Vector<T> {
 	x: T,
@@ -20,6 +22,86 @@ impl<T> Vector<T> {
 	/// ```
 	pub const fn new(x: T, y: T) -> Self {
 		Self { x, y }
+	}
+}
+
+impl<T: Add<Output = T>> Add for Vector<T> {
+	type Output = Self;
+
+	#[inline(always)]
+	fn add(self: Self, rhs: Self) -> Self::Output {
+		Self {
+			x: self.x + rhs.x,
+			y: self.y + rhs.y,
+		}
+	}
+}
+
+impl<T: Sub<Output = T>> Sub for Vector<T> {
+	type Output = Self;
+
+	#[inline(always)]
+	fn sub(self: Self, rhs: Self) -> Self::Output {
+		Self {
+			x: self.x - rhs.x,
+			y: self.y - rhs.y,
+		}
+	}
+}
+
+impl<T: Copy + Mul<Output = T>> Mul<T> for Vector<T> {
+	type Output = Self;
+
+	#[inline(always)]
+	fn mul(self: Self, rhs: T) -> Self::Output {
+		Self {
+			x: self.x * rhs,
+			y: self.y * rhs,
+		}
+	}
+}
+
+impl<T: Copy + Div<Output = T>> Div<T> for Vector<T> {
+	type Output = Self;
+
+	#[inline(always)]
+	fn div(self: Self, rhs: T) -> Self::Output {
+		Self {
+			x: self.x / rhs,
+			y: self.y / rhs,
+		}
+	}
+}
+
+impl<T: AddAssign> AddAssign for Vector<T> {
+	#[inline(always)]
+	fn add_assign(self: &mut Self, rhs: Self) {
+		self.x += rhs.x;
+		self.y += rhs.y;
+	}
+}
+
+impl<T: SubAssign> SubAssign for Vector<T> {
+	#[inline(always)]
+	fn sub_assign(self: &mut Self, rhs: Self) {
+		self.x -= rhs.x;
+		self.y -= rhs.y;
+	}
+}
+
+impl<T: Copy + MulAssign> MulAssign<T> for Vector<T> {
+	#[inline(always)]
+	fn mul_assign(self: &mut Self, rhs: T) {
+		self.x *= rhs;
+		self.y *= rhs;
+	}
+}
+
+impl<T: Copy + DivAssign> DivAssign<T> for Vector<T> {
+	#[inline(always)]
+	fn div_assign(self: &mut Self, rhs: T) {
+		self.x /= rhs;
+		self.y /= rhs;
 	}
 }
 
@@ -229,40 +311,56 @@ mod tests {
 
 	#[test]
 	fn operator_equivalent_10() {
-		const LHS: Vector<f32> = Vector::new(1.0, 0.0);
-		const RHS: Vector<f32> = Vector::new(1.0, 0.0);
+		const LHS: Vector<usize> = Vector::new(1, 0);
+		const RHS: Vector<usize> = Vector::new(1, 0);
 
 		assert_eq!(LHS == RHS, true);
 	}
 
 	#[test]
 	fn operator_equivalent_11() {
-		const LHS: Vector<f64> = Vector::new(1.0, 0.0);
-		const RHS: Vector<f64> = Vector::new(1.0, 1.0);
+		const LHS: Vector<isize> = Vector::new(1, 0);
+		const RHS: Vector<isize> = Vector::new(1, 1);
 
 		assert_eq!(LHS == RHS, false);
 	}
 
 	#[test]
 	fn operator_equivalent_12() {
-		const LHS: Vector<char> = Vector::new('1', '1');
-		const RHS: Vector<char> = Vector::new('0', '0');
+		const LHS: Vector<f32> = Vector::new(1.0, 1.0);
+		const RHS: Vector<f32> = Vector::new(0.0, 0.0);
 
 		assert_eq!(LHS == RHS, false);
 	}
 
 	#[test]
 	fn operator_equivalent_13() {
-		const LHS: Vector<&str> = Vector::new("1", "1");
-		const RHS: Vector<&str> = Vector::new("0", "1");
+		const LHS: Vector<f64> = Vector::new(1.0, 1.0);
+		const RHS: Vector<f64> = Vector::new(0.0, 1.0);
 
 		assert_eq!(LHS == RHS, false);
 	}
 
 	#[test]
 	fn operator_equivalent_14() {
-		const LHS: Vector<bool> = Vector::new(true, true);
-		const RHS: Vector<bool> = Vector::new(true, true);
+		const LHS: Vector<char> = Vector::new('1', '1');
+		const RHS: Vector<char> = Vector::new('1', '0');
+
+		assert_eq!(LHS == RHS, false);
+	}
+
+	#[test]
+	fn operator_equivalent_15() {
+		const LHS: Vector<&str> = Vector::new("1", "1");
+		const RHS: Vector<&str> = Vector::new("1", "1");
+
+		assert_eq!(LHS == RHS, true);
+	}
+
+	#[test]
+	fn operator_equivalent_16() {
+		const LHS: Vector<bool> = Vector::new(false, false);
+		const RHS: Vector<bool> = Vector::new(false, false);
 
 		assert_eq!(LHS == RHS, true);
 	}
@@ -349,41 +447,194 @@ mod tests {
 
 	#[test]
 	fn operator_different_10() {
-		const LHS: Vector<f32> = Vector::new(1.0, 0.0);
-		const RHS: Vector<f32> = Vector::new(1.0, 0.0);
+		const LHS: Vector<usize> = Vector::new(1, 0);
+		const RHS: Vector<usize> = Vector::new(1, 0);
 
 		assert_eq!(LHS != RHS, false);
 	}
 
 	#[test]
 	fn operator_different_11() {
-		const LHS: Vector<f64> = Vector::new(1.0, 0.0);
-		const RHS: Vector<f64> = Vector::new(1.0, 1.0);
+		const LHS: Vector<isize> = Vector::new(1, 0);
+		const RHS: Vector<isize> = Vector::new(1, 1);
 
 		assert_eq!(LHS != RHS, true);
 	}
 
 	#[test]
 	fn operator_different_12() {
-		const LHS: Vector<char> = Vector::new('1', '1');
-		const RHS: Vector<char> = Vector::new('0', '0');
+		const LHS: Vector<f32> = Vector::new(1.0, 1.0);
+		const RHS: Vector<f32> = Vector::new(0.0, 0.0);
 
 		assert_eq!(LHS != RHS, true);
 	}
 
 	#[test]
 	fn operator_different_13() {
-		const LHS: Vector<&str> = Vector::new("1", "1");
-		const RHS: Vector<&str> = Vector::new("0", "1");
+		const LHS: Vector<f64> = Vector::new(1.0, 1.0);
+		const RHS: Vector<f64> = Vector::new(0.0, 1.0);
 
 		assert_eq!(LHS != RHS, true);
 	}
 
 	#[test]
 	fn operator_different_14() {
-		const LHS: Vector<bool> = Vector::new(true, true);
-		const RHS: Vector<bool> = Vector::new(true, true);
+		const LHS: Vector<char> = Vector::new('1', '1');
+		const RHS: Vector<char> = Vector::new('1', '0');
+
+		assert_eq!(LHS != RHS, true);
+	}
+
+	#[test]
+	fn operator_different_15() {
+		const LHS: Vector<&str> = Vector::new("1", "1");
+		const RHS: Vector<&str> = Vector::new("1", "1");
 
 		assert_eq!(LHS != RHS, false);
+	}
+
+	#[test]
+	fn operator_different_16() {
+		const LHS: Vector<bool> = Vector::new(false, false);
+		const RHS: Vector<bool> = Vector::new(false, false);
+
+		assert_eq!(LHS != RHS, false);
+	}
+
+	#[test]
+	fn operator_add_00() {
+		const LHS: Vector<u8> = Vector::new(42, 37);
+		const RHS: Vector<u8> = Vector::new(24, 13);
+		const EXPECTED: Vector<u8> = Vector::new(66, 50);
+
+		assert_eq!(LHS + RHS, EXPECTED);
+	}
+
+	#[test]
+	fn operator_add_01() {
+		const LHS: Vector<i8> = Vector::new(-42, 37);
+		const RHS: Vector<i8> = Vector::new(24, -13);
+		const EXPECTED: Vector<i8> = Vector::new(-18, 24);
+
+		assert_eq!(LHS + RHS, EXPECTED);
+	}
+
+	#[test]
+	fn operator_add_02() {
+		const LHS: Vector<u16> = Vector::new(579, 666);
+		const RHS: Vector<u16> = Vector::new(223, 333);
+		const EXPECTED: Vector<u16> = Vector::new(802, 999);
+
+		assert_eq!(LHS + RHS, EXPECTED);
+	}
+
+	#[test]
+	fn operator_add_03() {
+		// TODO: Change LHS, RHS, and EXPECTED values.
+		const LHS: Vector<i16> = Vector::new(0, 0);
+		const RHS: Vector<i16> = Vector::new(1, 1);
+		const EXPECTED: Vector<i16> = Vector::new(1, 1);
+
+		assert_eq!(LHS + RHS, EXPECTED);
+	}
+
+	#[test]
+	fn operator_add_04() {
+		// TODO: Change LHS, RHS, and EXPECTED values.
+		const LHS: Vector<u32> = Vector::new(0, 1);
+		const RHS: Vector<u32> = Vector::new(0, 0);
+		const EXPECTED: Vector<u32> = Vector::new(0, 1);
+
+		assert_eq!(LHS + RHS, EXPECTED);
+	}
+
+	#[test]
+	fn operator_add_05() {
+		// TODO: Change LHS, RHS, and EXPECTED values.
+		const LHS: Vector<i32> = Vector::new(0, 1);
+		const RHS: Vector<i32> = Vector::new(0, 1);
+		const EXPECTED: Vector<i32> = Vector::new(0, 2);
+
+		assert_eq!(LHS + RHS, EXPECTED);
+	}
+
+	#[test]
+	fn operator_add_06() {
+		// TODO: Change LHS, RHS, and EXPECTED values.
+		const LHS: Vector<u64> = Vector::new(0, 1);
+		const RHS: Vector<u64> = Vector::new(1, 0);
+		const EXPECTED: Vector<u64> = Vector::new(1, 1);
+
+		assert_eq!(LHS + RHS, EXPECTED);
+	}
+
+	#[test]
+	fn operator_add_07() {
+		// TODO: Change LHS, RHS, and EXPECTED values.
+		const LHS: Vector<i64> = Vector::new(0, 1);
+		const RHS: Vector<i64> = Vector::new(1, 1);
+		const EXPECTED: Vector<i64> = Vector::new(1, 2);
+
+		assert_eq!(LHS + RHS, EXPECTED);
+	}
+
+	#[test]
+	fn operator_add_08() {
+		// TODO: Change LHS, RHS, and EXPECTED values.
+		const LHS: Vector<u128> = Vector::new(1, 0);
+		const RHS: Vector<u128> = Vector::new(0, 0);
+		const EXPECTED: Vector<u128> = Vector::new(1, 0);
+
+		assert_eq!(LHS + RHS, EXPECTED);
+	}
+
+	#[test]
+	fn operator_add_09() {
+		// TODO: Change LHS, RHS, and EXPECTED values.
+		const LHS: Vector<i128> = Vector::new(1, 0);
+		const RHS: Vector<i128> = Vector::new(0, 1);
+		const EXPECTED: Vector<i128> = Vector::new(1, 1);
+
+		assert_eq!(LHS + RHS, EXPECTED);
+	}
+
+	#[test]
+	fn operator_add_10() {
+		// TODO: Change LHS, RHS, and EXPECTED values.
+		const LHS: Vector<usize> = Vector::new(1, 0);
+		const RHS: Vector<usize> = Vector::new(1, 0);
+		const EXPECTED: Vector<usize> = Vector::new(2, 0);
+
+		assert_eq!(LHS + RHS, EXPECTED);
+	}
+
+	#[test]
+	fn operator_add_11() {
+		// TODO: Change LHS, RHS, and EXPECTED values.
+		const LHS: Vector<isize> = Vector::new(1, 0);
+		const RHS: Vector<isize> = Vector::new(1, 1);
+		const EXPECTED: Vector<isize> = Vector::new(2, 1);
+
+		assert_eq!(LHS + RHS, EXPECTED);
+	}
+
+	#[test]
+	fn operator_add_12() {
+		// TODO: Change LHS, RHS, and EXPECTED values.
+		const LHS: Vector<f32> = Vector::new(1.0, 1.0);
+		const RHS: Vector<f32> = Vector::new(0.0, 0.0);
+		const EXPECTED: Vector<f32> = Vector::new(1.0, 1.0);
+
+		assert_eq!(LHS + RHS, EXPECTED);
+	}
+
+	#[test]
+	fn operator_add_13() {
+		// TODO: Change LHS, RHS, and EXPECTED values.
+		const LHS: Vector<f64> = Vector::new(1.0, 1.0);
+		const RHS: Vector<f64> = Vector::new(0.0, 1.0);
+		const EXPECTED: Vector<f64> = Vector::new(1.0, 2.0);
+
+		assert_eq!(LHS + RHS, EXPECTED);
 	}
 }

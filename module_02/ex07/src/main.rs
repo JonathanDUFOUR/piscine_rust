@@ -87,6 +87,7 @@ impl Board {
 		#[inline(always)]
 		fn random_index(len: usize) -> usize {
 			use ftkit::random_number;
+
 			return (random_number(i32::MIN..i32::MAX) as u32 as usize
 				* random_number(i32::MIN..i32::MAX) as u32 as usize)
 				% len;
@@ -586,10 +587,10 @@ fn main() {
 				ParseError::InvalidHeight { arg } => eprintln!("error: invalid height ({arg})"),
 				ParseError::InvalidPercentage { arg } => {
 					eprintln!("error: invalid percentage ({arg})")
-				}
+				},
 			}
 			return;
-		}
+		},
 	};
 
 	board.print(false);

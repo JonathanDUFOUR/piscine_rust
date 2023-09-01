@@ -1,10 +1,10 @@
-use unicode_width::UnicodeWidthStr;
-
 fn __get_index_of_the_after_last_word_of_the_line(
 	paragraph_words: &[String],
 	column_number: usize,
 	begin: usize,
 ) -> usize {
+	use unicode_width::UnicodeWidthStr;
+
 	let mut line_end: usize = begin + 1;
 	let mut line_len: usize = UnicodeWidthStr::width(paragraph_words[begin].as_str());
 

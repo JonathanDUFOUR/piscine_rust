@@ -1,7 +1,7 @@
-use ex07::strpcmp;
-use ftkit::ARGS;
-
 fn main() {
+	use ex07::strpcmp;
+	use ftkit::ARGS;
+
 	if ARGS.len() == 3 {
 		println!(
 			"strpcmp(b\"{}\", b\"{}\"): {}",

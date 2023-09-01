@@ -2,6 +2,7 @@ fn choose<T>(values: &[T]) -> &T {
 	#[inline(always)]
 	fn random_index(len: usize) -> usize {
 		use ftkit::random_number;
+
 		return (random_number(i32::MIN..i32::MAX) as u32 as usize
 			* random_number(i32::MIN..i32::MAX) as u32 as usize)
 			% len;
@@ -53,7 +54,7 @@ fn main() {
 			Err((error, value)) => {
 				println!("\x1b[38;2;255;0;0m[KO]\x1b[0m");
 				panic!("{error}: {value}");
-			}
+			},
 		}
 	}
 	{
@@ -67,7 +68,7 @@ fn main() {
 			Err((error, value)) => {
 				println!("\x1b[38;2;255;0;0m[KO]\x1b[0m");
 				panic!("{error}: {value}");
-			}
+			},
 		}
 	}
 	{
@@ -79,7 +80,7 @@ fn main() {
 			Err((error, value)) => {
 				println!("\x1b[38;2;255;0;0m[KO]\x1b[0m");
 				panic!("{error}: {value}");
-			}
+			},
 		}
 	}
 	{
@@ -97,7 +98,7 @@ fn main() {
 			Err((error, value)) => {
 				println!("\x1b[38;2;255;0;0m[KO]\x1b[0m");
 				panic!("{error}: {value}");
-			}
+			},
 		}
 	}
 	{
@@ -109,7 +110,7 @@ fn main() {
 			Err((error, value)) => {
 				println!("\x1b[38;2;255;0;0m[KO]\x1b[0m");
 				panic!("{error}: {value}");
-			}
+			},
 		}
 	}
 	{
@@ -121,7 +122,7 @@ fn main() {
 			Err((error, value)) => {
 				println!("\x1b[38;2;255;0;0m[KO]\x1b[0m");
 				panic!("{error}: {value}");
-			}
+			},
 		}
 	}
 	{
@@ -133,7 +134,7 @@ fn main() {
 			Err((error, value)) => {
 				println!("\x1b[38;2;255;0;0m[KO]\x1b[0m");
 				panic!("{error}: {value}");
-			}
+			},
 		}
 	}
 	{
@@ -152,7 +153,7 @@ fn main() {
 			Err((error, value)) => {
 				println!("\x1b[38;2;255;0;0m[KO]\x1b[0m");
 				panic!("{error}: {value}");
-			}
+			},
 		}
 	}
 	{
@@ -177,7 +178,7 @@ fn main() {
 			Err((error, value)) => {
 				println!("\x1b[38;2;255;0;0m[KO]\x1b[0m");
 				panic!("{error}: {value}");
-			}
+			},
 		}
 	}
 	{
@@ -214,7 +215,7 @@ fn main() {
 			Err((error, value)) => {
 				println!("\x1b[38;2;255;0;0m[KO]\x1b[0m");
 				panic!("{error}: {value}");
-			}
+			},
 		}
 	}
 	{
@@ -233,7 +234,7 @@ fn main() {
 			Err((error, value)) => {
 				println!("\x1b[38;2;255;0;0m[KO]\x1b[0m");
 				panic!("{error}: {value}");
-			}
+			},
 		}
 	}
 	{
@@ -342,7 +343,7 @@ fn main() {
 			Err((error, value)) => {
 				println!("\x1b[38;2;255;0;0m[KO]\x1b[0m");
 				panic!("{error}: {value}");
-			}
+			},
 		}
 	}
 	{
@@ -547,7 +548,7 @@ fn main() {
 			Err((error, value)) => {
 				println!("\x1b[38;2;255;0;0m[KO]\x1b[0m");
 				panic!("{error}: {value}");
-			}
+			},
 		}
 	}
 }
