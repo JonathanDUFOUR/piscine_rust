@@ -1,6 +1,6 @@
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Vector<T> {
 	x: T,
 	y: T,
@@ -14,54 +14,102 @@ impl<T> Vector<T> {
 	/// * `x` - The x direction of the vector to create.
 	/// * `y` - The y direction of the vector to create.
 	///
+	/// # Returns
+	///
+	/// The newly created Vector instance.
+	///
 	/// # Example
 	/// ```
 	/// use ex05::Vector;
 	///
-	/// let vector = Vector::new(1, 2);
+	/// let vector: Vector<u8> = Vector::new(1, 2);
 	/// ```
+	#[inline(always)]
 	pub const fn new(x: T, y: T) -> Self {
 		Self { x, y }
 	}
 }
 
-impl<T: Add<Output = T>> Add for Vector<T> {
+impl Vector<f32> {
+	/// Calculate the length of the vector.
+	///
+	/// # Returns
+	///
+	///  The calculated length of the vector.
+	///
+	/// # Example
+	/// ```
+	/// use ex05::Vector;
+	///
+	/// let vector: Vector<f32> = Vector::new(3.0, 4.0);
+	/// assert_eq!(vector.length(), 5.0);
+	/// ```
+	#[inline(always)]
+	pub fn length(self: &Self) -> f32 {
+		(self.x * self.x + self.y * self.y).sqrt()
+	}
+}
+
+impl Vector<f64> {
+	/// Calculate the length of the vector.
+	///
+	/// # Returns
+	///
+	/// The calculated length of the vector.
+	///
+	/// # Example
+	/// ```
+	/// use ex05::Vector;
+	///
+	/// let vector: Vector<f64> = Vector::new(3.0, 4.0);
+	/// assert_eq!(vector.length(), 5.0);
+	/// ```
+	#[inline(always)]
+	pub fn length(self: &Self) -> f64 {
+		(self.x * self.x + self.y * self.y).sqrt()
+	}
+}
+
+impl<T> Add for Vector<T>
+where
+	T: Add<Output = T>,
+{
 	type Output = Self;
 
 	#[inline(always)]
 	fn add(self: Self, rhs: Self) -> Self::Output {
-		Self {
-			x: self.x + rhs.x,
-			y: self.y + rhs.y,
-		}
+		Self::new(self.x + rhs.x, self.y + rhs.y)
 	}
 }
 
-impl<T: Sub<Output = T>> Sub for Vector<T> {
+impl<T> Sub for Vector<T>
+where
+	T: Sub<Output = T>,
+{
 	type Output = Self;
 
 	#[inline(always)]
 	fn sub(self: Self, rhs: Self) -> Self::Output {
-		Self {
-			x: self.x - rhs.x,
-			y: self.y - rhs.y,
-		}
+		Self::new(self.x - rhs.x, self.y - rhs.y)
 	}
 }
 
-impl<T: Copy + Mul<Output = T>> Mul<T> for Vector<T> {
+impl<T> Mul<T> for Vector<T>
+where
+	T: Mul<Output = T> + Copy,
+{
 	type Output = Self;
 
 	#[inline(always)]
 	fn mul(self: Self, rhs: T) -> Self::Output {
-		Self {
-			x: self.x * rhs,
-			y: self.y * rhs,
-		}
+		Self::new(self.x * rhs, self.y * rhs)
 	}
 }
 
-impl<T: Copy + Div<Output = T>> Div<T> for Vector<T> {
+impl<T> Div<T> for Vector<T>
+where
+	T: Div<Output = T> + Copy,
+{
 	type Output = Self;
 
 	#[inline(always)]
@@ -73,7 +121,10 @@ impl<T: Copy + Div<Output = T>> Div<T> for Vector<T> {
 	}
 }
 
-impl<T: AddAssign> AddAssign for Vector<T> {
+impl<T> AddAssign for Vector<T>
+where
+	T: AddAssign,
+{
 	#[inline(always)]
 	fn add_assign(self: &mut Self, rhs: Self) {
 		self.x += rhs.x;
@@ -81,7 +132,10 @@ impl<T: AddAssign> AddAssign for Vector<T> {
 	}
 }
 
-impl<T: SubAssign> SubAssign for Vector<T> {
+impl<T> SubAssign for Vector<T>
+where
+	T: SubAssign,
+{
 	#[inline(always)]
 	fn sub_assign(self: &mut Self, rhs: Self) {
 		self.x -= rhs.x;
@@ -89,7 +143,10 @@ impl<T: SubAssign> SubAssign for Vector<T> {
 	}
 }
 
-impl<T: Copy + MulAssign> MulAssign<T> for Vector<T> {
+impl<T> MulAssign<T> for Vector<T>
+where
+	T: MulAssign + Copy,
+{
 	#[inline(always)]
 	fn mul_assign(self: &mut Self, rhs: T) {
 		self.x *= rhs;
@@ -97,7 +154,10 @@ impl<T: Copy + MulAssign> MulAssign<T> for Vector<T> {
 	}
 }
 
-impl<T: Copy + DivAssign> DivAssign<T> for Vector<T> {
+impl<T> DivAssign<T> for Vector<T>
+where
+	T: DivAssign + Copy,
+{
 	#[inline(always)]
 	fn div_assign(self: &mut Self, rhs: T) {
 		self.x /= rhs;
@@ -109,865 +169,662 @@ impl<T: Copy + DivAssign> DivAssign<T> for Vector<T> {
 mod tests {
 	use super::*;
 
+	#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+	struct A {}
+
+	impl A {
+		#[inline(always)]
+		const fn new() -> Self {
+			Self {}
+		}
+	}
+
+	impl Add for A {
+		type Output = Self;
+
+		#[inline(always)]
+		fn add(self: Self, _rhs: Self) -> Self::Output {
+			Self {}
+		}
+	}
+
+	impl Sub for A {
+		type Output = Self;
+
+		#[inline(always)]
+		fn sub(self: Self, _rhs: Self) -> Self::Output {
+			Self {}
+		}
+	}
+
+	impl Mul for A {
+		type Output = Self;
+
+		#[inline(always)]
+		fn mul(self: Self, _rhs: Self) -> Self::Output {
+			Self {}
+		}
+	}
+
+	impl Div for A {
+		type Output = Self;
+
+		#[inline(always)]
+		fn div(self: Self, _rhs: Self) -> Self::Output {
+			Self {}
+		}
+	}
+
+	impl AddAssign for A {
+		#[inline(always)]
+		fn add_assign(self: &mut Self, _rhs: Self) {}
+	}
+
+	impl SubAssign for A {
+		#[inline(always)]
+		fn sub_assign(self: &mut Self, _rhs: Self) {}
+	}
+
+	impl MulAssign for A {
+		#[inline(always)]
+		fn mul_assign(self: &mut Self, _rhs: Self) {}
+	}
+
+	impl DivAssign for A {
+		#[inline(always)]
+		fn div_assign(self: &mut Self, _rhs: Self) {}
+	}
+
+	#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+	struct B {
+		n: u8,
+	}
+
+	impl B {
+		#[inline(always)]
+		const fn new(n: u8) -> Self {
+			Self { n }
+		}
+	}
+
+	impl Add for B {
+		type Output = Self;
+
+		#[inline(always)]
+		fn add(self: Self, rhs: Self) -> Self::Output {
+			Self { n: self.n + rhs.n }
+		}
+	}
+
+	impl Sub for B {
+		type Output = Self;
+
+		#[inline(always)]
+		fn sub(self: Self, rhs: Self) -> Self::Output {
+			Self { n: self.n - rhs.n }
+		}
+	}
+
+	impl Mul for B {
+		type Output = Self;
+
+		#[inline(always)]
+		fn mul(self: Self, rhs: Self) -> Self::Output {
+			Self { n: self.n * rhs.n }
+		}
+	}
+
+	impl Div for B {
+		type Output = Self;
+
+		#[inline(always)]
+		fn div(self: Self, rhs: Self) -> Self::Output {
+			Self { n: self.n / rhs.n }
+		}
+	}
+
+	impl AddAssign for B {
+		#[inline(always)]
+		fn add_assign(self: &mut Self, rhs: Self) {
+			self.n += rhs.n;
+		}
+	}
+
+	impl SubAssign for B {
+		#[inline(always)]
+		fn sub_assign(self: &mut Self, rhs: Self) {
+			self.n -= rhs.n;
+		}
+	}
+
+	impl MulAssign for B {
+		#[inline(always)]
+		fn mul_assign(self: &mut Self, rhs: Self) {
+			self.n *= rhs.n;
+		}
+	}
+
+	impl DivAssign for B {
+		#[inline(always)]
+		fn div_assign(self: &mut Self, rhs: Self) {
+			self.n /= rhs.n;
+		}
+	}
+
+	#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+	struct C {
+		n: i8,
+	}
+
+	impl C {
+		#[inline(always)]
+		const fn new(n: i8) -> Self {
+			Self { n }
+		}
+	}
+
+	impl Add for C {
+		type Output = Self;
+
+		#[inline(always)]
+		fn add(self: Self, rhs: Self) -> Self::Output {
+			Self { n: self.n + rhs.n }
+		}
+	}
+
+	impl Sub for C {
+		type Output = Self;
+
+		#[inline(always)]
+		fn sub(self: Self, rhs: Self) -> Self::Output {
+			Self { n: self.n - rhs.n }
+		}
+	}
+
+	impl Mul for C {
+		type Output = Self;
+
+		#[inline(always)]
+		fn mul(self: Self, rhs: Self) -> Self::Output {
+			Self { n: self.n * rhs.n }
+		}
+	}
+
+	impl Div for C {
+		type Output = Self;
+
+		#[inline(always)]
+		fn div(self: Self, rhs: Self) -> Self::Output {
+			Self { n: self.n / rhs.n }
+		}
+	}
+
+	impl AddAssign for C {
+		#[inline(always)]
+		fn add_assign(self: &mut Self, rhs: Self) {
+			self.n += rhs.n;
+		}
+	}
+
+	impl SubAssign for C {
+		#[inline(always)]
+		fn sub_assign(self: &mut Self, rhs: Self) {
+			self.n -= rhs.n;
+		}
+	}
+
+	impl MulAssign for C {
+		#[inline(always)]
+		fn mul_assign(self: &mut Self, rhs: Self) {
+			self.n *= rhs.n;
+		}
+	}
+
+	impl DivAssign for C {
+		#[inline(always)]
+		fn div_assign(self: &mut Self, rhs: Self) {
+			self.n /= rhs.n;
+		}
+	}
+
+	#[inline(always)]
+	fn test_function_new<T>(x: T, y: T)
+	where
+		T: Copy + std::fmt::Debug + PartialEq,
+	{
+		assert_eq!(Vector::new(x, y), Vector { x, y });
+	}
+
+	#[inline(always)]
+	fn test_operator_equivalent<T>(v0_x: T, v0_y: T, v1_x: T, v1_y: T)
+	where
+		T: Copy + PartialEq,
+	{
+		let v0: Vector<T> = Vector::new(v0_x, v0_y);
+		let v1: Vector<T> = Vector::new(v1_x, v1_y);
+		let expected: bool = v0_x == v1_x && v0_y == v1_y;
+
+		assert_eq!(v0 == v0, true);
+		assert_eq!(v0 == v1, expected);
+		assert_eq!(v1 == v0, expected);
+	}
+
+	#[inline(always)]
+	fn test_operator_different<T>(v0_x: T, v0_y: T, v1_x: T, v1_y: T)
+	where
+		T: Copy + PartialEq,
+	{
+		let v0: Vector<T> = Vector::new(v0_x, v0_y);
+		let v1: Vector<T> = Vector::new(v1_x, v1_y);
+		let expected: bool = v0_x != v1_x || v0_y != v1_y;
+
+		assert_eq!(v0 != v0, false);
+		assert_eq!(v0 != v1, expected);
+		assert_eq!(v1 != v0, expected);
+	}
+
+	#[inline(always)]
+	fn test_operator_add<T>(v0_x: T, v0_y: T, v1_x: T, v1_y: T)
+	where
+		T: Add<Output = T> + Copy + std::fmt::Debug + PartialEq,
+	{
+		let v0: Vector<T> = Vector::new(v0_x, v0_y);
+		let v1: Vector<T> = Vector::new(v1_x, v1_y);
+		let expected: Vector<T> = Vector::new(v0_x + v1_x, v0_y + v1_y);
+
+		assert_eq!(v0 + v1, expected);
+		assert_eq!(v1 + v0, expected);
+	}
+
+	#[inline(always)]
+	fn test_operator_sub<T>(lhs_x: T, lhs_y: T, rhs_x: T, rhs_y: T)
+	where
+		T: Sub<Output = T> + Copy + std::fmt::Debug + PartialEq,
+	{
+		let lhs: Vector<T> = Vector::new(lhs_x, lhs_y);
+		let rhs: Vector<T> = Vector::new(rhs_x, rhs_y);
+		let expected: Vector<T> = Vector::new(lhs_x - rhs_x, lhs_y - rhs_y);
+
+		assert_eq!(lhs - rhs, expected);
+	}
+
+	#[inline(always)]
+	fn test_operator_mul<T>(lhs_x: T, lhs_y: T, rhs: T)
+	where
+		T: Mul<Output = T> + Copy + std::fmt::Debug + PartialEq,
+	{
+		let lhs: Vector<T> = Vector::new(lhs_x, lhs_y);
+		let expected: Vector<T> = Vector::new(lhs_x * rhs, lhs_y * rhs);
+
+		assert_eq!(lhs * rhs, expected);
+	}
+
+	#[inline(always)]
+	fn test_operator_div<T>(lhs_x: T, lhs_y: T, rhs: T)
+	where
+		T: Div<Output = T> + Copy + std::fmt::Debug + PartialEq,
+	{
+		let lhs: Vector<T> = Vector::new(lhs_x, lhs_y);
+		let expected: Vector<T> = Vector::new(lhs_x / rhs, lhs_y / rhs);
+
+		assert_eq!(lhs / rhs, expected);
+	}
+
+	#[inline(always)]
+	fn test_operator_add_assign<T>(v0_x: T, v0_y: T, v1_x: T, v1_y: T)
+	where
+		T: AddAssign + Add<Output = T> + Copy + std::fmt::Debug + PartialEq,
+	{
+		let v0: Vector<T> = Vector::new(v0_x, v0_y);
+		let v1: Vector<T> = Vector::new(v1_x, v1_y);
+		let expected: Vector<T> = Vector::new(v0_x + v1_x, v0_y + v1_y);
+		let mut v2: Vector<T>;
+
+		v2 = v0;
+		v2 += v1;
+		assert_eq!(v2, expected);
+		v2 = v1;
+		v2 += v0;
+		assert_eq!(v2, expected);
+	}
+
+	#[inline(always)]
+	fn test_operator_sub_assign<T>(lhs_x: T, lhs_y: T, rhs_x: T, rhs_y: T)
+	where
+		T: SubAssign + Sub<Output = T> + Copy + std::fmt::Debug + PartialEq,
+	{
+		let rhs: Vector<T> = Vector::new(rhs_x, rhs_y);
+		let expected: Vector<T> = Vector::new(lhs_x - rhs_x, lhs_y - rhs_y);
+		let mut lhs: Vector<T> = Vector::new(lhs_x, lhs_y);
+
+		lhs -= rhs;
+		assert_eq!(lhs, expected);
+	}
+
+	#[inline(always)]
+	fn test_operator_mul_assign<T>(lhs_x: T, lhs_y: T, rhs: T)
+	where
+		T: MulAssign + Mul<Output = T> + Copy + std::fmt::Debug + PartialEq,
+	{
+		let expected: Vector<T> = Vector::new(lhs_x * rhs, lhs_y * rhs);
+		let mut lhs: Vector<T> = Vector::new(lhs_x, lhs_y);
+
+		lhs *= rhs;
+		assert_eq!(lhs, expected);
+	}
+
+	#[inline(always)]
+	fn test_operator_div_assign<T>(lhs_x: T, lhs_y: T, rhs: T)
+	where
+		T: DivAssign + Div<Output = T> + Copy + std::fmt::Debug + PartialEq,
+	{
+		let expected: Vector<T> = Vector::new(lhs_x / rhs, lhs_y / rhs);
+		let mut lhs: Vector<T> = Vector::new(lhs_x, lhs_y);
+
+		lhs /= rhs;
+		assert_eq!(lhs, expected);
+	}
+
+	#[inline(always)]
+	fn test_function_length_f32(x: f32, y: f32) {
+		let v: Vector<f32> = Vector::new(x, y);
+		let expected: f32 = (x * x + y * y).sqrt();
+
+		if expected.is_nan() {
+			assert!(v.length().is_nan());
+		} else {
+			assert_eq!(v.length(), expected);
+		}
+	}
+
+	#[inline(always)]
+	fn test_function_length_f64(x: f64, y: f64) {
+		let v: Vector<f64> = Vector::new(x, y);
+		let expected: f64 = (x * x + y * y).sqrt();
+
+		if expected.is_nan() {
+			assert!(v.length().is_nan());
+		} else {
+			assert_eq!(v.length(), expected);
+		}
+	}
+
 	#[test]
 	fn new_00() {
-		const X: u8 = 0;
-		const Y: u8 = 0;
-
-		assert_eq!(Vector::new(X, Y), Vector { x: X, y: Y });
+		test_function_new(&A::new(), &A::new());
 	}
 
 	#[test]
 	fn new_01() {
-		const X: i8 = 0;
-		const Y: i8 = -1;
-
-		assert_eq!(Vector::new(X, Y), Vector { x: X, y: Y });
+		test_function_new(&B::new(21), &B::new(42));
 	}
 
 	#[test]
 	fn new_02() {
-		const X: u16 = 42;
-		const Y: u16 = 0;
-
-		assert_eq!(Vector::new(X, Y), Vector { x: X, y: Y });
+		test_function_new(C::new(-56), C::new(124));
 	}
 
 	#[test]
 	fn new_03() {
-		const X: i16 = -1234;
-		const Y: i16 = -4321;
-
-		assert_eq!(Vector::new(X, Y), Vector { x: X, y: Y });
+		test_function_new('a', 'b');
 	}
 
 	#[test]
 	fn new_04() {
-		const X: u32 = 134679;
-		const Y: u32 = 946137;
-
-		assert_eq!(Vector::new(X, Y), Vector { x: X, y: Y });
+		test_function_new(false, true);
 	}
 
 	#[test]
 	fn new_05() {
-		const X: i32 = -123456789;
-		const Y: i32 = -987654321;
-
-		assert_eq!(Vector::new(X, Y), Vector { x: X, y: Y });
-	}
-
-	#[test]
-	fn new_06() {
-		const X: u64 = 555554444333221;
-		const Y: u64 = 122333444455555;
-
-		assert_eq!(Vector::new(X, Y), Vector { x: X, y: Y });
-	}
-
-	#[test]
-	fn new_07() {
-		const X: i64 = -7654321234567;
-		const Y: i64 = -1234567654321;
-
-		assert_eq!(Vector::new(X, Y), Vector { x: X, y: Y });
-	}
-
-	#[test]
-	fn new_08() {
-		const X: u128 = 122333444455555666666777777788888888;
-		const Y: u128 = 888888887777777666666555554444333221;
-
-		assert_eq!(Vector::new(X, Y), Vector { x: X, y: Y });
-	}
-
-	#[test]
-	fn new_09() {
-		const X: i128 = -1234567654321234567654321234567654321;
-		const Y: i128 = -7654321234567654321234567654321234567;
-
-		assert_eq!(Vector::new(X, Y), Vector { x: X, y: Y });
-	}
-
-	#[test]
-	fn new_10() {
-		const X: f32 = -4.2;
-		const Y: f32 = 3.14;
-
-		assert_eq!(Vector::new(X, Y), Vector { x: X, y: Y });
-	}
-
-	#[test]
-	fn new_11() {
-		const X: f64 = 0.00000000000000000000000000000000000000000000000000001;
-		const Y: f64 = -1111111111111111111111111111111111111111111111111111.2;
-
-		assert_eq!(Vector::new(X, Y), Vector { x: X, y: Y });
-	}
-
-	#[test]
-	fn new_12() {
-		const X: char = 'a';
-		const Y: char = 'b';
-
-		assert_eq!(Vector::new(X, Y), Vector { x: X, y: Y });
-	}
-
-	#[test]
-	fn new_13() {
-		const X: bool = true;
-		const Y: bool = false;
-
-		assert_eq!(Vector::new(X, Y), Vector { x: X, y: Y });
-	}
-
-	#[test]
-	fn new_14() {
-		const X: &str = "Hello";
-		const Y: &str = "World";
-
-		assert_eq!(Vector::new(X, Y), Vector { x: X, y: Y });
+		test_function_new("Hello", "World");
 	}
 
 	#[test]
 	fn operator_equivalent_00() {
-		const A: Vector<u8> = Vector::new(0, 0);
-		const B: Vector<u8> = Vector::new(0, 0);
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, true);
-		assert_eq!(B == A, true);
+		test_operator_equivalent(A::new(), A::new(), A::new(), A::new());
 	}
 
 	#[test]
 	fn operator_equivalent_01() {
-		const A: Vector<i8> = Vector::new(0, 0);
-		const B: Vector<i8> = Vector::new(0, 1);
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, false);
-		assert_eq!(B == A, false);
+		test_operator_equivalent(B::new(0x00), B::new(0xfe), B::new(0x00), B::new(0xff));
 	}
 
 	#[test]
 	fn operator_equivalent_02() {
-		const A: Vector<u16> = Vector::new(0, 0);
-		const B: Vector<u16> = Vector::new(1, 0);
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, false);
-		assert_eq!(B == A, false);
+		test_operator_equivalent(C::new(-42), C::new(125), C::new(-42), C::new(125));
 	}
 
 	#[test]
 	fn operator_equivalent_03() {
-		const A: Vector<i16> = Vector::new(0, 0);
-		const B: Vector<i16> = Vector::new(1, 1);
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, false);
-		assert_eq!(B == A, false);
+		test_operator_equivalent('1', '1', '1', '0');
 	}
 
 	#[test]
 	fn operator_equivalent_04() {
-		const A: Vector<u32> = Vector::new(0, 1);
-		const B: Vector<u32> = Vector::new(0, 0);
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, false);
-		assert_eq!(B == A, false);
+		test_operator_equivalent(false, false, false, false);
 	}
 
 	#[test]
 	fn operator_equivalent_05() {
-		const A: Vector<i32> = Vector::new(0, 1);
-		const B: Vector<i32> = Vector::new(0, 1);
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, true);
-		assert_eq!(B == A, true);
-	}
-
-	#[test]
-	fn operator_equivalent_06() {
-		const A: Vector<u64> = Vector::new(0, 1);
-		const B: Vector<u64> = Vector::new(1, 0);
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, false);
-		assert_eq!(B == A, false);
-	}
-
-	#[test]
-	fn operator_equivalent_07() {
-		const A: Vector<i64> = Vector::new(0, 1);
-		const B: Vector<i64> = Vector::new(1, 1);
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, false);
-		assert_eq!(B == A, false);
-	}
-
-	#[test]
-	fn operator_equivalent_08() {
-		const A: Vector<u128> = Vector::new(1, 0);
-		const B: Vector<u128> = Vector::new(0, 0);
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, false);
-		assert_eq!(B == A, false);
-	}
-
-	#[test]
-	fn operator_equivalent_09() {
-		const A: Vector<i128> = Vector::new(1, 0);
-		const B: Vector<i128> = Vector::new(0, 1);
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, false);
-		assert_eq!(B == A, false);
-	}
-
-	#[test]
-	fn operator_equivalent_10() {
-		const A: Vector<usize> = Vector::new(1, 0);
-		const B: Vector<usize> = Vector::new(1, 0);
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, true);
-		assert_eq!(B == A, true);
-	}
-
-	#[test]
-	fn operator_equivalent_11() {
-		const A: Vector<isize> = Vector::new(1, 0);
-		const B: Vector<isize> = Vector::new(1, 1);
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, false);
-		assert_eq!(B == A, false);
-	}
-
-	#[test]
-	fn operator_equivalent_12() {
-		const A: Vector<f32> = Vector::new(1.0, 1.0);
-		const B: Vector<f32> = Vector::new(0.0, 0.0);
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, false);
-		assert_eq!(B == A, false);
-	}
-
-	#[test]
-	fn operator_equivalent_13() {
-		const A: Vector<f64> = Vector::new(1.0, 1.0);
-		const B: Vector<f64> = Vector::new(0.0, 1.0);
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, false);
-		assert_eq!(B == A, false);
-	}
-
-	#[test]
-	fn operator_equivalent_14() {
-		const A: Vector<char> = Vector::new('1', '1');
-		const B: Vector<char> = Vector::new('1', '0');
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, false);
-		assert_eq!(B == A, false);
-	}
-
-	#[test]
-	fn operator_equivalent_15() {
-		const A: Vector<&str> = Vector::new("1", "1");
-		const B: Vector<&str> = Vector::new("1", "1");
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, true);
-		assert_eq!(B == A, true);
-	}
-
-	#[test]
-	fn operator_equivalent_16() {
-		const A: Vector<bool> = Vector::new(false, false);
-		const B: Vector<bool> = Vector::new(false, false);
-
-		assert_eq!(A == A, true);
-		assert_eq!(A == B, true);
-		assert_eq!(B == A, true);
+		test_operator_equivalent("0", "1", "1", "0");
 	}
 
 	#[test]
 	fn operator_different_00() {
-		const A: Vector<u8> = Vector::new(0, 0);
-		const B: Vector<u8> = Vector::new(0, 0);
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, false);
-		assert_eq!(B != A, false);
+		test_operator_different(A::new(), A::new(), A::new(), A::new());
 	}
 
 	#[test]
 	fn operator_different_01() {
-		const A: Vector<i8> = Vector::new(0, 0);
-		const B: Vector<i8> = Vector::new(0, 1);
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, true);
-		assert_eq!(B != A, true);
+		test_operator_different(B::new(0x00), B::new(0xfe), B::new(0x00), B::new(0xff));
 	}
 
 	#[test]
 	fn operator_different_02() {
-		const A: Vector<u16> = Vector::new(0, 0);
-		const B: Vector<u16> = Vector::new(1, 0);
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, true);
-		assert_eq!(B != A, true);
+		test_operator_different(C::new(-42), C::new(125), C::new(-42), C::new(125));
 	}
 
 	#[test]
 	fn operator_different_03() {
-		const A: Vector<i16> = Vector::new(0, 0);
-		const B: Vector<i16> = Vector::new(1, 1);
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, true);
-		assert_eq!(B != A, true);
+		test_operator_different('1', '1', '1', '0');
 	}
 
 	#[test]
 	fn operator_different_04() {
-		const A: Vector<u32> = Vector::new(0, 1);
-		const B: Vector<u32> = Vector::new(0, 0);
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, true);
-		assert_eq!(B != A, true);
+		test_operator_different(false, false, false, false);
 	}
 
 	#[test]
 	fn operator_different_05() {
-		const A: Vector<i32> = Vector::new(0, 1);
-		const B: Vector<i32> = Vector::new(0, 1);
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, false);
-		assert_eq!(B != A, false);
-	}
-
-	#[test]
-	fn operator_different_06() {
-		const A: Vector<u64> = Vector::new(0, 1);
-		const B: Vector<u64> = Vector::new(1, 0);
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, true);
-		assert_eq!(B != A, true);
-	}
-
-	#[test]
-	fn operator_different_07() {
-		const A: Vector<i64> = Vector::new(0, 1);
-		const B: Vector<i64> = Vector::new(1, 1);
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, true);
-		assert_eq!(B != A, true);
-	}
-
-	#[test]
-	fn operator_different_08() {
-		const A: Vector<u128> = Vector::new(1, 0);
-		const B: Vector<u128> = Vector::new(0, 0);
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, true);
-		assert_eq!(B != A, true);
-	}
-
-	#[test]
-	fn operator_different_09() {
-		const A: Vector<i128> = Vector::new(1, 0);
-		const B: Vector<i128> = Vector::new(0, 1);
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, true);
-		assert_eq!(B != A, true);
-	}
-
-	#[test]
-	fn operator_different_10() {
-		const A: Vector<usize> = Vector::new(1, 0);
-		const B: Vector<usize> = Vector::new(1, 0);
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, false);
-		assert_eq!(B != A, false);
-	}
-
-	#[test]
-	fn operator_different_11() {
-		const A: Vector<isize> = Vector::new(1, 0);
-		const B: Vector<isize> = Vector::new(1, 1);
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, true);
-		assert_eq!(B != A, true);
-	}
-
-	#[test]
-	fn operator_different_12() {
-		const A: Vector<f32> = Vector::new(1.0, 1.0);
-		const B: Vector<f32> = Vector::new(0.0, 0.0);
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, true);
-		assert_eq!(B != A, true);
-	}
-
-	#[test]
-	fn operator_different_13() {
-		const A: Vector<f64> = Vector::new(1.0, 1.0);
-		const B: Vector<f64> = Vector::new(0.0, 1.0);
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, true);
-		assert_eq!(B != A, true);
-	}
-
-	#[test]
-	fn operator_different_14() {
-		const A: Vector<char> = Vector::new('1', '1');
-		const B: Vector<char> = Vector::new('1', '0');
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, true);
-		assert_eq!(B != A, true);
-	}
-
-	#[test]
-	fn operator_different_15() {
-		const A: Vector<&str> = Vector::new("1", "1");
-		const B: Vector<&str> = Vector::new("1", "1");
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, false);
-		assert_eq!(B != A, false);
-	}
-
-	#[test]
-	fn operator_different_16() {
-		const A: Vector<bool> = Vector::new(false, false);
-		const B: Vector<bool> = Vector::new(false, false);
-
-		assert_eq!(A != A, false);
-		assert_eq!(A != B, false);
-		assert_eq!(B != A, false);
+		test_operator_different("0", "1", "1", "0");
 	}
 
 	#[test]
 	fn operator_add_00() {
-		const A_X: u8 = 42;
-		const A_Y: u8 = 37;
-		const RHS_X: u8 = 24;
-		const RHS_Y: u8 = 13;
-		const A: Vector<u8> = Vector::new(A_X, A_Y);
-		const B: Vector<u8> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<u8> = Vector::new(A_X + RHS_X, A_Y + RHS_Y);
-
-		assert_eq!(A + B, EXPECTED);
-		assert_eq!(B + A, EXPECTED);
+		test_operator_add(A::new(), A::new(), A::new(), A::new());
 	}
 
 	#[test]
 	fn operator_add_01() {
-		const A_X: i8 = -42;
-		const A_Y: i8 = 37;
-		const RHS_X: i8 = 24;
-		const RHS_Y: i8 = -13;
-		const A: Vector<i8> = Vector::new(A_X, A_Y);
-		const B: Vector<i8> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<i8> = Vector::new(A_X + RHS_X, A_Y + RHS_Y);
-
-		assert_eq!(A + B, EXPECTED);
-		assert_eq!(B + A, EXPECTED);
+		test_operator_add(B::new(0x12), B::new(0x34), B::new(0x56), B::new(0x78));
 	}
 
 	#[test]
 	fn operator_add_02() {
-		const A_X: u16 = 579;
-		const A_Y: u16 = 666;
-		const RHS_X: u16 = 223;
-		const RHS_Y: u16 = 333;
-		const A: Vector<u16> = Vector::new(A_X, A_Y);
-		const B: Vector<u16> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<u16> = Vector::new(A_X + RHS_X, A_Y + RHS_Y);
-
-		assert_eq!(A + B, EXPECTED);
-		assert_eq!(B + A, EXPECTED);
-	}
-
-	#[test]
-	fn operator_add_03() {
-		const A_X: i16 = -579;
-		const A_Y: i16 = 666;
-		const RHS_X: i16 = 233;
-		const RHS_Y: i16 = -333;
-		const A: Vector<i16> = Vector::new(A_X, A_Y);
-		const B: Vector<i16> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<i16> = Vector::new(A_X + RHS_X, A_Y + RHS_Y);
-
-		assert_eq!(A + B, EXPECTED);
-		assert_eq!(B + A, EXPECTED);
-	}
-
-	#[test]
-	fn operator_add_04() {
-		const A_X: u32 = 99989796;
-		const A_Y: u32 = 868462;
-		const RHS_X: u32 = 11121314;
-		const RHS_Y: u32 = 156735;
-		const A: Vector<u32> = Vector::new(A_X, A_Y);
-		const B: Vector<u32> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<u32> = Vector::new(A_X + RHS_X, A_Y + RHS_Y);
-
-		assert_eq!(A + B, EXPECTED);
-		assert_eq!(B + A, EXPECTED);
-	}
-
-	#[test]
-	fn operator_add_05() {
-		const A_X: i32 = -99989796;
-		const A_Y: i32 = 868462;
-		const RHS_X: i32 = 11121314;
-		const RHS_Y: i32 = -156735;
-		const A: Vector<i32> = Vector::new(A_X, A_Y);
-		const B: Vector<i32> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<i32> = Vector::new(A_X + RHS_X, A_Y + RHS_Y);
-
-		assert_eq!(A + B, EXPECTED);
-		assert_eq!(B + A, EXPECTED);
-	}
-
-	#[test]
-	fn operator_add_06() {
-		const A_X: u64 = 34385221568451004;
-		const A_Y: u64 = 775218960468323;
-		const RHS_X: u64 = 10842267456381903;
-		const RHS_Y: u64 = 513897651258763;
-		const A: Vector<u64> = Vector::new(A_X, A_Y);
-		const B: Vector<u64> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<u64> = Vector::new(A_X + RHS_X, A_Y + RHS_Y);
-
-		assert_eq!(A + B, EXPECTED);
-		assert_eq!(B + A, EXPECTED);
-	}
-
-	#[test]
-	fn operator_add_07() {
-		const A_X: i64 = -34385221568451004;
-		const A_Y: i64 = 775218960468323;
-		const RHS_X: i64 = 10842267456381903;
-		const RHS_Y: i64 = -513897651258763;
-		const A: Vector<i64> = Vector::new(A_X, A_Y);
-		const B: Vector<i64> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<i64> = Vector::new(A_X + RHS_X, A_Y + RHS_Y);
-
-		assert_eq!(A + B, EXPECTED);
-		assert_eq!(B + A, EXPECTED);
-	}
-
-	#[test]
-	fn operator_add_08() {
-		const A_X: u128 = 753154682723179648101430;
-		const A_Y: u128 = 253448910430876192408113;
-		const RHS_X: u128 = 594837264587963254125793;
-		const RHS_Y: u128 = 123456789012345678901234;
-		const A: Vector<u128> = Vector::new(A_X, A_Y);
-		const B: Vector<u128> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<u128> = Vector::new(A_X + RHS_X, A_Y + RHS_Y);
-
-		assert_eq!(A + B, EXPECTED);
-		assert_eq!(B + A, EXPECTED);
-	}
-
-	#[test]
-	fn operator_add_09() {
-		const A_X: i128 = -71808433846287399410816;
-		const A_Y: i128 = 2710896536725620914729;
-		const RHS_X: i128 = 673520165547328004521462;
-		const RHS_Y: i128 = -1234567890123456789012;
-		const A: Vector<i128> = Vector::new(A_X, A_Y);
-		const B: Vector<i128> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<i128> = Vector::new(A_X + RHS_X, A_Y + RHS_Y);
-
-		assert_eq!(A + B, EXPECTED);
-		assert_eq!(B + A, EXPECTED);
-	}
-
-	#[test]
-	fn operator_add_10() {
-		const A_X: usize = 910229776674578740;
-		const A_Y: usize = 775346328037744557;
-		const RHS_X: usize = 890596211341745422;
-		const RHS_Y: usize = 356629621899658002;
-		const A: Vector<usize> = Vector::new(A_X, A_Y);
-		const B: Vector<usize> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<usize> = Vector::new(A_X + RHS_X, A_Y + RHS_Y);
-
-		assert_eq!(A + B, EXPECTED);
-		assert_eq!(B + A, EXPECTED);
-	}
-
-	#[test]
-	fn operator_add_11() {
-		const A_X: isize = -555144761072283375;
-		const A_Y: isize = -618241292701782516;
-		const RHS_X: isize = -630822953165765373;
-		const RHS_Y: isize = -354852285947913161;
-		const A: Vector<isize> = Vector::new(A_X, A_Y);
-		const B: Vector<isize> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<isize> = Vector::new(A_X + RHS_X, A_Y + RHS_Y);
-
-		assert_eq!(A + B, EXPECTED);
-		assert_eq!(B + A, EXPECTED);
-	}
-
-	#[test]
-	fn operator_add_12() {
-		const A_X: f32 = 2.3236801624298095703125;
-		const A_Y: f32 = 6.095500469207763671875;
-		const RHS_X: f32 = -7.7994251251220703125;
-		const RHS_Y: f32 = -9.25922870635986328125;
-		const A: Vector<f32> = Vector::new(A_X, A_Y);
-		const B: Vector<f32> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<f32> = Vector::new(A_X + RHS_X, A_Y + RHS_Y);
-
-		assert_eq!(A + B, EXPECTED);
-		assert_eq!(B + A, EXPECTED);
-	}
-
-	#[test]
-	fn operator_add_13() {
-		const A_X: f64 = 9094924168448048317657520807834234640892181891518240986759168.0;
-		const A_Y: f64 = 8443599126371414379654864980266240158403912962654371116482560.0;
-		const RHS_X: f64 = -8606246334228050844468748003196119889206728317870082462056448.0;
-		const RHS_Y: f64 = -6892461893904804034376935372196642757706266769942608267276516.0;
-		const A: Vector<f64> = Vector::new(A_X, A_Y);
-		const B: Vector<f64> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<f64> = Vector::new(A_X + RHS_X, A_Y + RHS_Y);
-
-		assert_eq!(A + B, EXPECTED);
-		assert_eq!(B + A, EXPECTED);
+		test_operator_add(C::new(-14), C::new(70), C::new(15), C::new(-52));
 	}
 
 	#[test]
 	fn operator_sub_00() {
-		const A_X: u8 = 42;
-		const A_Y: u8 = 37;
-		const RHS_X: u8 = 24;
-		const RHS_Y: u8 = 13;
-		const A: Vector<u8> = Vector::new(A_X, A_Y);
-		const B: Vector<u8> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<u8> = Vector::new(A_X - RHS_X, A_Y - RHS_Y);
-
-		assert_eq!(A - B, EXPECTED);
+		test_operator_sub(A::new(), A::new(), A::new(), A::new());
 	}
 
 	#[test]
 	fn operator_sub_01() {
-		const A_X: i8 = -42;
-		const A_Y: i8 = 37;
-		const RHS_X: i8 = 24;
-		const RHS_Y: i8 = -13;
-		const A: Vector<i8> = Vector::new(A_X, A_Y);
-		const B: Vector<i8> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<i8> = Vector::new(A_X - RHS_X, A_Y - RHS_Y);
-
-		assert_eq!(A - B, EXPECTED);
+		test_operator_sub(B::new(0x72), B::new(0x81), B::new(0x09), B::new(0x36));
 	}
 
 	#[test]
 	fn operator_sub_02() {
-		const A_X: u16 = 579;
-		const A_Y: u16 = 666;
-		const RHS_X: u16 = 223;
-		const RHS_Y: u16 = 333;
-		const A: Vector<u16> = Vector::new(A_X, A_Y);
-		const B: Vector<u16> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<u16> = Vector::new(A_X - RHS_X, A_Y - RHS_Y);
-
-		assert_eq!(A - B, EXPECTED);
-	}
-
-	#[test]
-	fn operator_sub_03() {
-		const A_X: i16 = -579;
-		const A_Y: i16 = 666;
-		const RHS_X: i16 = 233;
-		const RHS_Y: i16 = -333;
-		const A: Vector<i16> = Vector::new(A_X, A_Y);
-		const B: Vector<i16> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<i16> = Vector::new(A_X - RHS_X, A_Y - RHS_Y);
-
-		assert_eq!(A - B, EXPECTED);
-	}
-
-	#[test]
-	fn operator_sub_04() {
-		const A_X: u32 = 99989796;
-		const A_Y: u32 = 868462;
-		const RHS_X: u32 = 11121314;
-		const RHS_Y: u32 = 156735;
-		const A: Vector<u32> = Vector::new(A_X, A_Y);
-		const B: Vector<u32> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<u32> = Vector::new(A_X - RHS_X, A_Y - RHS_Y);
-
-		assert_eq!(A - B, EXPECTED);
-	}
-
-	#[test]
-	fn operator_sub_05() {
-		const A_X: i32 = -99989796;
-		const A_Y: i32 = 868462;
-		const RHS_X: i32 = 11121314;
-		const RHS_Y: i32 = -156735;
-		const A: Vector<i32> = Vector::new(A_X, A_Y);
-		const B: Vector<i32> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<i32> = Vector::new(A_X - RHS_X, A_Y - RHS_Y);
-
-		assert_eq!(A - B, EXPECTED);
-	}
-
-	#[test]
-	fn operator_sub_06() {
-		const A_X: u64 = 34385221568451004;
-		const A_Y: u64 = 775218960468323;
-		const RHS_X: u64 = 10842267456381903;
-		const RHS_Y: u64 = 513897651258763;
-		const A: Vector<u64> = Vector::new(A_X, A_Y);
-		const B: Vector<u64> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<u64> = Vector::new(A_X - RHS_X, A_Y - RHS_Y);
-
-		assert_eq!(A - B, EXPECTED);
-	}
-
-	#[test]
-	fn operator_sub_07() {
-		const A_X: i64 = -34385221568451004;
-		const A_Y: i64 = 775218960468323;
-		const RHS_X: i64 = 10842267456381903;
-		const RHS_Y: i64 = -513897651258763;
-		const A: Vector<i64> = Vector::new(A_X, A_Y);
-		const B: Vector<i64> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<i64> = Vector::new(A_X - RHS_X, A_Y - RHS_Y);
-
-		assert_eq!(A - B, EXPECTED);
-	}
-
-	#[test]
-	fn operator_sub_08() {
-		const A_X: u128 = 753154682723179648101430;
-		const A_Y: u128 = 253448910430876192408113;
-		const RHS_X: u128 = 594837264587963254125793;
-		const RHS_Y: u128 = 123456789012345678901234;
-		const A: Vector<u128> = Vector::new(A_X, A_Y);
-		const B: Vector<u128> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<u128> = Vector::new(A_X - RHS_X, A_Y - RHS_Y);
-
-		assert_eq!(A - B, EXPECTED);
-	}
-
-	#[test]
-	fn operator_sub_09() {
-		const A_X: i128 = -71808433846287399410816;
-		const A_Y: i128 = 2710896536725620914729;
-		const RHS_X: i128 = 673520165547328004521462;
-		const RHS_Y: i128 = -1234567890123456789012;
-		const A: Vector<i128> = Vector::new(A_X, A_Y);
-		const B: Vector<i128> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<i128> = Vector::new(A_X - RHS_X, A_Y - RHS_Y);
-
-		assert_eq!(A - B, EXPECTED);
-	}
-
-	#[test]
-	fn operator_sub_10() {
-		const A_X: usize = 910229776674578740;
-		const A_Y: usize = 775346328037744557;
-		const RHS_X: usize = 890596211341745422;
-		const RHS_Y: usize = 356629621899658002;
-		const A: Vector<usize> = Vector::new(A_X, A_Y);
-		const B: Vector<usize> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<usize> = Vector::new(A_X - RHS_X, A_Y - RHS_Y);
-
-		assert_eq!(A - B, EXPECTED);
-	}
-
-	#[test]
-	fn operator_sub_11() {
-		const A_X: isize = -555144761072283375;
-		const A_Y: isize = -618241292701782516;
-		const RHS_X: isize = -630822953165765373;
-		const RHS_Y: isize = -354852285947913161;
-		const A: Vector<isize> = Vector::new(A_X, A_Y);
-		const B: Vector<isize> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<isize> = Vector::new(A_X - RHS_X, A_Y - RHS_Y);
-
-		assert_eq!(A - B, EXPECTED);
-	}
-
-	#[test]
-	fn operator_sub_12() {
-		const A_X: f32 = 2.3236801624298095703125;
-		const A_Y: f32 = 6.095500469207763671875;
-		const RHS_X: f32 = -7.7994251251220703125;
-		const RHS_Y: f32 = -9.25922870635986328125;
-		const A: Vector<f32> = Vector::new(A_X, A_Y);
-		const B: Vector<f32> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<f32> = Vector::new(A_X - RHS_X, A_Y - RHS_Y);
-
-		assert_eq!(A - B, EXPECTED);
-	}
-
-	#[test]
-	fn operator_sub_13() {
-		const A_X: f64 = 9094924168448048317657520807834234640892181891518240986759168.0;
-		const A_Y: f64 = 8443599126371414379654864980266240158403912962654371116482560.0;
-		const RHS_X: f64 = -8606246334228050844468748003196119889206728317870082462056448.0;
-		const RHS_Y: f64 = -6892461893904804034376935372196642757706266769942608267276516.0;
-		const A: Vector<f64> = Vector::new(A_X, A_Y);
-		const B: Vector<f64> = Vector::new(RHS_X, RHS_Y);
-		const EXPECTED: Vector<f64> = Vector::new(A_X - RHS_X, A_Y - RHS_Y);
-
-		assert_eq!(A - B, EXPECTED);
+		test_operator_sub(C::new(10), C::new(-23), C::new(-99), C::new(48));
 	}
 
 	#[test]
 	fn operator_mul_00() {
-		const A_X: u8 = 13;
-		const A_Y: u8 = 17;
-		const A: Vector<u8> = Vector::new(A_X, A_Y);
-		const B: u8 = 5;
-		const EXPECTED: Vector<u8> = Vector::new(A_X * B, A_Y * B);
-
-		assert_eq!(A * B, EXPECTED);
-		// assert_eq!(B * A, EXPECTED);
+		test_operator_mul(A::new(), A::new(), A::new());
 	}
 
 	#[test]
 	fn operator_mul_01() {
-		const A_X: i8 = -7;
-		const A_Y: i8 = 11;
-		const A: Vector<i8> = Vector::new(A_X, A_Y);
-		const B: i8 = -2;
-		const EXPECTED: Vector<i8> = Vector::new(A_X * B, A_Y * B);
+		test_operator_mul(B::new(0x21), B::new(0x1d), B::new(0x03));
+	}
 
-		assert_eq!(A * B, EXPECTED);
-		// assert_eq!(B * A, EXPECTED);
+	#[test]
+	fn operator_mul_02() {
+		test_operator_mul(C::new(-9), C::new(32), C::new(-4));
+	}
+
+	#[test]
+	fn operator_div_00() {
+		test_operator_div(A::new(), A::new(), A::new());
+	}
+
+	#[test]
+	fn operator_div_01() {
+		test_operator_div(B::new(0xcb), B::new(0x3f), B::new(0x20));
+	}
+
+	#[test]
+	fn operator_div_02() {
+		test_operator_div(C::new(-111), C::new(-55), C::new(111));
+	}
+
+	#[test]
+	fn operator_add_assign_00() {
+		test_operator_add_assign(A::new(), A::new(), A::new(), A::new());
+	}
+
+	#[test]
+	fn operator_add_assign_01() {
+		test_operator_add_assign(B::new(0x88), B::new(0xc4), B::new(0x0e), B::new(0x1f));
+	}
+
+	#[test]
+	fn operator_add_assign_02() {
+		test_operator_add_assign(C::new(-22), C::new(40), C::new(71), C::new(-86));
+	}
+
+	#[test]
+	fn operator_sub_assign_00() {
+		test_operator_sub_assign(A::new(), A::new(), A::new(), A::new());
+	}
+
+	#[test]
+	fn operator_sub_assign_01() {
+		test_operator_sub_assign(B::new(0xd2), B::new(0x42), B::new(0xa1), B::new(0x35));
+	}
+
+	#[test]
+	fn operator_sub_assign_02() {
+		test_operator_sub_assign(C::new(-1), C::new(13), C::new(-25), C::new(9));
+	}
+
+	#[test]
+	fn operator_mul_assign_00() {
+		test_operator_mul_assign(A::new(), A::new(), A::new());
+	}
+
+	#[test]
+	fn operator_mul_assign_01() {
+		test_operator_mul_assign(B::new(0x08), B::new(0x06), B::new(0x0c));
+	}
+
+	#[test]
+	fn operator_mul_assign_02() {
+		test_operator_mul_assign(C::new(-2), C::new(3), C::new(42));
+	}
+
+	#[test]
+	fn operator_div_assign_00() {
+		test_operator_div_assign(A::new(), A::new(), A::new());
+	}
+
+	#[test]
+	fn operator_div_assign_01() {
+		test_operator_div_assign(B::new(0x92), B::new(0x3e), B::new(0x0a));
+	}
+
+	#[test]
+	fn operator_div_assign_02() {
+		test_operator_div_assign(C::new(-35), C::new(64), C::new(-28));
+	}
+
+	#[test]
+	fn function_length_00() {
+		test_function_length_f32(0.0, 0.0);
+	}
+
+	#[test]
+	fn function_length_01() {
+		test_function_length_f32(-3.0, 4.0);
+	}
+
+	#[test]
+	fn function_length_02() {
+		test_function_length_f32(12.0, -7.0);
+	}
+
+	#[test]
+	fn function_length_03() {
+		test_function_length_f32(f32::INFINITY, f32::NEG_INFINITY);
+	}
+
+	#[test]
+	fn function_length_04() {
+		test_function_length_f32(f32::NAN, f32::NAN);
+	}
+
+	#[test]
+	fn function_length_05() {
+		test_function_length_f64(0.0, 0.0);
+	}
+
+	#[test]
+	fn function_length_06() {
+		test_function_length_f64(-3.0, 4.0);
+	}
+
+	#[test]
+	fn function_length_07() {
+		test_function_length_f64(12.0, -7.0);
+	}
+
+	#[test]
+	fn function_length_08() {
+		test_function_length_f64(f64::INFINITY, f64::NEG_INFINITY);
+	}
+
+	#[test]
+	fn function_length_09() {
+		test_function_length_f64(f64::NAN, f64::NAN);
+	}
+
+	#[test]
+	fn subject_00() {
+		let v = Vector {
+			x: String::from("Hello, World!"),
+			y: String::from("Hello, Rust!"),
+		};
+		let w = v.clone();
+
+		assert_eq!(&v, &w);
+	}
+
+	#[test]
+	fn subject_01() {
+		let v = Vector::new("Hello, World!", "Hello, Rust!");
+		let a = v;
+		let b = v;
+		assert_eq!(a, b);
 	}
 }
