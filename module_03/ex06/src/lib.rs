@@ -24,6 +24,8 @@ impl<T> Node<T> {
 #[derive(Eq, Debug, PartialEq)]
 pub struct List<T> {
 	head: Option<Box<Node<T>>>,
+	tail: Option<Box<Node<T>>>,
+	count: usize,
 }
 
 impl<T> List<T> {
@@ -42,7 +44,11 @@ impl<T> List<T> {
 	/// ```
 	#[inline(always)]
 	pub const fn new() -> Self {
-		List { head: None }
+		List {
+			head: None,
+			tail: None,
+			count: 0,
+		}
 	}
 
 	/// Create a new Node instance, initialize its attributes,
@@ -63,11 +69,14 @@ impl<T> List<T> {
 	/// list.push_front(0x03);
 	/// ```
 	pub fn push_front(self: &mut Self, value: T) {
-		self.head = if let Some(head) = self.head.take() {
-			Some(Box::new(Node::new(value, Some(head))))
+		if self.count == 0 {
+			self.head = Some(Box::new(Node::new(value, None)));
+			self.tail = self.head;
 		} else {
-			Some(Box::new(Node::new(value, None)))
-		}
+			self.head = Some(Box::new(Node::new(value, self.head.take())));
+		};
+
+		self.count += 1;
 	}
 
 	/// Create a new Node instance, initialize its attributes,
@@ -87,18 +96,7 @@ impl<T> List<T> {
 	/// list.push_back(0x05);
 	/// list.push_back(0x06);
 	/// ```
-	pub fn push_back(&mut self, value: T) {
-		if let Some(head) = &mut self.head {
-			let mut current: &mut Box<Node<T>> = head;
-
-			while let Some(ref mut node) = current.next {
-				current = node;
-			}
-			current.next = Some(Box::new(Node::new(value, None)));
-		} else {
-			self.head = Some(Box::new(Node::new(value, None)));
-		}
-	}
+	pub fn push_back(&mut self, value: T) {}
 
 	/// # Returns
 	///
@@ -119,19 +117,7 @@ impl<T> List<T> {
 	/// assert_eq!(list.count(), 3);
 	/// ```
 	pub fn count(&self) -> usize {
-		if let Some(head) = &self.head {
-			let mut current: &Box<Node<T>> = head;
-			let mut count: usize = 1;
-
-			while let Some(ref node) = current.next {
-				current = node;
-				count += 1;
-			}
-
-			count
-		} else {
-			0
-		}
+		self.count
 	}
 
 	/// Get a reference
@@ -161,18 +147,7 @@ impl<T> List<T> {
 	/// assert_eq!(list.get(3), None);
 	/// ```
 	pub fn get(self: &Self, mut i: usize) -> Option<&T> {
-		let mut current: &Option<Box<Node<T>>> = &self.head;
-
-		while let Some(node) = current {
-			if i == 0 {
-				return Some(&node.value);
-			}
-
-			current = &node.next;
-			i -= 1;
-		}
-
-		None
+		// TODO: Implemet this function.
 	}
 
 	/// Get a mutable reference
@@ -202,18 +177,7 @@ impl<T> List<T> {
 	/// assert_eq!(list.get_mut(3), None);
 	/// ```
 	pub fn get_mut(&mut self, mut i: usize) -> Option<&mut T> {
-		let mut current: &mut Option<Box<Node<T>>> = &mut self.head;
-
-		while let Some(node) = current {
-			if i == 0 {
-				return Some(&mut node.value);
-			}
-
-			current = &mut node.next;
-			i -= 1;
-		}
-
-		None
+		// TODO: Implemet this function.
 	}
 
 	/// Remove the first element of the calling List instance.
@@ -238,12 +202,7 @@ impl<T> List<T> {
 	/// assert_eq!(list.remove_front(), None);
 	/// ```
 	pub fn remove_front(&mut self) -> Option<T> {
-		if let Some(head) = self.head.take() {
-			self.head = head.next;
-			Some(head.value)
-		} else {
-			None
-		}
+		// TODO: Implemet this function.
 	}
 
 	/// Remove the last element of the calling List instance.
@@ -268,37 +227,7 @@ impl<T> List<T> {
 	/// assert_eq!(list.remove_back(), None);
 	/// ```
 	pub fn remove_back(&mut self) -> Option<T> {
-		// BUG: This function is not implemented correctly.
-		if let Some(head) = &self.head {
-			if let Some(head_next) = &head.next {
-				let mut current: &mut Option<Box<Node<T>>> = &mut head.next;
-
-				while let Some(node) = current {
-					if let Some(next) = &node.next {
-						previous = if let Some(current);
-						current = &mut node.next;
-					} else {
-						break;
-					}
-				}
-
-				if let Some(ref mut node) = previous {
-					if let Some(removed) = node.next.take() {
-						Some(removed.value)
-					} else {
-						unreachable!();
-					}
-				} else {
-					unreachable!();
-				}
-			} else if let Some(node) = self.head.take() {
-				Some(node.value)
-			} else {
-				unreachable!();
-			}
-		} else {
-			None
-		}
+		// TODO: Implemet this function.
 	}
 
 	/// Remove all the elements of the calling List instance.
