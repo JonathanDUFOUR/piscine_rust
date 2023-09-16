@@ -72,12 +72,16 @@ impl<T> List<T> {
 	/// list.push_front(0x03);
 	/// ```
 	pub fn push_front(self: &mut Self, value: T) {
+		let node: Box<Node<T>>;
+
 		if self.count == 0 {
-			self.head = Some(Box::new(Node::new(value, None)));
-			self.tail = self.head;
+			node = Box::new(Node::new(value, None))
 		} else {
-			self.head = Some(Box::new(Node::new(value, self.head.take())));
-		};
+			node = Box::new(Node::new(value, self.head.take()))
+		}
+
+		// REMIND: Continue here
+		self.head = Some(node);
 		self.count += 1;
 	}
 
