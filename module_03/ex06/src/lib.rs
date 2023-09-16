@@ -13,15 +13,8 @@ impl<T> Node<T> {
 	///
 	/// # Returns
 	/// The newly created Node instance.
-	///
-	/// # Examples
-	/// ```
-	/// use ex06::Node;
-	///
-	/// let node: Node<u8> = Node::new(0x00, None);
-	/// ```
 	#[inline(always)]
-	pub const fn new(value: T, next: Option<Box<Node<T>>>) -> Self {
+	const fn new(value: T, next: Option<Box<Node<T>>>) -> Self {
 		Node { value, next }
 	}
 }
@@ -92,7 +85,13 @@ impl<T> List<T> {
 	/// list.push_back(0x06);
 	/// ```
 	pub fn push_back(&mut self, value: T) {
-		// TODO: Implemet this function.
+		let mut current: &mut Option<Box<Node<T>>> = &mut self.head;
+
+		while let Some(node) = current {
+			current = &mut node.next;
+		}
+
+		*current = Some(Box::new(Node::new(value, None)));
 	}
 
 	/// # Returns
@@ -113,7 +112,15 @@ impl<T> List<T> {
 	/// assert_eq!(list.count(), 3);
 	/// ```
 	pub fn count(&self) -> usize {
-		// TODO: Implemet this function.
+		let mut count: usize = 0;
+		let mut current: &Option<Box<Node<T>>> = &self.head;
+
+		while let Some(node) = current {
+			count += 1;
+			current = &node.next;
+		}
+
+		count
 	}
 
 	/// Get a reference
@@ -123,10 +130,8 @@ impl<T> List<T> {
 	/// * `i` - The index of the wanted element.
 	///
 	/// # Returns
-	/// A reference to the wanted element in the calling List instance.
-	///
-	/// # Panic
-	/// The index is out of bounds.
+	/// * `Some(&T)` - A reference to the wanted element in the calling List instance.
+	/// * `None` - The index is out of bounds.
 	///
 	/// # Examples
 	/// ```
@@ -143,8 +148,19 @@ impl<T> List<T> {
 	/// assert_eq!(list.get(2), Some(&0x09));
 	/// assert_eq!(list.get(3), None);
 	/// ```
-	pub fn get(self: &Self, mut i: usize) -> &T {
-		// TODO: Implemet this function.
+	pub fn get(self: &Self, mut i: usize) -> Option<&T> {
+		let mut current: &Option<Box<Node<T>>> = &self.head;
+
+		while let Some(node) = current {
+			if i == 0 {
+				return Some(&node.value);
+			}
+
+			i -= 1;
+			current = &node.next;
+		}
+
+		None
 	}
 
 	/// Get a mutable reference
@@ -154,10 +170,8 @@ impl<T> List<T> {
 	/// * `i` - The index of the wanted element.
 	///
 	/// # Returns
-	/// A mutable reference to the wanted element in the calling List instance.
-	///
-	/// # Panic
-	/// The index is out of bounds.
+	/// * `Some(&mut T)` - A mutable reference to the wanted element in the calling List instance.
+	/// * `None` - The index is out of bounds.
 	///
 	/// # Examples
 	/// ```
@@ -174,17 +188,26 @@ impl<T> List<T> {
 	/// assert_eq!(list.get_mut(2), Some(&mut 0x0c));
 	/// assert_eq!(list.get_mut(3), None);
 	/// ```
-	pub fn get_mut(&mut self, mut i: usize) -> &mut T {
-		// TODO: Implemet this function.
+	pub fn get_mut(self: &mut Self, mut i: usize) -> Option<&mut T> {
+		let mut current: &mut Option<Box<Node<T>>> = &mut self.head;
+
+		while let Some(ref mut node) = current {
+			if i == 0 {
+				return Some(&mut node.value);
+			}
+
+			i -= 1;
+			current = &mut node.next;
+		}
+
+		None
 	}
 
 	/// Remove the first element of the calling List instance.
 	///
 	/// # Returns
-	/// The removed element.
-	///
-	/// # Panic
-	/// The calling List instance is empty.
+	/// * `Some(T)` - The removed element.
+	/// * `None` - The calling List instance is empty.
 	///
 	/// # Examples
 	/// ```
@@ -201,17 +224,20 @@ impl<T> List<T> {
 	/// assert_eq!(list.remove_front(), Some(0x0f));
 	/// assert_eq!(list.remove_front(), None);
 	/// ```
-	pub fn remove_front(&mut self) -> T {
-		// TODO: Implemet this function.
+	pub fn remove_front(&mut self) -> Option<T> {
+		if let Some(mut head) = self.head.take() {
+			self.head = head.next.take();
+			Some(head.value)
+		} else {
+			None
+		}
 	}
 
 	/// Remove the last element of the calling List instance.
 	///
 	/// # Returns
-	/// The removed element.
-	///
-	/// # Panic
-	/// * the calling List instance is empty.
+	/// * `Some(T)` - The removed element.
+	/// * `None` - The calling List instance is empty.
 	///
 	/// # Examples
 	/// ```
@@ -228,8 +254,21 @@ impl<T> List<T> {
 	/// assert_eq!(list.remove_back(), Some(0x10));
 	/// assert_eq!(list.remove_back(), None);
 	/// ```
-	pub fn remove_back(&mut self) -> T {
-		// TODO: Implemet this function.
+	pub fn remove_back(&mut self) -> Option<T> {
+		if self.head.is_some() {
+			let mut current: &mut Option<Box<Node<T>>> = &mut self.head;
+
+			while current.is_some() {
+				if current.as_ref().unwrap().next.is_none() {
+					break;
+				}
+				current = &mut current.as_mut().unwrap().next;
+			}
+
+			Some(current.take().unwrap().value)
+		} else {
+			None
+		}
 	}
 
 	/// Remove all the elements of the calling List instance.
@@ -246,7 +285,7 @@ impl<T> List<T> {
 	/// list.clear();
 	/// ```
 	pub fn clear(&mut self) {
-		// TODO: Implemet this function.
+		self.head = None;
 	}
 }
 
@@ -254,14 +293,659 @@ impl<T> List<T> {
 mod tests {
 	use super::*;
 
+	#[derive(Debug, Eq, PartialEq)]
+	struct A {}
+
+	impl A {
+		#[inline(always)]
+		const fn new() -> Self {
+			Self {}
+		}
+	}
+
+	#[derive(Debug, Eq, PartialEq)]
+	struct B {
+		n: u8,
+	}
+
+	impl B {
+		#[inline(always)]
+		const fn new(n: u8) -> Self {
+			Self { n }
+		}
+	}
+
+	#[derive(Debug, Eq, PartialEq)]
+	struct C {
+		n: i8,
+	}
+
+	impl C {
+		#[inline(always)]
+		const fn new(n: i8) -> Self {
+			Self { n }
+		}
+	}
+
 	#[test]
 	fn node_new_00() {
+		let node: Node<A> = Node::new(A::new(), None);
+
 		assert_eq!(
-			Node::new(0xaa, None),
+			node,
 			Node {
-				value: 0xaa,
+				value: A::new(),
 				next: None
 			}
 		);
+	}
+
+	#[test]
+	fn node_new_01() {
+		let node0: Node<B> = Node::new(B::new(0x12), None);
+		let node1: Node<B> = Node::new(B::new(0x23), Some(Box::new(node0)));
+
+		assert_eq!(
+			node1,
+			Node {
+				value: B::new(0x23),
+				next: Some(Box::new(Node {
+					value: B::new(0x12),
+					next: None
+				}))
+			}
+		);
+	}
+
+	#[test]
+	fn node_new_02() {
+		let node0: Node<C> = Node::new(C::new(-17), None);
+		let node1: Node<C> = Node::new(C::new(-51), Some(Box::new(node0)));
+		let node2: Node<C> = Node::new(C::new(101), Some(Box::new(node1)));
+
+		assert_eq!(
+			node2,
+			Node {
+				value: C::new(101),
+				next: Some(Box::new(Node {
+					value: C::new(-51),
+					next: Some(Box::new(Node {
+						value: C::new(-17),
+						next: None
+					}))
+				}))
+			}
+		);
+	}
+
+	#[test]
+	fn list_new_00() {
+		let list: List<A> = List::new();
+
+		assert_eq!(list, List { head: None });
+	}
+
+	#[test]
+	fn list_new_01() {
+		let list: List<B> = List::new();
+
+		assert_eq!(list, List { head: None });
+	}
+
+	#[test]
+	fn list_new_02() {
+		let list: List<C> = List::new();
+
+		assert_eq!(list, List { head: None });
+	}
+
+	#[test]
+	fn list_push_front_00() {
+		let mut list: List<A> = List::new();
+
+		list.push_front(A::new());
+
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node {
+					value: A::new(),
+					next: None
+				}))
+			}
+		);
+	}
+
+	#[test]
+	fn list_push_front_01() {
+		let mut list: List<B> = List::new();
+
+		list.push_front(B::new(0x42));
+		list.push_front(B::new(0x24));
+
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node {
+					value: B::new(0x24),
+					next: Some(Box::new(Node {
+						value: B::new(0x42),
+						next: None,
+					}))
+				}))
+			}
+		);
+	}
+
+	#[test]
+	fn list_push_front_02() {
+		let mut list: List<C> = List::new();
+
+		list.push_front(C::new(-3));
+		list.push_front(C::new(77));
+		list.push_front(C::new(-19));
+
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node {
+					value: C::new(-19),
+					next: Some(Box::new(Node {
+						value: C::new(77),
+						next: Some(Box::new(Node {
+							value: C::new(-3),
+							next: None,
+						}))
+					}))
+				}))
+			}
+		);
+	}
+
+	#[test]
+	fn list_push_back_00() {
+		let mut list: List<A> = List::new();
+
+		list.push_back(A::new());
+
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node {
+					value: A::new(),
+					next: None
+				}))
+			}
+		);
+	}
+
+	#[test]
+	fn list_push_back_01() {
+		let mut list: List<B> = List::new();
+
+		list.push_back(B::new(0xbe));
+		list.push_back(B::new(0xaf));
+
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node {
+					value: B::new(0xbe),
+					next: Some(Box::new(Node {
+						value: B::new(0xaf),
+						next: None,
+					}))
+				}))
+			}
+		);
+	}
+
+	#[test]
+	fn list_push_back_02() {
+		let mut list: List<C> = List::new();
+
+		list.push_back(C::new(-5));
+		list.push_back(C::new(54));
+		list.push_back(C::new(26));
+
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node {
+					value: C::new(-5),
+					next: Some(Box::new(Node {
+						value: C::new(54),
+						next: Some(Box::new(Node {
+							value: C::new(26),
+							next: None,
+						}))
+					}))
+				}))
+			}
+		);
+	}
+
+	#[test]
+	fn list_count_00() {
+		let list: List<A> = List::new();
+
+		assert_eq!(list.count(), 0);
+	}
+
+	#[test]
+	fn list_count_01() {
+		let mut list: List<B> = List::new();
+
+		list.push_back(B::new(0x72));
+		list.push_back(B::new(0x27));
+
+		assert_eq!(list.count(), 2);
+	}
+
+	#[test]
+	fn list_count_02() {
+		let mut list: List<C> = List::new();
+
+		list.push_back(C::new(-128));
+		list.push_back(C::new(127));
+		list.push_back(C::new(-127));
+		list.push_back(C::new(126));
+		list.push_back(C::new(-126));
+		list.push_back(C::new(125));
+		list.push_back(C::new(-125));
+
+		assert_eq!(list.count(), 7);
+	}
+
+	#[test]
+	fn list_get_00() {
+		let list: List<A> = List::new();
+
+		assert_eq!(list.get(0), None);
+	}
+
+	#[test]
+	fn list_get_01() {
+		let list: List<B> = List {
+			head: Some(Box::new(Node::new(
+				B::new(0x0c),
+				Some(Box::new(Node::new(
+					B::new(0x13),
+					Some(Box::new(Node::new(
+						B::new(0x1d),
+						Some(Box::new(Node::new(B::new(0x27), None))),
+					))),
+				))),
+			))),
+		};
+
+		assert_eq!(list.get(0), Some(&B::new(0x0c)));
+		assert_eq!(list.get(1), Some(&B::new(0x13)));
+		assert_eq!(list.get(2), Some(&B::new(0x1d)));
+		assert_eq!(list.get(3), Some(&B::new(0x27)));
+		assert_eq!(list.get(4), None);
+	}
+
+	#[test]
+	fn list_get_02() {
+		let list: List<C> = List {
+			head: Some(Box::new(Node::new(
+				C::new(-99),
+				Some(Box::new(Node::new(
+					C::new(88),
+					Some(Box::new(Node::new(
+						C::new(-77),
+						Some(Box::new(Node::new(
+							C::new(66),
+							Some(Box::new(Node::new(
+								C::new(-55),
+								Some(Box::new(Node::new(
+									C::new(44),
+									Some(Box::new(Node::new(C::new(-33), None))),
+								))),
+							))),
+						))),
+					))),
+				))),
+			))),
+		};
+
+		assert_eq!(list.get(0), Some(&C::new(-99)));
+		assert_eq!(list.get(1), Some(&C::new(88)));
+		assert_eq!(list.get(2), Some(&C::new(-77)));
+		assert_eq!(list.get(3), Some(&C::new(66)));
+		assert_eq!(list.get(4), Some(&C::new(-55)));
+		assert_eq!(list.get(5), Some(&C::new(44)));
+		assert_eq!(list.get(6), Some(&C::new(-33)));
+		assert_eq!(list.get(usize::MAX), None);
+	}
+
+	#[test]
+	fn list_get_mut_00() {
+		let mut list: List<A> = List::new();
+
+		assert_eq!(list.get_mut(0), None);
+	}
+
+	#[test]
+	fn list_get_mut_01() {
+		let mut list: List<B> = List::new();
+
+		list.push_front(B::new(0x90));
+		list.push_front(B::new(0x51));
+		list.push_front(B::new(0xc4));
+		list.push_front(B::new(0x23));
+		list.push_front(B::new(0x87));
+
+		assert_eq!(list.get_mut(4), Some(&mut B::new(0x90)));
+		assert_eq!(list.get_mut(3), Some(&mut B::new(0x51)));
+		assert_eq!(list.get_mut(2), Some(&mut B::new(0xc4)));
+		assert_eq!(list.get_mut(1), Some(&mut B::new(0x23)));
+		assert_eq!(list.get_mut(0), Some(&mut B::new(0x87)));
+	}
+
+	#[test]
+	fn list_get_mut_02() {
+		let mut list: List<C> = List::new();
+
+		list.push_back(C::new(-1));
+		list.push_back(C::new(12));
+		list.push_back(C::new(-23));
+		list.push_back(C::new(34));
+		list.push_back(C::new(-45));
+		list.push_back(C::new(56));
+		list.push_back(C::new(-67));
+
+		assert_eq!(list.get_mut(0), Some(&mut C::new(-1)));
+		assert_eq!(list.get_mut(1), Some(&mut C::new(12)));
+		assert_eq!(list.get_mut(2), Some(&mut C::new(-23)));
+		assert_eq!(list.get_mut(3), Some(&mut C::new(34)));
+		assert_eq!(list.get_mut(4), Some(&mut C::new(-45)));
+		assert_eq!(list.get_mut(5), Some(&mut C::new(56)));
+		assert_eq!(list.get_mut(6), Some(&mut C::new(-67)));
+	}
+
+	#[test]
+	fn list_remove_front_00() {
+		let mut list: List<A> = List::new();
+
+		assert_eq!(list.remove_front(), None);
+		assert_eq!(list, List { head: None });
+	}
+
+	#[test]
+	fn list_remove_front_01() {
+		let mut list: List<B> = List::new();
+
+		list.push_back(B::new(0xd7));
+
+		assert_eq!(list.remove_front(), Some(B::new(0xd7)));
+		assert_eq!(list, List { head: None });
+		assert_eq!(list.remove_front(), None);
+		assert_eq!(list, List { head: None });
+	}
+
+	#[test]
+	fn list_remove_front_02() {
+		let mut list: List<C> = List::new();
+
+		list.push_back(C::new(-128));
+		list.push_back(C::new(-64));
+		list.push_back(C::new(32));
+		list.push_back(C::new(16));
+		list.push_back(C::new(-8));
+		list.push_back(C::new(-4));
+		list.push_back(C::new(2));
+
+		assert_eq!(list.remove_front(), Some(C::new(-128)));
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					C::new(-64),
+					Some(Box::new(Node::new(
+						C::new(32),
+						Some(Box::new(Node::new(
+							C::new(16),
+							Some(Box::new(Node::new(
+								C::new(-8),
+								Some(Box::new(Node::new(
+									C::new(-4),
+									Some(Box::new(Node::new(C::new(2), None))),
+								))),
+							))),
+						))),
+					))),
+				)))
+			}
+		);
+		assert_eq!(list.remove_front(), Some(C::new(-64)));
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					C::new(32),
+					Some(Box::new(Node::new(
+						C::new(16),
+						Some(Box::new(Node::new(
+							C::new(-8),
+							Some(Box::new(Node::new(
+								C::new(-4),
+								Some(Box::new(Node::new(C::new(2), None))),
+							))),
+						))),
+					))),
+				)))
+			}
+		);
+		assert_eq!(list.remove_front(), Some(C::new(32)));
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					C::new(16),
+					Some(Box::new(Node::new(
+						C::new(-8),
+						Some(Box::new(Node::new(
+							C::new(-4),
+							Some(Box::new(Node::new(C::new(2), None))),
+						))),
+					))),
+				)))
+			}
+		);
+		assert_eq!(list.remove_front(), Some(C::new(16)));
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					C::new(-8),
+					Some(Box::new(Node::new(
+						C::new(-4),
+						Some(Box::new(Node::new(C::new(2), None))),
+					))),
+				)))
+			}
+		);
+		assert_eq!(list.remove_front(), Some(C::new(-8)));
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					C::new(-4),
+					Some(Box::new(Node::new(C::new(2), None)))
+				)))
+			}
+		);
+		assert_eq!(list.remove_front(), Some(C::new(-4)));
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(C::new(2), None)))
+			}
+		);
+		assert_eq!(list.remove_front(), Some(C::new(2)));
+		assert_eq!(list, List { head: None });
+		assert_eq!(list.remove_front(), None);
+		assert_eq!(list, List { head: None });
+	}
+
+	#[test]
+	fn list_remove_back_00() {
+		let mut list: List<A> = List::new();
+
+		assert_eq!(list.remove_back(), None);
+		assert_eq!(list, List { head: None });
+	}
+
+	#[test]
+	fn list_remove_back_01() {
+		let mut list: List<B> = List::new();
+
+		list.push_front(B::new(0x1a));
+
+		assert_eq!(list.remove_back(), Some(B::new(0x1a)));
+		assert_eq!(list, List { head: None });
+		assert_eq!(list.remove_back(), None);
+		assert_eq!(list, List { head: None });
+	}
+
+	#[test]
+	fn list_remove_back_02() {
+		let mut list: List<C> = List::new();
+
+		list.push_front(C::new(-31));
+		list.push_front(C::new(15));
+		list.push_front(C::new(89));
+		list.push_front(C::new(-63));
+		list.push_front(C::new(127));
+		list.push_front(C::new(-12));
+		list.push_front(C::new(-91));
+
+		assert_eq!(list.remove_back(), Some(C::new(-31)));
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					C::new(-91),
+					Some(Box::new(Node::new(
+						C::new(-12),
+						Some(Box::new(Node::new(
+							C::new(127),
+							Some(Box::new(Node::new(
+								C::new(-63),
+								Some(Box::new(Node::new(
+									C::new(89),
+									Some(Box::new(Node::new(C::new(15), None))),
+								))),
+							))),
+						))),
+					))),
+				))),
+			}
+		);
+		assert_eq!(list.remove_back(), Some(C::new(15)));
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					C::new(-91),
+					Some(Box::new(Node::new(
+						C::new(-12),
+						Some(Box::new(Node::new(
+							C::new(127),
+							Some(Box::new(Node::new(
+								C::new(-63),
+								Some(Box::new(Node::new(C::new(89), None,))),
+							))),
+						))),
+					))),
+				))),
+			}
+		);
+		assert_eq!(list.remove_back(), Some(C::new(89)));
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					C::new(-91),
+					Some(Box::new(Node::new(
+						C::new(-12),
+						Some(Box::new(Node::new(
+							C::new(127),
+							Some(Box::new(Node::new(C::new(-63), None,))),
+						))),
+					))),
+				))),
+			}
+		);
+		assert_eq!(list.remove_back(), Some(C::new(-63)));
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					C::new(-91),
+					Some(Box::new(Node::new(
+						C::new(-12),
+						Some(Box::new(Node::new(C::new(127), None,))),
+					))),
+				))),
+			}
+		);
+		assert_eq!(list.remove_back(), Some(C::new(127)));
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					C::new(-91),
+					Some(Box::new(Node::new(C::new(-12), None,))),
+				))),
+			}
+		);
+		assert_eq!(list.remove_back(), Some(C::new(-12)));
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(C::new(-91), None,))),
+			}
+		);
+		assert_eq!(list.remove_back(), Some(C::new(-91)));
+		assert_eq!(list, List { head: None });
+		assert_eq!(list.remove_back(), None);
+		assert_eq!(list, List { head: None });
+	}
+
+	#[test]
+	fn list_clear_00() {
+		let mut list: List<A> = List::new();
+
+		list.clear();
+		assert_eq!(list, List { head: None });
+	}
+
+	#[test]
+	fn list_clear_01() {
+		let mut list: List<B> = List::new();
+
+		list.push_back(B::new(0x1a));
+
+		list.clear();
+		assert_eq!(list, List { head: None });
+	}
+
+	#[test]
+	fn list_clear_02() {
+		let mut list: List<C> = List::new();
+
+		list.push_back(C::new(-7));
+		list.push_back(C::new(29));
+		list.push_back(C::new(88));
+		list.push_back(C::new(-14));
+		list.push_back(C::new(112));
+		list.push_back(C::new(-53));
+		list.push_back(C::new(-95));
+
+		list.clear();
+		assert_eq!(list, List { head: None });
 	}
 }

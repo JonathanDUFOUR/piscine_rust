@@ -30,15 +30,12 @@ fn __quicksort(boxes: &mut [[u32; 2]], low: usize, high: usize) {
 /// Sort boxes in a way for every box to be contained in the previous one.
 ///
 /// # Arguments
-///
 /// * `boxes` - A slice containing the boxes to sort.
 ///
 /// # Panics
-///
-/// This function panics if no such sorting is possible.
+/// No such sorting is possible.
 ///
 /// # Examples
-///
 /// ```
 /// use ex04::sort_boxes;
 ///

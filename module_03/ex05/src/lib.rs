@@ -551,12 +551,12 @@ mod tests {
 
 	#[test]
 	fn new_00() {
-		test_function_new(&A::new(), &A::new());
+		test_function_new(A::new(), A::new());
 	}
 
 	#[test]
 	fn new_01() {
-		test_function_new(&B::new(21), &B::new(42));
+		test_function_new(B::new(21), B::new(42));
 	}
 
 	#[test]
