@@ -29,8 +29,6 @@ impl<T> Node<T> {
 #[derive(Eq, Debug, PartialEq)]
 pub struct List<T> {
 	head: Option<Box<Node<T>>>,
-	tail: Option<Box<Node<T>>>,
-	count: usize,
 }
 
 impl<T> List<T> {
@@ -48,11 +46,7 @@ impl<T> List<T> {
 	/// ```
 	#[inline(always)]
 	pub const fn new() -> Self {
-		List {
-			head: None,
-			tail: None,
-			count: 0,
-		}
+		List { head: None }
 	}
 
 	/// Create a new Node instance, initialize its attributes,
@@ -72,17 +66,13 @@ impl<T> List<T> {
 	/// list.push_front(0x03);
 	/// ```
 	pub fn push_front(self: &mut Self, value: T) {
-		let node: Box<Node<T>>;
-
-		if self.count == 0 {
-			node = Box::new(Node::new(value, None))
+		let node: Box<Node<T>> = if let Some(head) = self.head.take() {
+			Box::new(Node::new(value, Some(head)))
 		} else {
-			node = Box::new(Node::new(value, self.head.take()))
-		}
+			Box::new(Node::new(value, None))
+		};
 
-		// REMIND: Continue here
 		self.head = Some(node);
-		self.count += 1;
 	}
 
 	/// Create a new Node instance, initialize its attributes,
@@ -102,14 +92,7 @@ impl<T> List<T> {
 	/// list.push_back(0x06);
 	/// ```
 	pub fn push_back(&mut self, value: T) {
-		if self.count == 0 {
-			self.head = Some(Box::new(Node::new(value, None)));
-			self.tail = self.head;
-		} else {
-			self.tail.unwrap().next = Some(Box::new(Node::new(value, None)));
-			self.tail = self.tail.unwrap().next;
-		}
-		self.count += 1;
+		// TODO: Implemet this function.
 	}
 
 	/// # Returns
@@ -130,7 +113,7 @@ impl<T> List<T> {
 	/// assert_eq!(list.count(), 3);
 	/// ```
 	pub fn count(&self) -> usize {
-		self.count
+		// TODO: Implemet this function.
 	}
 
 	/// Get a reference
@@ -161,18 +144,7 @@ impl<T> List<T> {
 	/// assert_eq!(list.get(3), None);
 	/// ```
 	pub fn get(self: &Self, mut i: usize) -> &T {
-		if i >= self.count {
-			panic!("tried to access out of bounds index {i}");
-		}
-
-		let mut current: &Option<Box<Node<T>>> = &self.head;
-
-		while i > 0 {
-			current = &current.as_ref().unwrap().next;
-			i -= 1;
-		}
-
-		&current.as_ref().unwrap().value
+		// TODO: Implemet this function.
 	}
 
 	/// Get a mutable reference
@@ -203,18 +175,7 @@ impl<T> List<T> {
 	/// assert_eq!(list.get_mut(3), None);
 	/// ```
 	pub fn get_mut(&mut self, mut i: usize) -> &mut T {
-		if i >= self.count {
-			panic!("tried to access out of bounds index {i}");
-		}
-
-		let mut current: &mut Option<Box<Node<T>>> = &mut self.head;
-
-		while i > 0 {
-			current = &mut current.as_mut().unwrap().next;
-			i -= 1;
-		}
-
-		&mut current.as_mut().unwrap().value
+		// TODO: Implemet this function.
 	}
 
 	/// Remove the first element of the calling List instance.
@@ -241,18 +202,7 @@ impl<T> List<T> {
 	/// assert_eq!(list.remove_front(), None);
 	/// ```
 	pub fn remove_front(&mut self) -> T {
-		if self.count == 0 {
-			panic!("tried to remove an element from an empty list");
-		}
-
-		let head: &Box<Node<T>> = &self.head.take().unwrap();
-
-		self.head = head.next;
-		if self.count == 1 {
-			self.tail = None;
-		}
-		self.count -= 1;
-		head.value
+		// TODO: Implemet this function.
 	}
 
 	/// Remove the last element of the calling List instance.
@@ -279,26 +229,7 @@ impl<T> List<T> {
 	/// assert_eq!(list.remove_back(), None);
 	/// ```
 	pub fn remove_back(&mut self) -> T {
-		if self.count == 0 {
-			panic!("tried to remove an element from an empty list");
-		}
-
-		let tail: &Box<Node<T>> = &self.tail.take().unwrap();
-
-		if self.count == 1 {
-			self.head = None;
-		} else {
-			let mut node: &mut Box<Node<T>> = &mut self.head.as_mut().unwrap();
-			while node.next.is_some() {
-				if node.next.as_ref().unwrap().next.is_none() {
-					node.next = None;
-					break;
-				}
-				node = node.next.as_mut().unwrap();
-			}
-		}
-		self.count -= 1;
-		tail.value
+		// TODO: Implemet this function.
 	}
 
 	/// Remove all the elements of the calling List instance.
