@@ -289,6 +289,40 @@ impl<T> List<T> {
 	}
 }
 
+impl<T> std::ops::Index<usize> for List<T> {
+	type Output = T;
+
+	/// Get a reference
+	/// to the element located at a specific index in the calling List instance.
+	///
+	/// # Arguments
+	/// * `i` - The index of the wanted element.
+	///
+	/// # Returns
+	/// * `&T` - A reference to the wanted element in the calling List instance.
+	///
+	/// # Panics
+	/// The index is out of bounds.
+	///
+	/// # Examples
+	/// ```
+	/// use ex06::List;
+	///
+	/// let mut list: List<u8> = List::new();
+	///
+	/// list.push_back(0x16);
+	/// list.push_back(0x17);
+	/// list.push_back(0x18);
+	///
+	/// assert_eq!(list[0], 0x16);
+	/// assert_eq!(list[1], 0x17);
+	/// assert_eq!(list[2], 0x18);
+	/// ```
+	fn index(&self, i: usize) -> &Self::Output {
+		self.get(i).expect("Index out of bounds")
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;
