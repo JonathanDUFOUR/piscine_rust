@@ -84,7 +84,7 @@ impl<T> List<T> {
 	/// list.push_back(0x05);
 	/// list.push_back(0x06);
 	/// ```
-	pub fn push_back(&mut self, value: T) {
+	pub fn push_back(self: &mut Self, value: T) {
 		let mut current: &mut Option<Box<Node<T>>> = &mut self.head;
 
 		while let Some(node) = current {
@@ -111,7 +111,7 @@ impl<T> List<T> {
 	///
 	/// assert_eq!(list.count(), 3);
 	/// ```
-	pub fn count(&self) -> usize {
+	pub fn count(self: &Self) -> usize {
 		let mut count: usize = 0;
 		let mut current: &Option<Box<Node<T>>> = &self.head;
 
@@ -224,7 +224,7 @@ impl<T> List<T> {
 	/// assert_eq!(list.remove_front(), Some(0x0f));
 	/// assert_eq!(list.remove_front(), None);
 	/// ```
-	pub fn remove_front(&mut self) -> Option<T> {
+	pub fn remove_front(self: &mut Self) -> Option<T> {
 		if let Some(mut head) = self.head.take() {
 			self.head = head.next.take();
 			Some(head.value)
@@ -254,7 +254,7 @@ impl<T> List<T> {
 	/// assert_eq!(list.remove_back(), Some(0x10));
 	/// assert_eq!(list.remove_back(), None);
 	/// ```
-	pub fn remove_back(&mut self) -> Option<T> {
+	pub fn remove_back(self: &mut Self) -> Option<T> {
 		if self.head.is_some() {
 			let mut current: &mut Option<Box<Node<T>>> = &mut self.head;
 
@@ -284,7 +284,7 @@ impl<T> List<T> {
 	/// list.push_back(0x15);
 	/// list.clear();
 	/// ```
-	pub fn clear(&mut self) {
+	pub fn clear(self: &mut Self) {
 		self.head = None;
 	}
 }
@@ -299,7 +299,7 @@ impl<T> std::ops::Index<usize> for List<T> {
 	/// * `i` - The index of the wanted element.
 	///
 	/// # Returns
-	/// * `&T` - A reference to the wanted element in the calling List instance.
+	/// A reference to the wanted element in the calling List instance.
 	///
 	/// # Panics
 	/// The index is out of bounds.
@@ -318,8 +318,46 @@ impl<T> std::ops::Index<usize> for List<T> {
 	/// assert_eq!(list[1], 0x17);
 	/// assert_eq!(list[2], 0x18);
 	/// ```
-	fn index(&self, i: usize) -> &Self::Output {
-		self.get(i).expect("Index out of bounds")
+	fn index(self: &Self, i: usize) -> &Self::Output {
+		match self.get(i) {
+			Some(value) => value,
+			None => panic!("tried to access out of bound index {i}"),
+		}
+	}
+}
+
+impl<T> std::ops::IndexMut<usize> for List<T> {
+	/// Get a mutable reference
+	/// to the element located at a specific index in the calling List instance.
+	///
+	/// # Arguments
+	/// * `i` - The index of the wanted element.
+	///
+	/// # Returns
+	/// A mutable reference to the wanted element in the calling List instance.
+	///
+	/// # Panics
+	/// The index is out of bounds.
+	///
+	/// # Examples
+	/// ```
+	/// use ex06::List;
+	///
+	/// let mut list: List<u8> = List::new();
+	///
+	/// list.push_back(0x19);
+	/// list.push_back(0x1a);
+	/// list.push_back(0x1b);
+	///
+	/// assert_eq!(list[0], 0x19);
+	/// assert_eq!(list[1], 0x1a);
+	/// assert_eq!(list[2], 0x1b);
+	/// ```
+	fn index_mut(self: &mut Self, i: usize) -> &mut Self::Output {
+		match self.get_mut(i) {
+			Some(value) => value,
+			None => panic!("tried to access out of bound index {i}"),
+		}
 	}
 }
 
@@ -982,4 +1020,305 @@ mod tests {
 		list.clear();
 		assert_eq!(list, List { head: None });
 	}
+
+	#[test]
+	fn list_operator_index_00() {
+		let list: List<A> = List {
+			head: Some(Box::new(Node::new(A::new(), None))),
+		};
+
+		assert_eq!(list[0], A::new());
+	}
+
+	#[test]
+	fn list_operator_index_01() {
+		let list: List<B> = List {
+			head: Some(Box::new(Node::new(
+				B::new(0x45),
+				Some(Box::new(Node::new(B::new(0xd2), None))),
+			))),
+		};
+
+		assert_eq!(list[0], B::new(0x45));
+		assert_eq!(list[1], B::new(0xd2));
+	}
+
+	#[test]
+	fn list_operator_index_02() {
+		let list: List<C> = List {
+			head: Some(Box::new(Node::new(
+				C::new(-100),
+				Some(Box::new(Node::new(
+					C::new(-50),
+					Some(Box::new(Node::new(
+						C::new(-25),
+						Some(Box::new(Node::new(
+							C::new(-12),
+							Some(Box::new(Node::new(
+								C::new(-6),
+								Some(Box::new(Node::new(
+									C::new(-3),
+									Some(Box::new(Node::new(C::new(-1), None))),
+								))),
+							))),
+						))),
+					))),
+				))),
+			))),
+		};
+
+		assert_eq!(list[0], C::new(-100));
+		assert_eq!(list[1], C::new(-50));
+		assert_eq!(list[2], C::new(-25));
+		assert_eq!(list[3], C::new(-12));
+		assert_eq!(list[4], C::new(-6));
+		assert_eq!(list[5], C::new(-3));
+		assert_eq!(list[6], C::new(-1));
+	}
+
+	#[test]
+	#[should_panic(expected = "tried to access out of bound index 0")]
+	fn list_operator_index_03() {
+		let list: List<A> = List::new();
+
+		assert_eq!(list[0], A::new());
+	}
+
+	#[test]
+	#[should_panic(expected = "tried to access out of bound index 2")]
+	fn list_operator_index_04() {
+		let list: List<B> = List {
+			head: Some(Box::new(Node::new(
+				B::new(0x18),
+				Some(Box::new(Node::new(B::new(0x7a), None))),
+			))),
+		};
+
+		assert_eq!(list[2], B::new(0x99));
+	}
+
+	#[test]
+	#[should_panic(expected = "tried to access out of bound index 18446744073709551615")]
+	fn list_operator_index_05() {
+		let list: List<C> = List {
+			head: Some(Box::new(Node::new(
+				C::new(-8),
+				Some(Box::new(Node::new(
+					C::new(-7),
+					Some(Box::new(Node::new(
+						C::new(-6),
+						Some(Box::new(Node::new(
+							C::new(-5),
+							Some(Box::new(Node::new(
+								C::new(-4),
+								Some(Box::new(Node::new(
+									C::new(-3),
+									Some(Box::new(Node::new(
+										C::new(-2),
+										Some(Box::new(Node::new(C::new(-1), None))),
+									))),
+								))),
+							))),
+						))),
+					))),
+				))),
+			))),
+		};
+
+		assert_eq!(list[usize::MAX], C::new(0));
+	}
+
+	#[test]
+	fn list_operator_index_mut_00() {
+		let mut list: List<A> = List::new();
+
+		list.push_back(A::new());
+
+		list[0] = A::new();
+		assert_eq!(list[0], A::new());
+	}
+
+	#[test]
+	fn list_operator_index_mut_01() {
+		let mut list: List<B> = List::new();
+
+		list.push_front(B::new(0x3c));
+		list.push_front(B::new(0x9a));
+		list.push_front(B::new(0x27));
+		list.push_front(B::new(0x18));
+
+		list[0] = B::new(0x3c);
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					B::new(0x3c),
+					Some(Box::new(Node::new(
+						B::new(0x27),
+						Some(Box::new(Node::new(
+							B::new(0x9a),
+							Some(Box::new(Node::new(B::new(0x3c), None))),
+						))),
+					))),
+				)))
+			}
+		);
+		list[1] = B::new(0x9a);
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					B::new(0x3c),
+					Some(Box::new(Node::new(
+						B::new(0x9a),
+						Some(Box::new(Node::new(
+							B::new(0x9a),
+							Some(Box::new(Node::new(B::new(0x3c), None))),
+						))),
+					))),
+				)))
+			}
+		);
+		list[2] = B::new(0x27);
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					B::new(0x3c),
+					Some(Box::new(Node::new(
+						B::new(0x9a),
+						Some(Box::new(Node::new(
+							B::new(0x27),
+							Some(Box::new(Node::new(B::new(0x3c), None))),
+						))),
+					))),
+				)))
+			}
+		);
+		list[3] = B::new(0x18);
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					B::new(0x3c),
+					Some(Box::new(Node::new(
+						B::new(0x9a),
+						Some(Box::new(Node::new(
+							B::new(0x27),
+							Some(Box::new(Node::new(B::new(0x18), None))),
+						))),
+					))),
+				)))
+			}
+		);
+	}
+
+	#[test]
+	fn list_operator_index_mut_02() {
+		let mut list: List<C> = List::new();
+
+		list.push_front(C::new(-19));
+		list.push_front(C::new(-28));
+		list.push_front(C::new(-37));
+		list.push_front(C::new(-46));
+		list.push_front(C::new(-55));
+
+		list[0] = C::new(-19);
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					C::new(-19),
+					Some(Box::new(Node::new(
+						C::new(-46),
+						Some(Box::new(Node::new(
+							C::new(-37),
+							Some(Box::new(Node::new(
+								C::new(-28),
+								Some(Box::new(Node::new(C::new(-19), None))),
+							))),
+						))),
+					))),
+				)))
+			}
+		);
+		list[1] = C::new(-28);
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					C::new(-19),
+					Some(Box::new(Node::new(
+						C::new(-28),
+						Some(Box::new(Node::new(
+							C::new(-37),
+							Some(Box::new(Node::new(
+								C::new(-28),
+								Some(Box::new(Node::new(C::new(-19), None))),
+							))),
+						))),
+					))),
+				)))
+			}
+		);
+		list[2] = C::new(-37);
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					C::new(-19),
+					Some(Box::new(Node::new(
+						C::new(-28),
+						Some(Box::new(Node::new(
+							C::new(-37),
+							Some(Box::new(Node::new(
+								C::new(-28),
+								Some(Box::new(Node::new(C::new(-19), None))),
+							))),
+						))),
+					))),
+				)))
+			}
+		);
+		list[3] = C::new(-46);
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					C::new(-19),
+					Some(Box::new(Node::new(
+						C::new(-28),
+						Some(Box::new(Node::new(
+							C::new(-37),
+							Some(Box::new(Node::new(
+								C::new(-46),
+								Some(Box::new(Node::new(C::new(-19), None))),
+							))),
+						))),
+					))),
+				)))
+			}
+		);
+		list[4] = C::new(-55);
+		assert_eq!(
+			list,
+			List {
+				head: Some(Box::new(Node::new(
+					C::new(-19),
+					Some(Box::new(Node::new(
+						C::new(-28),
+						Some(Box::new(Node::new(
+							C::new(-37),
+							Some(Box::new(Node::new(
+								C::new(-46),
+								Some(Box::new(Node::new(C::new(-55), None))),
+							))),
+						))),
+					))),
+				)))
+			}
+		);
+	}
+
+	// REMIND: continue here
 }
