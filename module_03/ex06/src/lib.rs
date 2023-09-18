@@ -1,4 +1,4 @@
-#[derive(Eq, Debug, PartialEq)]
+#[derive(Clone, Eq, Debug, PartialEq)]
 struct Node<T> {
 	value: T,
 	next: Option<Box<Node<T>>>,
@@ -19,7 +19,7 @@ impl<T> Node<T> {
 	}
 }
 
-#[derive(Eq, Debug, PartialEq)]
+#[derive(Clone, Default, Eq, Debug, PartialEq)]
 pub struct List<T> {
 	head: Option<Box<Node<T>>>,
 }
@@ -1320,5 +1320,46 @@ mod tests {
 		);
 	}
 
-	// REMIND: continue here
+	#[test]
+	#[should_panic(expected = "tried to access out of bound index 0")]
+	fn list_operator_index_mut_03() {
+		let mut list: List<A> = List::new();
+
+		list[0] = A::new();
+	}
+
+	#[test]
+	#[should_panic(expected = "tried to access out of bound index 4")]
+	fn list_operator_index_mut_04() {
+		let mut list: List<B> = List::new();
+
+		list.push_back(B::new(0x00));
+		list.push_back(B::new(0x3d));
+		list.push_back(B::new(0x21));
+		list.push_back(B::new(0xa7));
+
+		list[4] = B::new(0x42);
+	}
+
+	#[test]
+	#[should_panic(expected = "tried to access out of bound index 18446744073709551615")]
+	fn list_operator_index_mut_05() {
+		let mut list: List<C> = List::new();
+
+		list.push_back(C::new(-2));
+		list.push_back(C::new(49));
+		list.push_back(C::new(28));
+
+		list[usize::MAX] = C::new(-42);
+	}
+
+	#[test]
+	fn trait_clone_00() {
+		let mut list: List<A> = List::new();
+
+		list.push_back(A::new());
+
+		let cloned: List<A> = list.clone();
+		// REMIND: continue here
+	}
 }
