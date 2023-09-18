@@ -1,5 +1,6 @@
 [package]
 name		=	"ex04"
 version		=	"0.1.0"
+authors		=	["Jonathan DUFOUR"]
 edition		=	"2021"
 description	=	"Implementing a more complex already existing trait for our own Time type"
