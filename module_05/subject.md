@@ -208,10 +208,15 @@ files to turn in:
 	std/main.rs  Cargo.toml
 
 allowed symbols:
-	std::fs::{metadata, Metadata, read_dir, DirEntry, ReadDir}
-	std::path::Path  std::io::{Error, Result}
-	std::env::args
-	std::{print, println, eprintln}
+	std::{
+		fs::{metadata, Metadata, Metadata::*, read_dir, DirEntry, DirEntry::*, ReadDir, ReadDir::*},
+		path::{Path, Path::*},
+		io::{Error, Error::*, Result, Result::*},
+		env::args,
+		print,
+		println,
+		eprintln
+	}
 ```
 
 Create a **program** that computes the total size of a directory or file. The program must write the
@@ -245,12 +250,14 @@ files to turn in:
 	std/main.rs  Cargo.toml
 
 allowed symbols:
-	std::env::args
-	std::process::Command
-	std::os::unix::process::CommandExt
-	std::io::stdin
-	std::vec::Vector
-	std::iter::*
+	std::{
+		env::args,
+		process::{Command, Command::*},
+		os::unix::process::CommandExt,
+		io::stdin,
+		vec::{Vec, Vec::*},
+		iter::*
+	}
 ```
 
 Create a **program** takes a path and some arguments as an input, and spawns that process with:
@@ -282,12 +289,16 @@ files to turn in:
 	std/main.rs  Cargo.toml
 
 allowed symbols:
-	std::env::args  std::iter::*
-	std::process::{Command, Stdio, Child}
-	std::vec::Vec
-	std::io::{stdout, Write, Read}
-	std::{write, writeln}
-	std::eprintln
+	std::{
+		env::args,
+		iter::*,
+		process::{Command, Command::*, Stdio, Stdio::*, Child, Child::*},
+		vec::{Vec, Vec::*},
+		io::{stdout, Write, Read},
+		write,
+		writeln,
+		eprintln
+	}
 ```
 
 Create a **program** that starts multiple commands, gather their output and then print it to its
@@ -331,9 +342,11 @@ files to turn in:
 	src/main.rs  Cargo.toml
 
 allowed symbols:
-	std::env::args
-	std::net::{TcpStream, SocketAddr}
-	std::io::{Write, Read, stdout}
+	std::{
+		env::args,
+		net::{TcpStream, TcpStream::*, SocketAddr, SocketAddr::*},
+		io::{Write, Read, stdout}
+	}
 ```
 
 Create a **program** that sends an HTTP/1.1 request and prints the response.
@@ -367,9 +380,7 @@ files to turn in:
 	std/main.rs  Cargo.toml
 
 allowed symbols:
-	std::env::args
-	std::io::read
-	std::str::{from_utf8, Utf8Error}
+	std::{env::args, io::read, str::{from_utf8, Utf8Error, Utf8Error::*}}
 ```
 
 Create a **program** that reads an arbitrary binary file, and prints printable UTF-8 strings it
@@ -415,10 +426,13 @@ allowed dependencies:
 	rug(v1.19.0)  rand(v0.8.5)
 
 allowed symbols:
-	std::vec::Vec
-	std::env::args
-	std::io::{stdin, stdout, stderr, Write, Read}
-	std::fs::File  rand::*  rug::*
+	std::{
+		vec::{Vec, Vec::*},
+		env::args,
+		io::{stdin, stdout, stderr, Write, Read},
+		fs::{File, File::*}
+	}
+	rand::*  rug::*
 ```
 
 Write a **program** that behaves in the following way:
