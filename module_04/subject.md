@@ -120,10 +120,7 @@ files to turn in:
 	src/main.rs  Cargo.toml
 
 allowed symbols:
-	std::ops::Range
-	std::iter::{IntoIterator, Iterator}
-	std::fmt::Debug
-	std::{print, println}
+	std::{fmt::Debug, iter::{IntoIterator, Iterator}, ops::{Range, Range::*}, print, println}
 ```
 
 Create a **function** with the following signature.
@@ -250,9 +247,8 @@ files to turn in:
 	src/lib.rs  Cargo.toml
 
 allowed symbols:
-	std::iter::Iterator::{filter_map, map, filter, sum, collect}
+	std::{iter::Iterator::{collect, filter, filter_map, map, sum}, str::FromStr}
 	str::{split_whitespaces, trim, split_once}
-	std::str::FromStr
 ```
 
 Create a **function** that does the following:
@@ -324,10 +320,11 @@ files to turn in:
 	src/lib.rs  Cargo.toml
 
 allowed symbols:
-	std::option::Option
-	std::u32::{checked_add, checked_mul}
-	std::iter::Iterator
-	std::iter::Iterator::{take_while, filter, count}
+	std::{
+		option::{Option, Option::*},
+		u32::{checked_add, checked_mul},
+		iter::{Iterator, Iterator::{take_while, filter, count}}
+	}
 ```
 
 Create an **Iterator** named `Fibs` that yields *every* fibonacci number that fits in a `u32`.
@@ -384,9 +381,12 @@ files to turn in:
 	src/lib.rs  Cargo.toml
 
 allowed symbols:
-	std::iter::Iterator  std::option::Option
-	std::cmp::{PartialOrd, Ordering}
-	std::clone::Clone
+	std::{
+		iter::Iterator,
+		option::{Option, Option::*},
+		cmp::{PartialOrd, Ordering, Ordering::*},
+		clone::Clone
+	}
 ```
 
 Create a type named `Increasing<I>`.
@@ -484,8 +484,6 @@ turn-in directory:
 
 files to turn in:
 	src/lib.rs  Cargo.toml
-
-allowed symbols:
 ```
 
 Let's create our own formatting system. Let's begin with a `Print` trait.
@@ -545,9 +543,9 @@ files to turn in:
 	src/lib.rs  Cargo.toml
 
 allowed symbols:
-	std::ops::Fn  str::{len, split_at, chars}
+	std::{iter::Iterator::{count, all, any}, ops::Fn}
+	str::{len, split_at, chars}
 	char::{is_alphabetic, is_ascii_digit}
-	std::iter::Iterator::{count, all, any}
 ```
 
 A "pattern matcher" is basically a function that takes a string and returns whether that string
