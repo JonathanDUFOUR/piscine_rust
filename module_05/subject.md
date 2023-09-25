@@ -115,8 +115,7 @@ files to turn in:
 	src/main.rs  Cargo.toml
 
 allowed symbols:
-	std::io::{stdout, Write}
-	std::writeln
+	std::{io::{stdout, Write}, writeln}
 ```
 
 Create a **program** that prints integers from 1 to 10.
@@ -152,13 +151,34 @@ files to turn in:
 	src/main.rs  Cargo.toml
 
 allowed symbols:
-	std::io::{Write, Read, stdin, stdout}
-	std::io::{Stdout, StdoutLock, Stdin, StdinLock}
-	std::io::{Error, Result}
-	std::fs::File  std::env::args
-	std::vec::Vec  std::string::String
-	std::iter::*
-	std::{print, println, eprintln}
+	std::{
+		io::{
+			Write,
+			Read,
+			stdin,
+			stdout,
+			Stdout,
+			Stdout::*,
+			StdoutLock,
+			StdoutLock::*,
+			Stdin,
+			Stdin::*,
+			StdinLock,
+			StdinLock::*,
+			Error,
+			Error::*,
+			Result,
+			Result::*,
+		},
+		fs::{File, File::*},
+		env::args,
+		vec::{Vec, Vec::*},
+		string::{String, String::*},
+		iter::*,
+		print,
+		println,
+		eprintln
+	}
 ```
 
 Create a **program** that reads the standard input, and copies it to the standard output, as well as
