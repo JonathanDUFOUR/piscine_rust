@@ -1,4 +1,4 @@
-# Module 12: Feeling Unsafe
+# Module 07: Feeling Unsafe
 
 ## Forword
 
@@ -247,8 +247,7 @@ files to turn in:
 	src/lib.rs  Cargo.toml
 
 allowed symbols:
-	std::slice::from_raw_parts
-	std::mem::transmute
+	std::{slice::from_raw_parts, mem::transmute}
 ```
 
 ```rust
@@ -317,9 +316,7 @@ files to turn in:
 	src/lib.rs  Cargo.toml
 
 allowed symbols:
-	std::alloc::{alloc, dealloc, Layout}
-	std::ops::{Deref, DerefMut}
-	std::clone::Clone
+	std::{alloc::{alloc, dealloc, Layout, Layout::*}, ops::{Deref, DerefMut}, clone::Clone}
 ```
 
 Create a type named `Carton<T>`, which must manage an allocation of a single `T` on the heap.
@@ -368,9 +365,7 @@ files to turn in:
 	src/lib.rs  Cargo.toml
 
 allowed symbols:
-	std::clone::Clone  std::marker::Copy
-	std::cell::UnsafeCell
-	std::ptr::*  std::mem::*
+	std::{clone::Clone, marker::Copy, cell::{UnsafeCell, UnsafeCell::*}, ptr::*, mem::*}
 ```
 
 Let's re-create our own `Cell<T>` named `Cellule<T>`.
@@ -410,14 +405,15 @@ allowed dependencies:
 	libc  cstr
 
 allowed symbols:
-	std::copy::Copy  std::clone::Clone
-	std::str::from_utf8_unchecked
-	libc::__errno_location
-	libc::strerror
-	libc::{write, read, open, close}
+	std::{
+		marker::Copy,
+		clone::Clone,
+		str::from_utf8_unchecked,
+		cmp::{PartialEq, Eq, PartialOrd, Ord},
+		fmt::{Debug, Display}
+	}
+	libc::{__errno_location, strerror, write, read, open, close}
 	cstr::cstr
-	std::cmp::{PartialEq, Eq, PartialOrd, Ord}
-	std::fmt::{Debug, Display}
 ```
 
 Create an `Errno` type, respondible for managing errors coming from C code.
@@ -506,10 +502,14 @@ files to turn in:
 	src/lib.rs  Cargo.toml
 
 allowed symbols:
-	std::alloc::{alloc, dealloc, Layout}
-	std::marker::Copy  std::clone::Clone
-	std::ops::{Deref, DerefMut}
-	std::ptr::*  std::mem::*
+	std::{
+		alloc::{alloc, dealloc, Layout, Layout::*},
+		marker::Copy,
+		clone::Clone,
+		ops::{Deref, DerefMut},
+		ptr::*,
+		mem::*
+	}
 ```
 
 It must implement the following inherent methods, as specified in the official documentation:
@@ -565,9 +565,7 @@ files to turn in:
 	src/lib.rs  Cargo.toml  build.rs  awesome.c
 
 allowed symbols:
-	std::mem::MaybeUninit
-	std::ffi::CStr
-	std::ffi::{c_int, c_char}
+	std::{mem::MaybeUninit, ffi::{CStr, CStr::*, c_int, c_char}}
 ```
 
 However sad may it be, Rust is not the only programming language in existence.
