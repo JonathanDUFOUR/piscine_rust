@@ -1,4 +1,4 @@
-# Module 10: Concurrence
+# Module 06: Concurrence
 
 ## Forword
 
@@ -48,7 +48,7 @@ files to turn in:
 	src/lib.rs  Cargo.toml
 
 allowed symbols:
-	std::cell::Cell
+	std::cell::{Cell, Cell::*}
 ```
 
 Write a **function** with the following prototype:
@@ -101,9 +101,7 @@ files to turn in:
 	src/main.rs  Cargo.toml
 
 allowed symbols:
-	std::sync::Mutex
-	std::thread::spawn
-	std::io::Write
+	std::{sync::{Mutex, Mutex::*}, thread::spawn, io::Write}
 ```
 
 Create a `Logger` type.
@@ -161,9 +159,7 @@ files to turn in:
 	src/lib.rs  Cargo.toml
 
 allowed symbols:
-	std::thread_local
-	std::cell::Cell
-	std::marker::Copy  std::clone::Clone
+	std::{thread_local, cell::{Cell, Cell::*}, marker::Copy, clone::Clone}
 ```
 
 Create an `Error` enum with the following variants:
@@ -197,10 +193,11 @@ files to turn in:
 	src/main.rs  Cargo.toml
 
 allowed symbols:
-	std::sync::Arc
-	std::sync::mpsc::{sync_channel, SyncSender, Receiver}
-	std::thread::{spawn, sleep}
-	std::time::Duration
+	std::{
+		sync::{Arc, Arc::*, mpsc::{sync_channel, SyncSender, SyncSender::*, Receiver, Receiver::*}},
+		thread::{spawn, sleep},
+		time::{Duration, Duration::*}
+	}
 ```
 
 Create a **program** that works in the following way:
@@ -240,7 +237,7 @@ files to turn in:
 	src/lib.rs  Cargo.toml
 
 allowed symbols:
-	std::sync::atomic::{AtomicU8, Ordering}
+	std::sync::atomic::{AtomicU8, AtomicU8::*, Ordering, Ordering::*}
 ```
 
 Create a type named `Unique`.
@@ -305,8 +302,8 @@ allowed dependencies:
 	rayon
 
 allowed symbols:
-	std::iter::* rayon::prelude::*
-	std::println  std::env::args
+	std::{iter::*, println, env::args}
+	rayon::prelude::*
 ```
 
 To finish with this module, let's look at a popular third-party crate!
@@ -342,11 +339,18 @@ files to turn in:
 	src/main.rs  Cargo.toml
 
 allowed symbols:
-	std::thread::{spawn, JoinHandle}
-	std::sync::mpsc::{Sender, Receiver, channel}
-	std::sync::{Arc, RwLock}
-	std::net::{TcpListener, SocketAdd}
-	std::io::{Result, Error}
+	std::{
+		thread::{spawn, JoinHandle, JoinHandle::*},
+		sync::{
+			mpsc::{Sender, Sender::*, Receiver, Receiver::*, channel},
+			Arc,
+			Arc::*,
+			RwLock,
+			RwLock::*
+		},
+		net::{TcpListener, TcpListener::*, SocketAdd, SocketAdd::*},
+		io::{Result, Result::*, Error, Error::*}
+	}
 ```
 
 Create a `ThreadPool` type.
@@ -404,10 +408,12 @@ files to turn in:
 	src/lib.rs  Cargo.toml
 
 allowed symbols:
-	std::sync::{Condvar, Mutex}
-	std::option::Option
-	std::result::Result
-	std::mem::{replace, swap}
+	std::{
+		sync::{Condvar, Condvar::*, Mutex, Mutex::*},
+		option::{Option, Option::*},
+		result::{Result, Result::*},
+		mem::{replace, swap}
+	}
 ```
 
 Let's create a "Rendez-Vous" primitive in Rust.
