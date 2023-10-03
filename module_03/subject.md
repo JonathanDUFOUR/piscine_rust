@@ -504,8 +504,12 @@ allowed symbols:
 		vec::{Vec, Vec::*},
 		write
 	}
-	str::{split, to_string, lines}
+	str::{split, to_string, lines, parse}
+
+missing allowed symbols:
+	std::str::is_empty
 ```
+
 
 Let's create a generic CSV Encoder & Decoder. A CSV file is defined like this:
 
@@ -547,7 +551,7 @@ impl_field_for_int!(u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isi
 ```rust
 trait Record: Sized {
 	fn encode(&self, target: &mut String) -> Result<(), EncodingError>;
-	fn decode(line: &str) -> Result<Self, DecodingError>; 
+	fn decode(line: &str) -> Result<Self, DecodingError>;
 }
 ```
 
