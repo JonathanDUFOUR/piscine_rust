@@ -29,7 +29,7 @@ fn __quicksort(boxes: &mut [[u32; 2]], low: usize, high: usize) {
 
 /// Sort boxes in a way for every box to be contained in the previous one.
 ///
-/// # Arguments
+/// # Parameters
 /// * `boxes` - A slice containing the boxes to sort.
 ///
 /// # Panics

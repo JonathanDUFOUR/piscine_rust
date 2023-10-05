@@ -10,7 +10,7 @@ pub enum PizzaStatus {
 impl PizzaStatus {
 	/// Predict the status of a pizza that was ordered days ago.
 	///
-	/// # Arguments
+	/// # Parameters
 	///
 	/// * `ordered_days_ago` - The days number reprensenting how long ago the pizza was ordered.
 	///

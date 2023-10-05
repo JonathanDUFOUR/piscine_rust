@@ -6,7 +6,7 @@ pub struct Point {
 impl Point {
 	/// Create a new Point instance with given coordinates.
 	///
-	/// # Arguments
+	/// # Parameters
 	///
 	/// * `x` - The x coordinate of the point to create.
 	/// * `y` - The y coordinate of the point to create.
@@ -49,7 +49,7 @@ impl Point {
 
 	/// Calculate the distance with another given point.
 	///
-	/// # Arguments
+	/// # Parameters
 	///
 	/// * `other` - The other point to calculate the distance with.
 	///
@@ -94,7 +94,7 @@ impl Point {
 
 	/// Translate the point by given coordinates.
 	///
-	/// # Arguments
+	/// # Parameters
 	///
 	/// * `dx` - The x coordinate to translate the point by.
 	/// * `dy` - The y coordinate to translate the point by.

@@ -3,7 +3,7 @@ use crate::error::{DecodingError, EncodingError};
 pub trait Field: Sized {
 	/// Decodes a field from its `str` representation to its concrete type value.
 	///
-	/// # Arguments
+	/// # Parameters
 	/// * `field` - The field to decode.
 	///
 	/// # Returns
@@ -13,7 +13,7 @@ pub trait Field: Sized {
 
 	/// Encodes a field from its concrete type value to its `str` representation.
 	///
-	/// # Arguments
+	/// # Parameters
 	/// * `self` - The field to encode.
 	/// * `target` - The string to append the encoded field to.
 	///
@@ -43,40 +43,36 @@ where
 {
 	fn decode(field: &str) -> Result<Self, DecodingError> {
 		if field.is_empty() {
-			Ok(None)
-		} else {
-			match T::decode(field) {
-				Ok(value) => Ok(Some(value)),
-				Err(err) => Err(err),
-			}
+			return Ok(None);
+		}
+		match T::decode(field) {
+			Ok(value) => Ok(Some(value)),
+			Err(err) => Err(err),
 		}
 	}
 	fn encode(self: &Self, target: &mut String) -> Result<(), EncodingError> {
-		if let Some(value) = self {
-			value.encode(target)
-		} else {
-			Ok(())
+		match self {
+			Some(value) => value.encode(target),
+			None => Ok(()),
 		}
 	}
 }
 
 macro_rules! impl_field_for_int {
-	($type:ty) => {
+	$(($type:ty), *) => {
 		$(
 			impl Field for $type {
 				fn decode(field: &str) -> Result<Self, DecodingError> {
-					if let Ok(value) = field.parse() {
-						Ok(value)
-					} else {
-						Err(DecodingError)
+					match field.parse() {
+						Ok(value) => Ok(value),
+						Err(_) => Err(DecodingError),
 					}
 				}
 
 				fn encode(self: &Self, target: &mut String) -> Result<(), EncodingError> {
-					if let Ok(()) = write!(target, "{}", self) {
-						Ok(())
-					} else {
-						Err(EncodingError),
+					match write!(target, "{}", self) {
+						Ok(()) => Ok(()),
+						Err(_) => Err(EncodingError),
 					}
 				}
 			}

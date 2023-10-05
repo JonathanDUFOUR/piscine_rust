@@ -1,6 +1,6 @@
 /// Get the name of a color, given its RGB value.
 ///
-/// # Arguments
+/// # Parameters
 ///
 /// * `color` - A slice of RGB values.
 ///

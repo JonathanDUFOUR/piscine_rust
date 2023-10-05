@@ -1,6 +1,6 @@
 /// Add two numbers together.
 ///
-/// # Arguments
+/// # Parameters
 ///
 /// * `a` - The first number.
 /// * `b` - The second number.
@@ -22,7 +22,7 @@ pub fn add(a: &i32, b: i32) -> i32 {
 
 /// Add two numbers together, and store the result in the first given argument.
 ///
-/// # Arguments
+/// # Parameters
 ///
 /// * `a` - The first number.
 /// * `b` - The second number.

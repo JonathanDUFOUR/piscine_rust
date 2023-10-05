@@ -66,7 +66,7 @@ impl Board {
 	/// The generated board will contains a certain percentage of alive cells,
 	/// and their posistions will be random.
 	///
-	/// # Arguments
+	/// # Parameters
 	///
 	/// * `width` - The width of the board.
 	/// * `height` - The height of the board.
@@ -532,7 +532,7 @@ impl Board {
 
 	/// Display the board on stdout.
 	///
-	/// # Arguments
+	/// # Parameters
 	///
 	/// * `clear` - If `true`, clear a previously displayed board before displaying the new one.
 	///
@@ -587,10 +587,10 @@ fn main() {
 				ParseError::InvalidHeight { arg } => eprintln!("error: invalid height ({arg})"),
 				ParseError::InvalidPercentage { arg } => {
 					eprintln!("error: invalid percentage ({arg})")
-				},
+				}
 			}
 			return;
-		},
+		}
 	};
 
 	board.print(false);

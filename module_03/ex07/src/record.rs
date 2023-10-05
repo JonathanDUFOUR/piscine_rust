@@ -1,9 +1,9 @@
 use crate::error::{DecodingError, EncodingError};
 
 pub trait Record: Sized {
-	/// Decodes a record from its `str` representation to its concrete collection value.
+	/// Decodes a record from its `str` representation to its concrete type value.
 	///
-	/// # Arguments
+	/// # Parameters
 	/// * `line` - The line to decode.
 	///
 	/// # Returns
@@ -11,9 +11,11 @@ pub trait Record: Sized {
 	/// - `Err(DecodingError)` if the line could not be decoded.
 	fn decode(line: &str) -> Result<Self, DecodingError>;
 
-	/// Encodes a record from its concrete collection value to its `str` representation.
+	/// Encodes a record from its concrete type value to its `str` representation,
+	/// and appends it to a target string.
+	/// Note that the resulting `str` representation is not terminated by a newline.
 	///
-	/// # Arguments
+	/// # Parameters
 	/// * `self` - The record to encode.
 	/// * `target` - The string to append the encoded record to.
 	///

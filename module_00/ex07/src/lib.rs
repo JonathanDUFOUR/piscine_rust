@@ -1,6 +1,6 @@
 /// Search for the first occurence of a character (needle) in a string (haystack).
 ///
-/// # Arguments
+/// # Parameters
 ///
 /// * `haystack` - The string to search in.
 /// * `needle` - The character to search for.
@@ -25,7 +25,7 @@ fn strchr(haystack: &[u8], needle: u8, i: &mut usize) -> bool {
 
 /// Search for the last occurence of a character in a string.
 ///
-/// # Arguments
+/// # Parameters
 ///
 /// * `haystack` - The string to search in.
 /// * `needle` - The character to search for.
@@ -50,7 +50,7 @@ fn strrchr(haystack: &[u8], needle: u8, i: &mut usize) -> bool {
 
 /// Search for the first occurence of a substring (needle) in a string (haystack).
 ///
-/// # Arguments
+/// # Parameters
 ///
 /// * `haystack` - The string to search in.
 /// * `needle` - The string to search for.
@@ -90,7 +90,7 @@ fn strstr(haystack: &[u8], needle: &[u8], i: &mut usize) -> bool {
 
 /// Check whether a string matches a pattern.
 ///
-/// # Arguments
+/// # Parameters
 ///
 /// * `query` - The string to check.
 /// * `pattern` - The pattern to check against.
@@ -272,7 +272,10 @@ mod test {
 	fn strstr_04() {
 		let mut i: usize = 0;
 
-		assert_eq!(strstr(b"Is it still working now?", b"working", &mut i), true);
+		assert_eq!(
+			strstr(b"Is it still working now?", b"working", &mut i),
+			true
+		);
 		assert_eq!(i, 12)
 	}
 
@@ -295,7 +298,11 @@ mod test {
 		let mut i: usize = 0;
 
 		assert_eq!(
-			strstr(b"What if we look for the beginning of the string?", b"What if", &mut i),
+			strstr(
+				b"What if we look for the beginning of the string?",
+				b"What if",
+				&mut i
+			),
 			true
 		);
 		assert_eq!(i, 0);

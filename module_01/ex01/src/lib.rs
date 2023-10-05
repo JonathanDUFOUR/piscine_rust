@@ -1,6 +1,6 @@
 /// Get the smallest value among two numbers.
 ///
-/// # Arguments
+/// # Parameters
 ///
 /// * `a` - The first number.
 /// * `b` - The second number.

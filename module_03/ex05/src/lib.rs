@@ -9,7 +9,7 @@ pub struct Vector<T> {
 impl<T> Vector<T> {
 	/// Create a new Vector instance and initialize its attributes.
 	///
-	/// # Arguments
+	/// # Parameters
 	///
 	/// * `x` - The x direction of the vector to create.
 	/// * `y` - The y direction of the vector to create.

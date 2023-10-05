@@ -8,7 +8,7 @@ pub struct Color {
 impl Color {
 	/// Calculate the distance with another color.
 	///
-	/// # Arguments
+	/// # Parameters
 	///
 	/// - `other`: The color to calculate the distance with.
 	///
@@ -26,7 +26,7 @@ impl Color {
 	/// Add a color to the canvas, and return the resulting color.
 	/// The canvas is assumed to be completly opaque.
 	///
-	/// # Arguments
+	/// # Parameters
 	///
 	/// - `color`: The color to add to the canvas,
 	/// represented by a tuple containing the Color instance and its opacity.
@@ -51,7 +51,7 @@ impl Color {
 	/// Find out the mix of colors that results in the closest color to the calling instance,
 	/// using a well defined number of colors to mix.
 	///
-	/// # Arguments
+	/// # Parameters
 	///
 	/// - `canvas`: The current color of the canvas we are painting on.
 	/// - `closest`: The closest resulting mixed color we found so far.
@@ -98,7 +98,7 @@ impl Color {
 
 	/// Create a new Color instance, and initialize it with the given RGB values.
 	///
-	/// # Arguments
+	/// # Parameters
 	///
 	/// - `red`: The red component of the color.
 	/// - `green`: The green component of the color.
@@ -123,7 +123,7 @@ impl Color {
 	/// Try mixing colors as if painted on a white canvas to obtain a result as close as possible
 	/// to the calling instance.
 	///
-	/// # Arguments
+	/// # Parameters
 	///
 	/// - `palette`: The palette of colors to mix.
 	/// - `max`: The maximum number of colors to mix.

@@ -507,7 +507,7 @@ allowed symbols:
 	str::{split, to_string, lines, parse}
 
 missing allowed symbols:
-	std::str::is_empty
+	std::str::{is_empty, Lines}
 ```
 
 
@@ -559,7 +559,7 @@ trait Record: Sized {
 
 ```rust
 fn encode_csv<R: Record>(records: &[R]) -> Result<String, EncodingError>;
-fn decode_csv<R: Record>(contents: &str) -> Result<Vec<R>, DecodingError>;
+fn decode_csv<R: Record>(content: &str) -> Result<Vec<R>, DecodingError>;
 ```
 
 * `encode_csv` takes a list of records and encode them into a `String`.

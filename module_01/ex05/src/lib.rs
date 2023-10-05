@@ -1,6 +1,6 @@
 /// Remove every duplicate elements from a vector.
 ///
-/// # Arguments
+/// # Parameters
 ///
 /// * `v` - The vector of integers to remove duplicate elements from.
 ///

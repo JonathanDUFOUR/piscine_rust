@@ -18,7 +18,7 @@ fn __most_significant_digit(n: &[u8]) -> usize {
 
 /// Add two big numbers.
 ///
-/// # Arguments
+/// # Parameters
 /// * `a` - The first big number to add.
 /// * `b` - The second big number to add.
 ///
@@ -33,7 +33,10 @@ fn __most_significant_digit(n: &[u8]) -> usize {
 /// ```
 pub fn big_add(a: &[u8], b: &[u8]) -> Vec<u8> {
 	assert!(!a.is_empty() && !b.is_empty(), "Empty input");
-	assert!(__are_digits_only(a) && __are_digits_only(b), "Input contains non-digits");
+	assert!(
+		__are_digits_only(a) && __are_digits_only(b),
+		"Input contains non-digits"
+	);
 
 	let mut sum: u8;
 	let mut carry: u8 = 0;

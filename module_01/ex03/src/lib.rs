@@ -1,6 +1,6 @@
 /// Search for the largest subslice of a slice that contains all and only specified values.
 ///
-/// # Arguments
+/// # Parameters
 ///
 /// * `haystack` - The slice to search in.
 /// * `needle` - The slice of values to search for.

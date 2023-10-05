@@ -4,7 +4,7 @@
 ///
 /// * `T` - The type of the two values to compare.
 ///
-/// # Arguments
+/// # Parameters
 ///
 /// * `a` - The first thing.
 /// * `b` - The second thing.

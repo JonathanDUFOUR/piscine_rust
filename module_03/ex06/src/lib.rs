@@ -7,7 +7,7 @@ struct Node<T> {
 impl<T> Node<T> {
 	/// Create a new Node instance and initialize its attributes.
 	///
-	/// # Arguments
+	/// # Parameters
 	/// * `value` - The value to be stored in the newly created Node instance.
 	/// * `next` - The eventual Node instance that follows the newly created Node instance.
 	///
@@ -45,7 +45,7 @@ impl<T> List<T> {
 	/// Create a new Node instance, initialize its attributes,
 	/// and insert it at the beginning of the calling List instance.
 	///
-	/// # Arguments
+	/// # Parameters
 	/// * `value` - The value to be stored in the newly created Node instance.
 	///
 	/// # Examples
@@ -126,7 +126,7 @@ impl<T> List<T> {
 	/// Get a reference
 	/// to the element located at a specific index in the calling List instance.
 	///
-	/// # Arguments
+	/// # Parameters
 	/// * `i` - The index of the wanted element.
 	///
 	/// # Returns
@@ -166,7 +166,7 @@ impl<T> List<T> {
 	/// Get a mutable reference
 	/// to the element located at a specific index in the calling List instance.
 	///
-	/// # Arguments
+	/// # Parameters
 	/// * `i` - The index of the wanted element.
 	///
 	/// # Returns
@@ -295,7 +295,7 @@ impl<T> std::ops::Index<usize> for List<T> {
 	/// Get a reference
 	/// to the element located at a specific index in the calling List instance.
 	///
-	/// # Arguments
+	/// # Parameters
 	/// * `i` - The index of the wanted element.
 	///
 	/// # Returns
@@ -330,7 +330,7 @@ impl<T> std::ops::IndexMut<usize> for List<T> {
 	/// Get a mutable reference
 	/// to the element located at a specific index in the calling List instance.
 	///
-	/// # Arguments
+	/// # Parameters
 	/// * `i` - The index of the wanted element.
 	///
 	/// # Returns

@@ -8,7 +8,7 @@ enum Token<'a> {
 
 /// Search for the next token in a given string.
 ///
-/// # Arguments
+/// # Parameters
 ///
 /// * `s` - The string to search in.
 ///
@@ -66,7 +66,7 @@ fn next_token<'a>(s: &mut &'a str) -> Option<Token<'a>> {
 
 /// Find out and print every token that composes a given string.
 ///
-/// # Arguments
+/// # Parameters
 ///
 /// * `s` - The string to search in.
 ///

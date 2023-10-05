@@ -72,7 +72,7 @@ impl TodoList {
 
 	/// Add a new TODO task to the TodoList instance.
 	///
-	/// # Arguments
+	/// # Parameters
 	///
 	/// - `todo`: The TODO task to add.
 	///
@@ -91,7 +91,7 @@ impl TodoList {
 
 	/// Set an existing TODO task as done.
 	///
-	/// # Arguments
+	/// # Parameters
 	///
 	/// - `index`: The task index to be set as done.
 	///
