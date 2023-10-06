@@ -59,7 +59,7 @@ where
 }
 
 macro_rules! impl_field_for_int {
-	$(($type:ty), *) => {
+	($($type:ty), * $(,)?) => {
 		$(
 			impl Field for $type {
 				fn decode(field: &str) -> Result<Self, DecodingError> {
@@ -70,6 +70,8 @@ macro_rules! impl_field_for_int {
 				}
 
 				fn encode(self: &Self, target: &mut String) -> Result<(), EncodingError> {
+					use std::fmt::Write;
+
 					match write!(target, "{}", self) {
 						Ok(()) => Ok(()),
 						Err(_) => Err(EncodingError),

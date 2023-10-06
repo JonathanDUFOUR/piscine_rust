@@ -1,2 +1,2 @@
-pub struct DecodingError {}
-pub struct EncodingError {}
+pub struct DecodingError;
+pub struct EncodingError;
