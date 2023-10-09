@@ -24,3 +24,68 @@ pub trait Record: Sized {
 	/// - `Err(EncodingError)` if the record could not be encoded.
 	fn encode(self: &Self, target: &mut String) -> Result<(), EncodingError>;
 }
+
+#[macro_export]
+macro_rules! impl_record_for_struct {
+	($struct_identifier:ident {}) => {
+		impl Record for $struct_identifier {
+			fn decode(line: &str) -> Result<Self, DecodingError> {
+				let mut fields: std::str::Split<'_, char> = line.split(',');
+
+				match fields.next() {
+					Some(field) if field.is_empty() => (),
+					_ => return Err(DecodingError),
+				};
+				if fields.next().is_some() {
+					return Err(DecodingError);
+				}
+
+				Ok($struct_identifier {})
+			}
+
+			fn encode(&self, _target: &mut String) -> Result<(), EncodingError> {
+				Ok(())
+			}
+		}
+	};
+	($struct_identifier:ident {
+			$first_field_identifier:ident: $first_field_type:ty,
+			$($next_field_identifier:ident: $next_field_type:ty),*
+			$(,)?
+		}
+	) => {
+		impl Record for $struct_identifier {
+			fn decode(line: &str) -> Result<Self, DecodingError> {
+				let mut fields: std::str::Split<'_, char> = line.split(',');
+
+				let $first_field_identifier: $first_field_type = match fields.next() {
+					Some(field) => Field::decode(field)?,
+					None => return Err(DecodingError),
+				};
+				$(
+					let $next_field_identifier: $next_field_type = match fields.next() {
+						Some(field) => Field::decode(field)?,
+						None => return Err(DecodingError),
+					};
+				)*
+				if fields.next().is_some() {
+					return Err(DecodingError);
+				}
+
+				Ok($struct_identifier {
+					$first_field_identifier,
+					$($next_field_identifier),*
+				})
+			}
+
+			fn encode(self: &Self, target: &mut String) -> Result<(), EncodingError> {
+				Field::encode(&self.$first_field_identifier, target)?;
+				$(
+					target.push(',');
+					Field::encode(&self.$next_field_identifier, target)?;
+				)*
+				Ok(())
+			}
+		}
+	};
+}
