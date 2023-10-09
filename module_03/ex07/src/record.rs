@@ -84,6 +84,7 @@ macro_rules! impl_record_for_struct {
 					target.push(',');
 					Field::encode(&self.$next_field_identifier, target)?;
 				)*
+
 				Ok(())
 			}
 		}

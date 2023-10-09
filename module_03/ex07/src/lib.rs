@@ -107,7 +107,7 @@ mod tests {
 
 	// region: decode_csv_00
 	#[test]
-	fn test_decode_csv_00() {
+	fn decode_csv_00() {
 		let content: &str = "";
 		let records: Vec<A> = match decode_csv(content) {
 			Ok(value) => value,
@@ -120,7 +120,7 @@ mod tests {
 
 	// region: decode_csv_01
 	#[test]
-	fn test_decode_csv_01() {
+	fn decode_csv_01() {
 		let content: &str = "\
 			Hello,\n\
 			,0\n\
@@ -153,7 +153,7 @@ mod tests {
 
 	// region: decode_csv_02
 	#[test]
-	fn test_decode_csv_02() {
+	fn decode_csv_02() {
 		let content: &str = "0,1,2,3,4,5,6,7,8,9,10,11\n";
 		let records: Vec<C> = match decode_csv(content) {
 			Ok(value) => value,
@@ -180,9 +180,36 @@ mod tests {
 	}
 	// endregion
 
+	// region: decode_csv_03
+	#[test]
+	fn decode_csv_03() {
+		let content: &str = "koala\n";
+
+		assert_eq!(decode_csv::<A>(content), Err(DecodingError));
+	}
+	// endregion
+
+	// region: decode_csv_04
+	#[test]
+	fn decode_csv_04() {
+		let content: &str = "pouic\n";
+
+		assert_eq!(decode_csv::<B>(content), Err(DecodingError));
+	}
+	// endregion
+
+	// region: decode_csv_05
+	#[test]
+	fn decode_csv_05() {
+		let content: &str = "0,-1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11\n";
+
+		assert_eq!(decode_csv::<C>(content), Err(DecodingError));
+	}
+	// endregion
+
 	// region: encode_csv_00
 	#[test]
-	fn test_encode_csv_00() {
+	fn encode_csv_00() {
 		let records: Vec<A> = vec![];
 		let content: String = match encode_csv(&records) {
 			Ok(value) => value,
@@ -195,7 +222,7 @@ mod tests {
 
 	// region: encode_csv_01
 	#[test]
-	fn test_encode_csv_01() {
+	fn encode_csv_01() {
 		let records: Vec<B> = vec![B {
 			a: "Never gonna give you up".to_string(),
 			b: Some(98),
@@ -211,27 +238,81 @@ mod tests {
 
 	// region: encode_csv_02
 	#[test]
-	fn test_encode_csv_02() {
-		let records: Vec<C> = vec![C {
-			a: 66,
-			b: 65,
-			c: 63,
-			d: 60,
-			e: 56,
-			f: 51,
-			g: 45,
-			h: 38,
-			i: 30,
-			j: 21,
-			k: 11,
-			l: 0,
-		}];
+	fn encode_csv_02() {
+		let records: Vec<C> = vec![
+			// region: records[0]
+			C {
+				a: 66,
+				b: 65,
+				c: 63,
+				d: 60,
+				e: 56,
+				f: 51,
+				g: 45,
+				h: 38,
+				i: 30,
+				j: 21,
+				k: 11,
+				l: 0,
+			},
+			// endregion
+			// region: records[1]
+			C {
+				a: 12,
+				b: 10,
+				c: 8,
+				d: 6,
+				e: 4,
+				f: 2,
+				g: 1,
+				h: 3,
+				i: 5,
+				j: 7,
+				k: 9,
+				l: 11,
+			},
+			// endregion
+			// region: records[2]
+			C {
+				a: 123,
+				b: 234,
+				c: 345,
+				d: 456,
+				e: 567,
+				f: 678,
+				g: -12,
+				h: -23,
+				i: -34,
+				j: -45,
+				k: -56,
+				l: -67,
+			},
+			// endregion
+		];
 		let content: String = match encode_csv(&records) {
 			Ok(value) => value,
 			Err(EncodingError) => panic!("could not encode CSV"),
 		};
 
-		assert_eq!(content, "66,65,63,60,56,51,45,38,30,21,11,0\n");
+		assert_eq!(
+			content,
+			"\
+			66,65,63,60,56,51,45,38,30,21,11,0\n\
+			12,10,8,6,4,2,1,3,5,7,9,11\n\
+			123,234,345,456,567,678,-12,-23,-34,-45,-56,-67\n"
+		);
+	}
+	// endregion
+
+	// region: encode_csv_03
+	#[test]
+	fn encode_csv_03() {
+		let records: Vec<B> = vec![B {
+			a: "May I have your attention, please?".to_string(),
+			b: None,
+		}];
+
+		assert_eq!(encode_csv(&records), Err(EncodingError));
 	}
 	// endregion
 }
