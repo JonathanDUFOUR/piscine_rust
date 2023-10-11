@@ -159,28 +159,31 @@ turn-in directory:
 	ex01/
 
 files to turn in:
-	src/yes.rs  src/collatz.rs  src/print_bytes.rs  Cargo.toml
+	src/yes.rs  src/collayz.rs  src/print_bytes.rs  Cargo.toml
 
 allowed symbols:
-	std::ops::{Fn, FnMut, FnOnce}
+	core::ops::{Fn, FnMut, FnOnce}
 	str::chars
+
+missing allowed symbols:
+	std::{print, unreachable}
 ```
 
 Create tree **functions**. Each function must be prototyped as follows.
 
 ```rust
 fn collayz<F: /* ... */>(start: u32, f: F);
+fn print_bytes<F: /* ... */>(f: F);
 fn yes<F: /* ... */>(f: F) -> !;
-fn print_byes<F: /* ... */>(f: F);
 ```
 
 * The `collayz` function must call the `f` function on every new odd value in the [collatz sequence](https://en.wikipedia.org/wiki/Collatz_conjecture).
 * You must add an appropriate bound for the `F` generic type so that you can call it with a single
 `u32` parameter (i.e. `f(n: u32);`).
-* Create a `main` that calls `collatz` with `start = 11` and produces the following output:
+* Create a `main` that calls `collayz` with `start = 11` and produces the following output:
 
 ```txt
->_ cargo run --bin collatz
+>_ cargo run --bin collayz
 YYYYYYYYYYY
 YYYYYYYYYYYYYYYYY
 YYYYYYYYYYYYY
@@ -188,18 +191,18 @@ YYYYY
 Y
 ```
 
-* The `print_byes` function must call `f` in repeat until it returns `None` (rather
+* The `print_bytes` function must call `f` in repeat until it returns `None` (rather
 than a `Some(u8)`). Each time, `print_bytes` prints the returned byte in binary, but zeros are
 replaced by 'Y's, and ones with `y`.
 * You must add an appropriate bound to the `F` generic type, such that it returns an `Option<u8>`
-and takes no parameters (i.e. `let ret: Option<u8> = f();`).
+and takes no parameters (e.g. `let ret: Option<u8> = f();`).
 * Create a `main` that calls the `print_bytes` function in a way that it produces the following
 output.
 
 Example:
 
 ```txt
->_ cargo run --bin yes
+>_ cargo run --bin print_bytes
 YyYYyYYY
 YyyYYyYy
 YyyYyyYY

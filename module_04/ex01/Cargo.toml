@@ -1,0 +1,18 @@
+[package]
+name		=	"ex01"
+version		=	"0.1.0"
+authors		=	["Jonathan DUFOUR"]
+edition		=	"2021"
+description	=	""
+
+[[bin]]
+name		=	"collayz"
+path		=	"src/collayz.rs"
+
+[[bin]]
+name		=	"print_bytes"
+path		=	"src/print_bytes.rs"
+
+[[bin]]
+name		=	"yes"
+path		=	"src/yes.rs"

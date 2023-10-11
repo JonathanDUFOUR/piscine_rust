@@ -71,7 +71,7 @@ impl<T> List<T> {
 	/// Create a new Node instance, initialize its attributes,
 	/// and insert it at the end of the calling List instance.
 	///
-	/// # Argumets
+	/// # Parameters
 	/// * `value` - The value to be stored in the newly created Node instance.
 	///
 	/// # Examples
