@@ -1,0 +1,6 @@
+[package]
+name		= "ex00"
+version		= "0.1.0"
+authors		= ["Jonathan DUFOUR"]
+edition		= "2021"
+description	= "Dealing with iterators for the first time!"

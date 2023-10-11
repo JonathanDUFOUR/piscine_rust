@@ -131,7 +131,7 @@ fn print_all_things<I: /* ... */>(i: I);
 
 * The `print_all_things` function must print the values it is given.
 * You have to add appropriate trait bounds to `I`.
-* Yo must use exactly *one* for loop.
+* You must use exactly *one* for loop.
 
 Example:
 
@@ -146,10 +146,10 @@ fn main() {
 
 ```txt
 >_ cargo run
-[ 1 3 4 2 ]
-[ 1 2 5 4 ]
 [ 0 1 2 3 4 5 ]
 [ 'H' 'e' 'l' 'l' 'o' ]
+[ 1 3 4 2 ]
+[ 1 2 5 4 ]
 ```
 
 ## Exercise 01: YYYYYYYYYYYYYY
