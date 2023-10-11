@@ -166,7 +166,7 @@ allowed symbols:
 	str::chars
 
 missing allowed symbols:
-	std::{print, unreachable}
+	std::{print, println, unreachable}
 ```
 
 Create tree **functions**. Each function must be prototyped as follows.

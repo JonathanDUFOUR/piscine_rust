@@ -34,5 +34,5 @@ where
 }
 
 fn main() {
-	collayz(3, |n| println!("{}", "Y".repeat(n as usize)));
+	collayz(11, |n| println!("{}", "Y".repeat(n as usize)));
 }

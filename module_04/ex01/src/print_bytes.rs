@@ -1,6 +1,21 @@
-fn print_bytes<F>(f: F)
+/// Print each byte of any thing,
+/// calling repeatedly a given function that is supposed to return the next byte to print.
+///
+/// # Type parameters
+/// * `F` - The type of the function to repeatedly call.
+///
+/// # Parameters
+/// * `f` - The function to repeatedly call.
+///
+/// # Examples
+/// ```
+/// let mut chars: std::str::Chars<'static> = "foo".chars();
+///
+/// print_bytes(|| chars.next().map(|c| c as u8));
+/// ```
+fn print_bytes<F>(mut f: F)
 where
-	F: Fn() -> Option<u8>,
+	F: FnMut() -> Option<u8>,
 {
 	while let Some(byte) = f() {
 		for i in 0..8 {
@@ -10,26 +25,12 @@ where
 				_ => unreachable!(),
 			}
 		}
+		println!();
 	}
 }
 
-const S: &str = "Hello, World!";
 fn main() {
-	print_bytes(|| S.chars().next().map(|c| c as u8));
-}
+	let mut chars: std::str::Chars<'static> = "koala".chars();
 
-/*
-01001000
-01100101
-01101100
-01101100
-01101111
-00101100
-00100000
-01010111
-01101111
-01110010
-01101100
-01100100
-00100001
-*/
+	print_bytes(|| chars.next().map(|c| c as u8));
+}
