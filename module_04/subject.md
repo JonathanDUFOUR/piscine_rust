@@ -251,7 +251,11 @@ files to turn in:
 
 allowed symbols:
 	std::{iter::Iterator::{collect, filter, filter_map, map, sum}, str::FromStr}
-	str::{split_whitespaces, trim, split_once}
+	str::{split_whitespaces, split_once, trim}
+
+missing allowed symbols:
+	std::{option::Option, result::Result::ok}
+	str::{lines, parse}
 ```
 
 Create a **function** that does the following:
