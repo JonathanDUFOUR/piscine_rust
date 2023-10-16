@@ -342,9 +342,13 @@ impl Fibs {
 }
 ```
 
- * The `new` function must allow the user of the type to choose the first and second term of the
-   sequence.
- * Ensure that your iterator does *not* panic when reaching the greatest fibonacci `u32`.
+* The `new` function must allow the user of the type to choose the first and second term of the
+  sequence.
+* Ensure that your iterator does *not* panic when reaching the greatest fibonacci `u32`.
+
+missing precision:
+* The `next` function, which is bound to the `Iterator` trait, must return the next fibonacci
+  number in the sequence, including both starting numbers, or `None` if there is no more.
 
 Example:
 
@@ -371,6 +375,8 @@ fn even_fibs_bellow_1000() -> u32;
 * This function must return the sum of even fibonacci numbers bellow `1000` using the `Fibs`
 iterator you previously wrote.
 * You still can't use `return` nor can you use `;`s characters!
+
+
 
 Example:
 
