@@ -227,7 +227,7 @@ mod tests {
 	// region: create_pairs_01
 	#[test]
 	fn create_pairs_01() {
-		const S: &str = "\
+		const S: &str = "
 foo:\n\
 :bar\n\
 muf:diz";

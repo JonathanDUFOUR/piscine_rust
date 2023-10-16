@@ -352,10 +352,10 @@ Example:
 let mut count = 0;
 for fib in Fibs::new(0, 1) {
 	if fib >= 1000 {
-	    break;
+		break;
 	}
 	if fib % 2 == 0 {
-	    count += fib;
+		count += fib;
 	}
 }
 
