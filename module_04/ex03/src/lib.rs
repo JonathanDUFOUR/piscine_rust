@@ -1,7 +1,8 @@
-#[derive(Debug, Eq, PartialEq)]
+/// An iterator through a Fibonacci sequence.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Fibs {
-	first: u32,
-	second: u32,
+	current: Option<u32>,
+	next: Option<u32>,
 }
 
 impl Fibs {
@@ -21,7 +22,27 @@ impl Fibs {
 	/// const FIB: Fibs = Fibs::new(0, 1);
 	/// ```
 	pub const fn new(first: u32, second: u32) -> Fibs {
-		Fibs { first, second }
+		Fibs {
+			current: Some(first),
+			next: Some(second),
+		}
+	}
+
+	/// Calculate the sum of all even Fibonacci numbers below 1000.
+	///
+	/// # Returns
+	/// The sum of all even Fibonacci numbers below 1000.
+	///
+	/// # Example
+	/// ```
+	/// use ex03::Fibs;
+	///
+	/// const FIBS: Fibs = Fibs::new(0, 1);
+	///
+	/// assert_eq!(FIBS.even_fibs_below_1000(), 798);
+	/// ```
+	pub fn even_fibs_below_1000(self: &Self) -> u32 {
+		self.take_while(|&x| x < 1000).filter(|&x| x % 2 == 0).sum()
 	}
 }
 
@@ -29,17 +50,16 @@ impl Iterator for Fibs {
 	type Item = u32;
 
 	fn next(self: &mut Self) -> Option<Self::Item> {
-		match self.first.checked_add(self.second) {
-			Some(third) => {
-				let first: u32 = self.first;
+		let current: Option<u32> = self.current;
+		let next_next: Option<u32> = match (self.current, self.next) {
+			(Some(current), Some(next)) => current.checked_add(next),
+			_ => None,
+		};
 
-				self.first = self.second;
-				self.second = third;
+		self.current = self.next;
+		self.next = next_next;
 
-				Some(first)
-			}
-			None => None,
-		}
+		current
 	}
 }
 
@@ -55,8 +75,8 @@ mod tests {
 		assert_eq!(
 			FIB,
 			Fibs {
-				first: 0,
-				second: 0
+				current: Some(0),
+				next: Some(0)
 			}
 		);
 	}
@@ -70,8 +90,8 @@ mod tests {
 		assert_eq!(
 			FIB,
 			Fibs {
-				first: 0,
-				second: 1
+				current: Some(0),
+				next: Some(1)
 			}
 		);
 	}
@@ -85,8 +105,8 @@ mod tests {
 		assert_eq!(
 			FIB,
 			Fibs {
-				first: 0,
-				second: u32::MAX
+				current: Some(0),
+				next: Some(u32::MAX)
 			}
 		);
 	}
@@ -100,8 +120,8 @@ mod tests {
 		assert_eq!(
 			FIB,
 			Fibs {
-				first: 2,
-				second: 0
+				current: Some(2),
+				next: Some(0)
 			}
 		);
 	}
@@ -115,8 +135,8 @@ mod tests {
 		assert_eq!(
 			FIB,
 			Fibs {
-				first: 3,
-				second: 4
+				current: Some(3),
+				next: Some(4)
 			}
 		);
 	}
@@ -130,8 +150,8 @@ mod tests {
 		assert_eq!(
 			FIB,
 			Fibs {
-				first: 5,
-				second: u32::MAX
+				current: Some(5),
+				next: Some(u32::MAX)
 			}
 		);
 	}
@@ -145,8 +165,8 @@ mod tests {
 		assert_eq!(
 			FIB,
 			Fibs {
-				first: u32::MAX,
-				second: 0
+				current: Some(u32::MAX),
+				next: Some(0)
 			}
 		);
 	}
@@ -160,8 +180,8 @@ mod tests {
 		assert_eq!(
 			FIB,
 			Fibs {
-				first: u32::MAX,
-				second: 6
+				current: Some(u32::MAX),
+				next: Some(6)
 			}
 		);
 	}
@@ -175,8 +195,8 @@ mod tests {
 		assert_eq!(
 			FIB,
 			Fibs {
-				first: u32::MAX,
-				second: u32::MAX
+				current: Some(u32::MAX),
+				next: Some(u32::MAX)
 			}
 		);
 	}
@@ -243,6 +263,184 @@ mod tests {
 		assert_eq!(fib.next(), None);
 		assert_eq!(fib.next(), None);
 		assert_eq!(fib.next(), None);
+	}
+	// endregion
+
+	// region: next_04
+	#[test]
+	fn next_04() {
+		let mut fib: Fibs = Fibs::new(u32::MAX, 0);
+
+		assert_eq!(fib.next(), Some(u32::MAX));
+		assert_eq!(fib.next(), Some(0));
+		assert_eq!(fib.next(), Some(u32::MAX));
+		assert_eq!(fib.next(), Some(u32::MAX));
+		assert_eq!(fib.next(), None);
+		assert_eq!(fib.next(), None);
+		assert_eq!(fib.next(), None);
+		assert_eq!(fib.next(), None);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_00
+	#[test]
+	fn even_fibs_below_1000_00() {
+		const FIB: Fibs = Fibs::new(0, 1);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 798);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_01
+	#[test]
+	fn even_fibs_below_1000_01() {
+		const FIB: Fibs = Fibs::new(0, 2);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 1972);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_02
+	#[test]
+	fn even_fibs_below_1000_02() {
+		const FIB: Fibs = Fibs::new(0, 501);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 0);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_03
+	#[test]
+	fn even_fibs_below_1000_03() {
+		const FIB: Fibs = Fibs::new(0, 1000);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 0);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_04
+	#[test]
+	fn even_fibs_below_1000_04() {
+		const FIB: Fibs = Fibs::new(0, u32::MAX);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 0);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_05
+	#[test]
+	fn even_fibs_below_1000_05() {
+		const FIB: Fibs = Fibs::new(1, 0);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 798);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_06
+	#[test]
+	fn even_fibs_below_1000_06() {
+		const FIB: Fibs = Fibs::new(1, 1);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 798);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_07
+	#[test]
+	fn even_fibs_below_1000_07() {
+		const FIB: Fibs = Fibs::new(1, 3);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 420);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_08
+	#[test]
+	fn even_fibs_below_1000_08() {
+		const FIB: Fibs = Fibs::new(1, 765);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 766);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_09
+	#[test]
+	fn even_fibs_below_1000_09() {
+		const FIB: Fibs = Fibs::new(1, 1002);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 0);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_10
+	#[test]
+	fn even_fibs_below_1000_10() {
+		const FIB: Fibs = Fibs::new(1, u32::MAX);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 0);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_11
+	#[test]
+	fn even_fibs_below_1000_11() {
+		const FIB: Fibs = Fibs::new(42, 0);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 2310);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_12
+	#[test]
+	fn even_fibs_below_1000_12() {
+		const FIB: Fibs = Fibs::new(42, 21);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 504);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_13
+	#[test]
+	fn even_fibs_below_1000_13() {
+		const FIB: Fibs = Fibs::new(42, 631);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 42);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_14
+	#[test]
+	fn even_fibs_below_1000_14() {
+		const FIB: Fibs = Fibs::new(42, 958);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 1000);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_15
+	#[test]
+	fn even_fibs_below_1000_15() {
+		const FIB: Fibs = Fibs::new(42, u32::MAX - 1);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 42);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_16
+	#[test]
+	fn even_fibs_below_1000_16() {
+		const FIB: Fibs = Fibs::new(1000, 1000);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 0);
+	}
+	// endregion
+
+	// region: even_fibs_below_1000_17
+	#[test]
+	fn even_fibs_below_1000_17() {
+		const FIB: Fibs = Fibs::new(u32::MAX, u32::MAX);
+
+		assert_eq!(FIB.even_fibs_below_1000(), 0);
 	}
 	// endregion
 }

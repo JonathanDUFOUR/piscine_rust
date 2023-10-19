@@ -366,22 +366,20 @@ for fib in Fibs::new(0, 1) {
 assert_eq!(count, 798);
 ```
 
-Write the `even_fibs_bellow_1000` function.
+Write the `even_fibs_below_1000` function.
 
 ```rust
-fn even_fibs_bellow_1000() -> u32;
+fn even_fibs_below_1000() -> u32;
 ```
 
-* This function must return the sum of even fibonacci numbers bellow `1000` using the `Fibs`
+* This function must return the sum of even fibonacci numbers below `1000` using the `Fibs`
 iterator you previously wrote.
-* You still can't use `return` nor can you use `;`s characters!
-
-
+* You still can't use `return` nor can you use `;`s characters!s
 
 Example:
 
 ```rust
-assert_eq!(even_fibs_bellow_1000(), 798);
+assert_eq!(even_fibs_below_1000(), 798);
 ```
 
 ## Exercuse 04: Monotically Increasing 
