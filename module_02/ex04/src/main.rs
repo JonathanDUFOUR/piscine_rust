@@ -6,16 +6,15 @@ enum Command {
 }
 
 impl Command {
-	/// Display a prompt, read standard input until a valid command is entered,
-	/// and return it's corresponding Command enum value.
+	/// Displays a prompt, reads standard input until a valid command is entered,
+	/// and returns it's corresponding Command enum value.
 	///
-	/// # Returns
-	///
-	/// - `Command::Todo` if the user entered a valid TODO command.
-	/// - `Command::Done` if the user entered a valid DONE command.
-	/// - `Command::Purge` if the user entered a valid PURGE command.
-	/// - `Command::Quit` if the user entered a valid QUIT command
-	/// or if the standard input has been closed.
+	/// # Return
+	/// * `Command::Todo` - The user entered a valid TODO command.
+	/// * `Command::Done` - The user entered a valid DONE command.
+	/// * `Command::Purge` - The user entered a valid PURGE command.
+	/// * `Command::Quit` - Either the user entered a valid QUIT command
+	/// or the standard input has been closed.
 	fn prompt() -> Self {
 		loop {
 			let line: String = ftkit::read_line().trim().to_string();
@@ -41,19 +40,16 @@ struct TodoList {
 }
 
 impl TodoList {
-	/// Create a new TodoList instance, initialize it to be empty, and return it.
+	/// Creates a new TodoList instance and initializes its attribute.
+	/// The newly created TodoList instance is empty.
 	///
-	/// # Returns
-	///
+	/// # Return
 	/// The newly created and initialized TodoList instance.
 	fn new() -> Self {
-		Self {
-			todos: Vec::new(),
-			dones: Vec::new(),
-		}
+		Self { todos: Vec::new(), dones: Vec::new() }
 	}
 
-	/// Display the TodoList instance's content on stdout.
+	/// Displays the content of the calling TodoList instance on stdout.
 	fn display(self: &Self) {
 		println!("+-------------------+");
 		println!("|    TASKS TO DO    |");
@@ -70,51 +66,25 @@ impl TodoList {
 		}
 	}
 
-	/// Add a new TODO task to the TodoList instance.
+	/// Adds a new TODO task to the calling TodoList instance.
 	///
 	/// # Parameters
-	///
-	/// - `todo`: The TODO task to add.
-	///
-	/// # Examples
-	/// ```
-	/// let mut todo_list: TodoList = TodoList::new();
-	///
-	/// todo_list.add("Buy milk".to_string());
-	/// todo_list.add("Buy eggs".to_string());
-	/// todo_list.add("Buy coffee".to_string());
-	/// todo_list.add("Find a girlfriend".to_string());
-	/// ```
+	/// * `todo` - The TODO task to add.
 	fn add(self: &mut Self, todo: String) {
 		self.todos.push(todo);
 	}
 
-	/// Set an existing TODO task as done.
+	/// Set an existing TODO task as done in the calling TodoList instance.
 	///
 	/// # Parameters
-	///
-	/// - `index`: The task index to be set as done.
-	///
-	/// # Examples
-	/// ```
-	/// let mut todo_list: TodoList = TodoList::new();
-	///
-	/// todo_list.add("Finish".to_string());
-	/// todo_list.add("this".to_string());
-	/// todo_list.add("examples".to_string());
-	/// todo_list.add("section".to_string());
-	///
-	/// todo_list.done(1);
-	/// todo_list.done(0);
-	/// todo_list.done(1);
-	/// todo_list.done(0);
+	/// * `index` - The task index to be set as done.
 	fn done(self: &mut Self, index: usize) {
 		if index < self.todos.len() {
 			self.dones.push(self.todos.remove(index));
 		}
 	}
 
-	/// Remove all the done tasks from the TodoList instance.
+	/// Remove all the done tasks from the calling TodoList instance.
 	fn purge(self: &mut Self) {
 		self.dones.clear();
 	}

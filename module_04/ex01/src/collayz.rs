@@ -1,5 +1,5 @@
-/// Process the Collatz conjecture for a given number,
-/// calling a given function each time the number gets an odd value.
+/// Computes the Collatz sequence (https://en.wikipedia.org/wiki/Collatz_conjecture)
+/// for a given number, calling a given function each time the number gets an odd value.
 ///
 /// # Type parameters
 /// * `F` - The type of the function to call.

@@ -6,52 +6,32 @@ enum ParseError {
 	InvalidPercentage { arg: &'static str },
 }
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 enum Cell {
 	Dead,
 	Alive,
 }
 
 impl Cell {
-	/// Check if the cell is alive.
+	/// Checks if the cell is alive.
 	///
-	/// # Returns
-	///
-	/// * `true` if the cell is alive.
-	/// * `false` otherwise.
-	///
-	/// # Examples
-	/// ```
-	/// let cell_a: Cell = Cell::Alive;
-	/// let cell_b: Cell = Cell::Dead;
-	///
-	/// assert_eq!(cell_a.is_alive(), true);
-	/// assert_eq!(cell_b.is_alive(), false);
-	/// ```
+	/// # Return
+	/// * `true` - The cell is alive.
+	/// * `false` - The cell is not alive.
 	#[inline(always)]
 	fn is_alive(self: &Self) -> bool {
-		return self == &Cell::Alive;
+		*self == Cell::Alive
 	}
 
-	/// Check if the cell is dead.
+	/// Checks if the cell is dead.
 	///
-	/// # Returns
-	///
-	/// * `true` if the cell is dead.
-	/// * `false` otherwise.
-	///
-	/// # Examples
-	/// ```
-	/// let cell_a: Cell = Cell::Alive;
-	/// let cell_b: Cell = Cell::Dead;
-	///
-	/// assert_eq!(cell_a.is_dead(), false);
-	/// assert_eq!(cell_b.is_dead(), true);
-	/// ```
+	/// # Return
+	/// * `true` - The cell is dead.
+	/// * `false` - The cell is not dead.
 	#[allow(dead_code)]
 	#[inline(always)]
 	fn is_dead(self: &Self) -> bool {
-		return self == &Cell::Dead;
+		*self == Cell::Dead
 	}
 }
 
@@ -62,35 +42,26 @@ struct Board {
 }
 
 impl Board {
-	/// Create a new Board instance and initialize its attributes.
+	/// Creates a new Board instance and initializes its attributes.
 	/// The generated board will contains a certain percentage of alive cells,
 	/// and their posistions will be random.
 	///
 	/// # Parameters
-	///
 	/// * `width` - The width of the board.
 	/// * `height` - The height of the board.
 	/// * `percentage` - The percentage of alive cells.
 	///
-	/// # Returns
-	///
+	/// # Return
 	/// The newly created Board instance.
-	///
-	/// # Examples
-	/// ```
-	/// let board: Board = Board::new(10, 10);
-	///
-	/// assert_eq!(board, Board { width});
-	/// ```
 	#[inline(always)]
 	fn new(width: usize, height: usize, percentage: u8) -> Self {
 		#[inline(always)]
 		fn random_index(len: usize) -> usize {
 			use ftkit::random_number;
 
-			return (random_number(i32::MIN..i32::MAX) as u32 as usize
+			(random_number(i32::MIN..i32::MAX) as u32 as usize
 				* random_number(i32::MIN..i32::MAX) as u32 as usize)
-				% len;
+				% len
 		}
 
 		return Self {
@@ -116,18 +87,12 @@ impl Board {
 		};
 	}
 
-	/// Parse the command-line arguments passed to the application
+	/// Parses the command-line arguments passed to the application
 	/// and use them to create a Board instance.
 	///
-	/// # Returns
-	///
-	/// * `Ok(board)` if the arguments are valid.
-	/// * `Err(error)` otherwise.
-	///
-	/// # Examples
-	/// ```
-	/// let board: Board = Board::from_args();
-	/// ```
+	/// # Return
+	/// * `Ok(Self)` - The generated board.
+	/// * `Err(ParseError)` - The command-line arguments are invalid.
 	fn from_args() -> Result<Self, ParseError> {
 		use ftkit::ARGS;
 
@@ -156,16 +121,10 @@ impl Board {
 		return Ok(Self::new(width, height, percentage));
 	}
 
-	/// Simulate the next step of the game.
+	/// Simulates the next step of the game.
 	/// It is assumed that the board is a torus:
 	/// - the left and right edges are connected
 	/// - the top and bottom edges are connected
-	///
-	/// # Examples
-	/// ```
-	/// let board: Board = Board::new(42, 42, 42);
-	/// board.step();
-	/// ```
 	fn step(&mut self) {
 		#[inline(always)]
 		fn alive_neighbor_count(neighbors: &[Cell]) -> u8 {
@@ -180,360 +139,342 @@ impl Board {
 			return count;
 		}
 
-		/* Handling easy edge cases */
-		{
-			if self.width == 0 || self.height == 0 {
-				return;
-			}
-			if self.width == 1 && self.height == 1 {
-				self.cells[0] = Cell::Dead;
-				return;
-			}
+		// region: Easy edge cases
+		if self.width == 0 || self.height == 0 {
+			return;
 		}
+		if self.width == 1 && self.height == 1 {
+			self.cells[0] = Cell::Dead;
+			return;
+		}
+		// endregion
 
 		let mut new_cells: Vec<Cell> = vec![Cell::Dead; self.cells.len()];
 		let mut neighbors: [Cell; 8];
 
-		/* Handling more complex edge cases */
-		{
-			if self.width == 1 || self.height == 1 {
-				/* Extremity cells */
-				{
-					let last: usize = self.cells.len() - 1;
-					let penultimate: usize = last - 1;
+		// region: More complex edge cases
+		if self.width == 1 || self.height == 1 {
+			// region: Extremity cells
+			let last: usize = self.cells.len() - 1;
+			let penultimate: usize = last - 1;
 
-					/* First cell */
-					{
-						neighbors = [
-							self.cells[last],
-							self.cells[last],
-							self.cells[last],
-							self.cells[0],
-							self.cells[0],
-							self.cells[1],
-							self.cells[1],
-							self.cells[1],
-						];
-						if self.cells[0].is_alive() {
-							match alive_neighbor_count(&neighbors) {
-								2 | 3 => new_cells[0] = Cell::Alive,
-								_ => (),
-							}
-						} else if alive_neighbor_count(&neighbors) == 3 {
-							new_cells[0] = Cell::Alive;
-						}
-					}
-
-					/* Last cell */
-					{
-						neighbors = [
-							self.cells[penultimate],
-							self.cells[penultimate],
-							self.cells[penultimate],
-							self.cells[last],
-							self.cells[last],
-							self.cells[0],
-							self.cells[0],
-							self.cells[0],
-						];
-						if self.cells[last].is_alive() {
-							match alive_neighbor_count(&neighbors) {
-								2 | 3 => new_cells[last] = Cell::Alive,
-								_ => (),
-							}
-						} else if alive_neighbor_count(&neighbors) == 3 {
-							new_cells[last] = Cell::Alive;
-						}
-					}
-				}
-
-				/* Intermediate cells */
-				{
-					for i in 1..self.cells.len() - 1 {
-						neighbors = [
-							self.cells[i - 1],
-							self.cells[i - 1],
-							self.cells[i - 1],
-							self.cells[i],
-							self.cells[i],
-							self.cells[i + 1],
-							self.cells[i + 1],
-							self.cells[i + 1],
-						];
-
-						if self.cells[i].is_alive() {
-							match alive_neighbor_count(&neighbors) {
-								2 | 3 => new_cells[i] = Cell::Alive,
-								_ => (),
-							}
-						} else if alive_neighbor_count(&neighbors) == 3 {
-							new_cells[i] = Cell::Alive;
-						}
-					}
-				}
-
-				self.cells = new_cells;
-				return;
-			}
-		}
-
-		/* First, we compute the corners */
-		{
-			const TOP_LEFT: usize = 0;
-			const TOP_RIGHT: usize = 1;
-			const BOTTOM_LEFT: usize = 2;
-			const BOTTOM_RIGHT: usize = 3;
-
-			let areas: [[Cell; 4]; 4] = [
-				[
-					self.cells[0],
-					self.cells[1],
-					self.cells[self.width],
-					self.cells[self.width + 1],
-				],
-				[
-					self.cells[self.width - 2],
-					self.cells[self.width - 1],
-					self.cells[self.width * 2 - 2],
-					self.cells[self.width * 2 - 1],
-				],
-				[
-					self.cells[self.cells.len() - (self.width * 2)],
-					self.cells[self.cells.len() - (self.width * 2) + 1],
-					self.cells[self.cells.len() - self.width],
-					self.cells[self.cells.len() - self.width + 1],
-				],
-				[
-					self.cells[self.cells.len() - self.width - 2],
-					self.cells[self.cells.len() - self.width - 1],
-					self.cells[self.cells.len() - 2],
-					self.cells[self.cells.len() - 1],
-				],
+			// region: First cell
+			neighbors = [
+				self.cells[last],
+				self.cells[last],
+				self.cells[last],
+				self.cells[0],
+				self.cells[0],
+				self.cells[1],
+				self.cells[1],
+				self.cells[1],
 			];
+			if self.cells[0].is_alive() {
+				match alive_neighbor_count(&neighbors) {
+					2 | 3 => new_cells[0] = Cell::Alive,
+					_ => (),
+				}
+			} else if alive_neighbor_count(&neighbors) == 3 {
+				new_cells[0] = Cell::Alive;
+			}
+			// endregion
 
-			/* Top-left corner */
-			{
+			// region: Last cell
+			neighbors = [
+				self.cells[penultimate],
+				self.cells[penultimate],
+				self.cells[penultimate],
+				self.cells[last],
+				self.cells[last],
+				self.cells[0],
+				self.cells[0],
+				self.cells[0],
+			];
+			if self.cells[last].is_alive() {
+				match alive_neighbor_count(&neighbors) {
+					2 | 3 => new_cells[last] = Cell::Alive,
+					_ => (),
+				}
+			} else if alive_neighbor_count(&neighbors) == 3 {
+				new_cells[last] = Cell::Alive;
+			}
+			// endregion
+			// endregion
+
+			// region: Intermediate cells
+			for i in 1..self.cells.len() - 1 {
 				neighbors = [
-					areas[BOTTOM_RIGHT][BOTTOM_RIGHT],
-					areas[BOTTOM_LEFT][BOTTOM_LEFT],
-					areas[BOTTOM_LEFT][BOTTOM_RIGHT],
-					areas[TOP_RIGHT][TOP_RIGHT],
-					areas[TOP_LEFT][TOP_RIGHT],
-					areas[TOP_RIGHT][BOTTOM_RIGHT],
-					areas[TOP_LEFT][BOTTOM_LEFT],
-					areas[TOP_LEFT][BOTTOM_RIGHT],
+					self.cells[i - 1],
+					self.cells[i - 1],
+					self.cells[i - 1],
+					self.cells[i],
+					self.cells[i],
+					self.cells[i + 1],
+					self.cells[i + 1],
+					self.cells[i + 1],
 				];
-				if areas[TOP_LEFT][TOP_LEFT].is_alive() {
+
+				if self.cells[i].is_alive() {
 					match alive_neighbor_count(&neighbors) {
-						2 | 3 => new_cells[0] = Cell::Alive,
+						2 | 3 => new_cells[i] = Cell::Alive,
 						_ => (),
 					}
 				} else if alive_neighbor_count(&neighbors) == 3 {
-					new_cells[0] = Cell::Alive;
+					new_cells[i] = Cell::Alive;
 				}
 			}
+			// endregion
 
-			/* Top-right corner */
-			{
-				neighbors = [
-					areas[BOTTOM_RIGHT][BOTTOM_LEFT],
-					areas[BOTTOM_RIGHT][BOTTOM_RIGHT],
-					areas[BOTTOM_LEFT][BOTTOM_LEFT],
-					areas[TOP_RIGHT][TOP_LEFT],
-					areas[TOP_LEFT][TOP_LEFT],
-					areas[TOP_RIGHT][BOTTOM_LEFT],
-					areas[TOP_RIGHT][BOTTOM_RIGHT],
-					areas[TOP_LEFT][BOTTOM_LEFT],
-				];
-				if areas[TOP_RIGHT][TOP_RIGHT].is_alive() {
-					match alive_neighbor_count(&neighbors) {
-						2 | 3 => new_cells[self.width - 1] = Cell::Alive,
-						_ => (),
-					}
-				} else if alive_neighbor_count(&neighbors) == 3 {
-					new_cells[self.width - 1] = Cell::Alive;
-				}
+			self.cells = new_cells;
+			return;
+		}
+		// endregion
+
+		// region: Common cases
+		// region: Corners
+		const TOP_LEFT: usize = 0;
+		const TOP_RIGHT: usize = 1;
+		const BOTTOM_LEFT: usize = 2;
+		const BOTTOM_RIGHT: usize = 3;
+
+		let areas: [[Cell; 4]; 4] = [
+			[
+				self.cells[0],
+				self.cells[1],
+				self.cells[self.width],
+				self.cells[self.width + 1],
+			],
+			[
+				self.cells[self.width - 2],
+				self.cells[self.width - 1],
+				self.cells[self.width * 2 - 2],
+				self.cells[self.width * 2 - 1],
+			],
+			[
+				self.cells[self.cells.len() - (self.width * 2)],
+				self.cells[self.cells.len() - (self.width * 2) + 1],
+				self.cells[self.cells.len() - self.width],
+				self.cells[self.cells.len() - self.width + 1],
+			],
+			[
+				self.cells[self.cells.len() - self.width - 2],
+				self.cells[self.cells.len() - self.width - 1],
+				self.cells[self.cells.len() - 2],
+				self.cells[self.cells.len() - 1],
+			],
+		];
+
+		// region: Top-left corner
+		neighbors = [
+			areas[BOTTOM_RIGHT][BOTTOM_RIGHT],
+			areas[BOTTOM_LEFT][BOTTOM_LEFT],
+			areas[BOTTOM_LEFT][BOTTOM_RIGHT],
+			areas[TOP_RIGHT][TOP_RIGHT],
+			areas[TOP_LEFT][TOP_RIGHT],
+			areas[TOP_RIGHT][BOTTOM_RIGHT],
+			areas[TOP_LEFT][BOTTOM_LEFT],
+			areas[TOP_LEFT][BOTTOM_RIGHT],
+		];
+		if areas[TOP_LEFT][TOP_LEFT].is_alive() {
+			match alive_neighbor_count(&neighbors) {
+				2 | 3 => new_cells[0] = Cell::Alive,
+				_ => (),
 			}
+		} else if alive_neighbor_count(&neighbors) == 3 {
+			new_cells[0] = Cell::Alive;
+		}
+		// endregion
 
-			/* Bottom-left corner */
-			{
-				neighbors = [
-					areas[BOTTOM_RIGHT][TOP_RIGHT],
-					areas[BOTTOM_LEFT][TOP_LEFT],
-					areas[BOTTOM_LEFT][TOP_RIGHT],
-					areas[BOTTOM_RIGHT][BOTTOM_RIGHT],
-					areas[BOTTOM_LEFT][BOTTOM_RIGHT],
-					areas[TOP_RIGHT][TOP_RIGHT],
-					areas[TOP_LEFT][TOP_LEFT],
-					areas[TOP_LEFT][TOP_RIGHT],
-				];
-				if areas[BOTTOM_LEFT][BOTTOM_LEFT].is_alive() {
-					match alive_neighbor_count(&neighbors) {
-						2 | 3 => new_cells[self.width * (self.height - 1)] = Cell::Alive,
-						_ => (),
-					}
-				} else if alive_neighbor_count(&neighbors) == 3 {
-					new_cells[self.width * (self.height - 1)] = Cell::Alive;
-				}
+		// region: Top-right corner
+		neighbors = [
+			areas[BOTTOM_RIGHT][BOTTOM_LEFT],
+			areas[BOTTOM_RIGHT][BOTTOM_RIGHT],
+			areas[BOTTOM_LEFT][BOTTOM_LEFT],
+			areas[TOP_RIGHT][TOP_LEFT],
+			areas[TOP_LEFT][TOP_LEFT],
+			areas[TOP_RIGHT][BOTTOM_LEFT],
+			areas[TOP_RIGHT][BOTTOM_RIGHT],
+			areas[TOP_LEFT][BOTTOM_LEFT],
+		];
+		if areas[TOP_RIGHT][TOP_RIGHT].is_alive() {
+			match alive_neighbor_count(&neighbors) {
+				2 | 3 => new_cells[self.width - 1] = Cell::Alive,
+				_ => (),
 			}
+		} else if alive_neighbor_count(&neighbors) == 3 {
+			new_cells[self.width - 1] = Cell::Alive;
+		}
+		// endregion
 
-			/* Bottom-right corner */
-			{
+		// region: Bottom-left corner
+		neighbors = [
+			areas[BOTTOM_RIGHT][TOP_RIGHT],
+			areas[BOTTOM_LEFT][TOP_LEFT],
+			areas[BOTTOM_LEFT][TOP_RIGHT],
+			areas[BOTTOM_RIGHT][BOTTOM_RIGHT],
+			areas[BOTTOM_LEFT][BOTTOM_RIGHT],
+			areas[TOP_RIGHT][TOP_RIGHT],
+			areas[TOP_LEFT][TOP_LEFT],
+			areas[TOP_LEFT][TOP_RIGHT],
+		];
+		if areas[BOTTOM_LEFT][BOTTOM_LEFT].is_alive() {
+			match alive_neighbor_count(&neighbors) {
+				2 | 3 => new_cells[self.width * (self.height - 1)] = Cell::Alive,
+				_ => (),
+			}
+		} else if alive_neighbor_count(&neighbors) == 3 {
+			new_cells[self.width * (self.height - 1)] = Cell::Alive;
+		}
+		// endregion
+
+		// region: Bottom-right corner
+		neighbors = [
+			areas[BOTTOM_RIGHT][TOP_LEFT],
+			areas[BOTTOM_RIGHT][TOP_RIGHT],
+			areas[BOTTOM_LEFT][TOP_LEFT],
+			areas[BOTTOM_RIGHT][BOTTOM_LEFT],
+			areas[BOTTOM_LEFT][BOTTOM_LEFT],
+			areas[TOP_RIGHT][TOP_LEFT],
+			areas[TOP_RIGHT][TOP_RIGHT],
+			areas[TOP_LEFT][TOP_LEFT],
+		];
+		if areas[BOTTOM_RIGHT][BOTTOM_RIGHT].is_alive() {
+			match alive_neighbor_count(&neighbors) {
+				2 | 3 => new_cells[self.width * self.height - 1] = Cell::Alive,
+				_ => (),
+			}
+		} else if alive_neighbor_count(&neighbors) == 3 {
+			new_cells[self.width * self.height - 1] = Cell::Alive;
+		}
+		// endregion
+		// endregion
+
+		// region: Edges
+		// region: Left & Right edges
+		for y in 1..self.height - 1 {
+			// region: Left edge
+			neighbors = [
+				self.cells[self.width * y - 1],
+				self.cells[self.width * (y - 1)],
+				self.cells[self.width * (y - 1) + 1],
+				self.cells[self.width * (y + 1) - 1],
+				self.cells[self.width * y + 1],
+				self.cells[self.width * (y + 2) - 1],
+				self.cells[self.width * (y + 1)],
+				self.cells[self.width * (y + 1) + 1],
+			];
+			if self.cells[self.width * y].is_alive() {
+				match alive_neighbor_count(&neighbors) {
+					2 | 3 => new_cells[self.width * y] = Cell::Alive,
+					_ => (),
+				}
+			} else if alive_neighbor_count(&neighbors) == 3 {
+				new_cells[self.width * y] = Cell::Alive;
+			}
+			// endregion
+
+			// region: Right edge
+			neighbors = [
+				self.cells[self.width * y - 2],
+				self.cells[self.width * y - 1],
+				self.cells[self.width * (y - 1)],
+				self.cells[self.width * (y + 1) - 2],
+				self.cells[self.width * y],
+				self.cells[self.width * (y + 2) - 2],
+				self.cells[self.width * (y + 2) - 1],
+				self.cells[self.width * (y + 1)],
+			];
+			if self.cells[self.width * (y + 1) - 1].is_alive() {
+				match alive_neighbor_count(&neighbors) {
+					2 | 3 => new_cells[self.width * (y + 1) - 1] = Cell::Alive,
+					_ => (),
+				}
+			} else if alive_neighbor_count(&neighbors) == 3 {
+				new_cells[self.width * (y + 1) - 1] = Cell::Alive;
+			}
+			// endregion
+		}
+		// endregion
+
+		// region: Top & Bottom edges
+		for x in 1..self.width - 1 {
+			// region: Top edge
+			neighbors = [
+				self.cells[x + self.cells.len() - self.width - 1],
+				self.cells[x + self.cells.len() - self.width],
+				self.cells[x + self.cells.len() - self.width + 1],
+				self.cells[x - 1],
+				self.cells[x + 1],
+				self.cells[x + self.width - 1],
+				self.cells[x + self.width],
+				self.cells[x + self.width + 1],
+			];
+			if self.cells[x].is_alive() {
+				match alive_neighbor_count(&neighbors) {
+					2 | 3 => new_cells[x] = Cell::Alive,
+					_ => (),
+				}
+			} else if alive_neighbor_count(&neighbors) == 3 {
+				new_cells[x] = Cell::Alive;
+			}
+			// endregion
+
+			// region: Bottom edge
+			neighbors = [
+				self.cells[x + self.cells.len() - self.width * 2 - 1],
+				self.cells[x + self.cells.len() - self.width * 2],
+				self.cells[x + self.cells.len() - self.width * 2 + 1],
+				self.cells[x + self.cells.len() - self.width - 1],
+				self.cells[x + self.cells.len() - self.width + 1],
+				self.cells[x - 1],
+				self.cells[x],
+				self.cells[x + 1],
+			];
+			if self.cells[x + self.cells.len() - self.width].is_alive() {
+				match alive_neighbor_count(&neighbors) {
+					2 | 3 => new_cells[x + self.cells.len() - self.width] = Cell::Alive,
+					_ => (),
+				}
+			} else if alive_neighbor_count(&neighbors) == 3 {
+				new_cells[x + self.cells.len() - self.width] = Cell::Alive;
+			}
+			// endregion
+		}
+		// endregion
+		// endregion
+
+		// region: Center area
+		for y in 1..self.height - 1 {
+			for x in 1..self.width - 1 {
 				neighbors = [
-					areas[BOTTOM_RIGHT][TOP_LEFT],
-					areas[BOTTOM_RIGHT][TOP_RIGHT],
-					areas[BOTTOM_LEFT][TOP_LEFT],
-					areas[BOTTOM_RIGHT][BOTTOM_LEFT],
-					areas[BOTTOM_LEFT][BOTTOM_LEFT],
-					areas[TOP_RIGHT][TOP_LEFT],
-					areas[TOP_RIGHT][TOP_RIGHT],
-					areas[TOP_LEFT][TOP_LEFT],
+					self.cells[self.width * (y - 1) + x - 1],
+					self.cells[self.width * (y - 1) + x],
+					self.cells[self.width * (y - 1) + x + 1],
+					self.cells[self.width * y + x - 1],
+					self.cells[self.width * y + x + 1],
+					self.cells[self.width * (y + 1) + x - 1],
+					self.cells[self.width * (y + 1) + x],
+					self.cells[self.width * (y + 1) + x + 1],
 				];
-				if areas[BOTTOM_RIGHT][BOTTOM_RIGHT].is_alive() {
+				if self.cells[self.width * y + x].is_alive() {
 					match alive_neighbor_count(&neighbors) {
-						2 | 3 => new_cells[self.width * self.height - 1] = Cell::Alive,
+						2 | 3 => new_cells[self.width * y + x] = Cell::Alive,
 						_ => (),
 					}
 				} else if alive_neighbor_count(&neighbors) == 3 {
-					new_cells[self.width * self.height - 1] = Cell::Alive;
+					new_cells[self.width * y + x] = Cell::Alive;
 				}
 			}
 		}
-
-		/* Then, we compute the edges */
-		{
-			/* Left & Right edges */
-			{
-				for y in 1..self.height - 1 {
-					/* Left edge */
-					{
-						neighbors = [
-							self.cells[self.width * y - 1],
-							self.cells[self.width * (y - 1)],
-							self.cells[self.width * (y - 1) + 1],
-							self.cells[self.width * (y + 1) - 1],
-							self.cells[self.width * y + 1],
-							self.cells[self.width * (y + 2) - 1],
-							self.cells[self.width * (y + 1)],
-							self.cells[self.width * (y + 1) + 1],
-						];
-						if self.cells[self.width * y].is_alive() {
-							match alive_neighbor_count(&neighbors) {
-								2 | 3 => new_cells[self.width * y] = Cell::Alive,
-								_ => (),
-							}
-						} else if alive_neighbor_count(&neighbors) == 3 {
-							new_cells[self.width * y] = Cell::Alive;
-						}
-					}
-
-					/* Right edge */
-					{
-						neighbors = [
-							self.cells[self.width * y - 2],
-							self.cells[self.width * y - 1],
-							self.cells[self.width * (y - 1)],
-							self.cells[self.width * (y + 1) - 2],
-							self.cells[self.width * y],
-							self.cells[self.width * (y + 2) - 2],
-							self.cells[self.width * (y + 2) - 1],
-							self.cells[self.width * (y + 1)],
-						];
-						if self.cells[self.width * (y + 1) - 1].is_alive() {
-							match alive_neighbor_count(&neighbors) {
-								2 | 3 => new_cells[self.width * (y + 1) - 1] = Cell::Alive,
-								_ => (),
-							}
-						} else if alive_neighbor_count(&neighbors) == 3 {
-							new_cells[self.width * (y + 1) - 1] = Cell::Alive;
-						}
-					}
-				}
-			}
-
-			/* Top & Bottom edges */
-			{
-				for x in 1..self.width - 1 {
-					/* Top edge */
-					{
-						neighbors = [
-							self.cells[x + self.cells.len() - self.width - 1],
-							self.cells[x + self.cells.len() - self.width],
-							self.cells[x + self.cells.len() - self.width + 1],
-							self.cells[x - 1],
-							self.cells[x + 1],
-							self.cells[x + self.width - 1],
-							self.cells[x + self.width],
-							self.cells[x + self.width + 1],
-						];
-						if self.cells[x].is_alive() {
-							match alive_neighbor_count(&neighbors) {
-								2 | 3 => new_cells[x] = Cell::Alive,
-								_ => (),
-							}
-						} else if alive_neighbor_count(&neighbors) == 3 {
-							new_cells[x] = Cell::Alive;
-						}
-					}
-
-					/* Bottom edge */
-					{
-						neighbors = [
-							self.cells[x + self.cells.len() - self.width * 2 - 1],
-							self.cells[x + self.cells.len() - self.width * 2],
-							self.cells[x + self.cells.len() - self.width * 2 + 1],
-							self.cells[x + self.cells.len() - self.width - 1],
-							self.cells[x + self.cells.len() - self.width + 1],
-							self.cells[x - 1],
-							self.cells[x],
-							self.cells[x + 1],
-						];
-						if self.cells[x + self.cells.len() - self.width].is_alive() {
-							match alive_neighbor_count(&neighbors) {
-								2 | 3 => new_cells[x + self.cells.len() - self.width] = Cell::Alive,
-								_ => (),
-							}
-						} else if alive_neighbor_count(&neighbors) == 3 {
-							new_cells[x + self.cells.len() - self.width] = Cell::Alive;
-						}
-					}
-				}
-			}
-		}
-
-		/* Finally, we compute the center area */
-		{
-			for y in 1..self.height - 1 {
-				for x in 1..self.width - 1 {
-					neighbors = [
-						self.cells[self.width * (y - 1) + x - 1],
-						self.cells[self.width * (y - 1) + x],
-						self.cells[self.width * (y - 1) + x + 1],
-						self.cells[self.width * y + x - 1],
-						self.cells[self.width * y + x + 1],
-						self.cells[self.width * (y + 1) + x - 1],
-						self.cells[self.width * (y + 1) + x],
-						self.cells[self.width * (y + 1) + x + 1],
-					];
-					if self.cells[self.width * y + x].is_alive() {
-						match alive_neighbor_count(&neighbors) {
-							2 | 3 => new_cells[self.width * y + x] = Cell::Alive,
-							_ => (),
-						}
-					} else if alive_neighbor_count(&neighbors) == 3 {
-						new_cells[self.width * y + x] = Cell::Alive;
-					}
-				}
-			}
-		}
+		// endregion
+		// endregion
 
 		self.cells = new_cells;
 	}
 
-	/// Display the board on stdout.
+	/// Displays the board on stdout.
 	///
 	/// # Parameters
-	///
 	/// * `clear` - If `true`, clear a previously displayed board before displaying the new one.
 	///
 	/// # Examples

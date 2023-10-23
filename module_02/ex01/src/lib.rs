@@ -4,15 +4,13 @@ pub struct Point {
 }
 
 impl Point {
-	/// Create a new Point instance with given coordinates.
+	/// Creates a new Point instance with given coordinates.
 	///
 	/// # Parameters
-	///
 	/// * `x` - The x coordinate of the point to create.
 	/// * `y` - The y coordinate of the point to create.
 	///
-	/// # Returns
-	///
+	/// # Return
 	/// The newly created Point instance.
 	///
 	/// # Examples
@@ -28,10 +26,9 @@ impl Point {
 		return Self { x, y };
 	}
 
-	/// Create a new Point instance with coordinates (0, 0).
+	/// Creates a new Point instance with coordinates (0, 0).
 	///
-	/// # Returns
-	///
+	/// # Return
 	/// The newly created Point instance.
 	///
 	/// # Examples
@@ -47,14 +44,12 @@ impl Point {
 		return Self { x: 0.0, y: 0.0 };
 	}
 
-	/// Calculate the distance with another given point.
+	/// Calculates the distance with another given point.
 	///
 	/// # Parameters
-	///
 	/// * `other` - The other point to calculate the distance with.
 	///
-	/// # Returns
-	///
+	/// # Return
 	/// The distance between the two points.
 	///
 	/// # Examples
@@ -92,10 +87,9 @@ impl Point {
 		return (dx.powi(2) + dy.powi(2)).sqrt() as f32;
 	}
 
-	/// Translate the point by given coordinates.
+	/// Translates the point by given coordinates.
 	///
 	/// # Parameters
-	///
 	/// * `dx` - The x coordinate to translate the point by.
 	/// * `dy` - The y coordinate to translate the point by.
 	///

@@ -6,9 +6,9 @@
 /// Whenever a word is not a valid positive integer, it is ignored.
 ///
 /// # Parameters
-/// * `s`: the string to parse the positive integers from.
+/// * `s` - The string to parse the positive integers from.
 ///
-/// # Returns
+/// # Return
 /// The sum of all odd positive integers in the string.
 ///
 /// # Examples
@@ -38,10 +38,10 @@ use std::str::FromStr;
 /// Whenever a line is not a valid pair, it is ignored.
 ///
 /// # Parameters
-/// * `s`: the string to parse the pairs from.
+/// * `s` - The string to parse the pairs from.
 ///
-/// # Returns
-/// A vector of pairs.
+/// # Return
+/// A `Vec` of pairs.
 ///
 /// # Examples
 /// ```
@@ -72,6 +72,7 @@ pub fn create_pairs<T: FromStr>(s: &str) -> Vec<(&str, T)> {
 mod tests {
 	use super::*;
 
+	// region: Struct A
 	#[derive(Debug, Eq, PartialEq)]
 	struct A {}
 
@@ -87,7 +88,9 @@ mod tests {
 			}
 		}
 	}
+	// endregion
 
+	// region: Struct B
 	#[derive(Debug, Eq, PartialEq)]
 	struct B {
 		a: String,
@@ -100,7 +103,9 @@ mod tests {
 			Ok(B { a: s.to_string() })
 		}
 	}
+	// endregion
 
+	// region: Struct C
 	#[derive(Debug, Eq, PartialEq)]
 	struct C {
 		a: u8,
@@ -122,6 +127,7 @@ mod tests {
 			}
 		}
 	}
+	// endregion
 
 	// region: sum_of_odds_00
 	#[test]
@@ -233,18 +239,8 @@ foo:\n\
 muf:diz";
 		let expected: Vec<(&str, B)> = vec![
 			("foo", B { a: "".to_string() }),
-			(
-				"",
-				B {
-					a: "bar".to_string(),
-				},
-			),
-			(
-				"muf",
-				B {
-					a: "diz".to_string(),
-				},
-			),
+			("", B { a: "bar".to_string() }),
+			("muf", B { a: "diz".to_string() }),
 		];
 
 		assert_eq!(create_pairs::<B>(S), expected);

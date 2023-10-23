@@ -1,4 +1,4 @@
-/// Print each byte of any thing,
+/// Prints each byte of any thing,
 /// calling repeatedly a given function that is supposed to return the next byte to print.
 ///
 /// # Type parameters
@@ -30,7 +30,7 @@ where
 }
 
 fn main() {
-	let mut chars: std::str::Chars<'static> = "koala".chars();
+	let mut chars: std::str::Chars<'static> = "Hello, World!".chars();
 
 	print_bytes(|| chars.next().map(|c| c as u8));
 }

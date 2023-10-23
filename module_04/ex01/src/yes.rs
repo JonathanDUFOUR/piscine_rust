@@ -1,4 +1,4 @@
-/// Call a given function only once to get a string,
+/// Calls a given function only once to get a string,
 /// and then print that string infinitely.
 ///
 /// # Type parameters

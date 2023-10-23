@@ -1,9 +1,11 @@
-/// Get the smallest value among two numbers.
+/// Compares two numbers and returns the lowest one.
 ///
 /// # Parameters
+/// * `a` - The first number to compare.
+/// * `b` - The second number to compare.
 ///
-/// * `a` - The first number.
-/// * `b` - The second number.
+/// # Return
+/// The lowest number between `a` and `b`.
 ///
 /// # Examples
 /// ```
@@ -15,8 +17,7 @@
 /// assert_eq!(min(&A, &B), &A);
 /// assert_eq!(min(&B, &A), &A);
 /// ```
-#[allow(dead_code)]
-pub fn min<'lifetime>(a: &'lifetime i32, b: &'lifetime i32) -> &'lifetime i32 {
+pub fn min<'a>(a: &'a i32, b: &'a i32) -> &'a i32 {
 	if a < b {
 		a
 	} else {

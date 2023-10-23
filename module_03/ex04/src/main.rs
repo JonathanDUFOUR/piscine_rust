@@ -116,10 +116,11 @@ fn main() {
 
 	println!("Tests:");
 
-	/* Test error cases */
+	// region: Test error cases
 	{
 		let padding: usize = 8;
 		let tests: [(&str, TimeParseError); 26] = [
+			// region: tests
 			("", TimeParseError::MissingColon),
 			("12", TimeParseError::MissingColon),
 			("1234", TimeParseError::MissingColon),
@@ -146,6 +147,7 @@ fn main() {
 			("24:34", TimeParseError::InvalidNumber),
 			("42:34", TimeParseError::InvalidNumber),
 			("99:34", TimeParseError::InvalidNumber),
+			// endregion
 		];
 
 		println!("\tError cases:");
@@ -162,90 +164,27 @@ fn main() {
 			);
 		}
 	}
+	// endregion
 
 	println!();
 
-	/* Test valid cases */
+	// region: Test valid cases
 	{
 		let padding: usize = 8;
 		let tests: [(&str, Time); 11] = [
-			(
-				"00:00",
-				Time {
-					hours: 0,
-					minutes: 0,
-				},
-			),
-			(
-				"00:01",
-				Time {
-					hours: 0,
-					minutes: 1,
-				},
-			),
-			(
-				"00:59",
-				Time {
-					hours: 0,
-					minutes: 59,
-				},
-			),
-			(
-				"01:00",
-				Time {
-					hours: 1,
-					minutes: 0,
-				},
-			),
-			(
-				"01:01",
-				Time {
-					hours: 1,
-					minutes: 1,
-				},
-			),
-			(
-				"01:59",
-				Time {
-					hours: 1,
-					minutes: 59,
-				},
-			),
-			(
-				"23:00",
-				Time {
-					hours: 23,
-					minutes: 0,
-				},
-			),
-			(
-				"23:01",
-				Time {
-					hours: 23,
-					minutes: 1,
-				},
-			),
-			(
-				"23:59",
-				Time {
-					hours: 23,
-					minutes: 59,
-				},
-			),
-			(
-				"12:34",
-				Time {
-					hours: 12,
-					minutes: 34,
-				},
-			),
-			(
-				"21:42",
-				Time {
-					hours: 21,
-					minutes: 42,
-				},
-			),
+			// region: tests
+			("00:00", Time { hours: 0, minutes: 0 }),
+			("00:01", Time { hours: 0, minutes: 1 }),
+			("00:59", Time { hours: 0, minutes: 59 }),
+			("01:00", Time { hours: 1, minutes: 0 }),
+			("01:01", Time { hours: 1, minutes: 1 }),
+			("01:59", Time { hours: 1, minutes: 59 }),
+			("23:00", Time { hours: 23, minutes: 0 }),
+			("23:01", Time { hours: 23, minutes: 1 }),
+			("23:59", Time { hours: 23, minutes: 59 }),
+			("12:34", Time { hours: 12, minutes: 34 }),
+			("21:42", Time { hours: 21, minutes: 42 }),
+			// endregion
 		];
 
 		println!("\tValid cases:");
@@ -262,4 +201,5 @@ fn main() {
 			);
 		}
 	}
+	// endregion
 }

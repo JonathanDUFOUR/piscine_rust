@@ -6,9 +6,9 @@ pub trait Record: Sized {
 	/// # Parameters
 	/// * `line` - The line to decode.
 	///
-	/// # Returns
-	/// - `Ok(Self)` if the line was successfully decoded.
-	/// - `Err(DecodingError)` if the line could not be decoded.
+	/// # Return
+	/// * `Ok(Self)` - The decoded record.
+	/// * `Err(DecodingError)` - The line could not be decoded.
 	fn decode(line: &str) -> Result<Self, DecodingError>;
 
 	/// Encodes a record from its concrete type value to its `str` representation,
@@ -19,9 +19,9 @@ pub trait Record: Sized {
 	/// * `self` - The record to encode.
 	/// * `target` - The string to append the encoded record to.
 	///
-	/// # Returns
-	/// - `Ok(())` if the record was successfully encoded.
-	/// - `Err(EncodingError)` if the record could not be encoded.
+	/// # Return
+	/// * `Ok(())` - The record was successfully encoded.
+	/// * `Err(EncodingError)` - The record could not be encoded.
 	fn encode(self: &Self, target: &mut String) -> Result<(), EncodingError>;
 }
 

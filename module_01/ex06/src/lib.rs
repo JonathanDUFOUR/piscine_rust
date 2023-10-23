@@ -16,27 +16,33 @@ fn __most_significant_digit(n: &[u8]) -> usize {
 	return n.len() - 1;
 }
 
-/// Add two big numbers.
+/// Adds two big numbers.
 ///
 /// # Parameters
 /// * `a` - The first big number to add.
 /// * `b` - The second big number to add.
 ///
-/// # Panics
+/// # Return
+/// The sum of `a` and `b`.
+///
+/// # Panic
 /// The input contains anything else than digits.
 ///
 /// # Examples
 /// ```
 /// use ex06::big_add;
 ///
-/// assert_eq!(big_add(b"000111222333444555666777888999101010111111", b"031"), b"111222333444555666777888999101010111142");
+/// assert_eq!(
+/// 	big_add(
+/// 		b"000111222333444555666777888999101010111111",
+/// 		b"031"
+/// 	),
+/// 	b"111222333444555666777888999101010111142"
+/// );
 /// ```
 pub fn big_add(a: &[u8], b: &[u8]) -> Vec<u8> {
 	assert!(!a.is_empty() && !b.is_empty(), "Empty input");
-	assert!(
-		__are_digits_only(a) && __are_digits_only(b),
-		"Input contains non-digits"
-	);
+	assert!(__are_digits_only(a) && __are_digits_only(b), "Input contains non-digits");
 
 	let mut sum: u8;
 	let mut carry: u8 = 0;

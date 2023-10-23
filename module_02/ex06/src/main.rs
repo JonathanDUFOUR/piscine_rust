@@ -6,19 +6,17 @@ enum Token<'a> {
 	Pipe,
 }
 
-/// Search for the next token in a given string.
+/// Searches for the next token in a given string.
 ///
 /// # Parameters
-///
 /// * `s` - The string to search in.
 ///
-/// # Returns
-///
-/// * `None` if there are no more tokens.
-/// * `Some(Token::Word(word))` if the next token is a word.
-/// * `Some(Token::RedirectStdout)` if the next token is `>`.
-/// * `Some(Token::RedirectStdin)` if the next token is `<`.
-/// * `Some(Token::Pipe)` if the next token is `|`.
+/// # Return
+/// - `Some(Token::Word(word))` - The next token is a word.
+/// - `Some(Token::RedirectStdout)` - The next token is `>`.
+/// - `Some(Token::RedirectStdin)` - The next token is `<`.
+/// - `Some(Token::Pipe)` - The next token is `|`.
+/// - `None` - There are no more tokens.
 ///
 /// # Examples
 /// ```
@@ -64,15 +62,15 @@ fn next_token<'a>(s: &mut &'a str) -> Option<Token<'a>> {
 	Some(Token::Word(word))
 }
 
-/// Find out and print every token that composes a given string.
+/// Finds out and prints every token that composes a given string.
 ///
 /// # Parameters
-///
 /// * `s` - The string to search in.
 ///
 /// # Examples
 /// ```
 /// let mut s: &str = "ls -l|<input.txt cat -e>output.txt";
+///
 /// print_all_tokens(&mut s);
 /// ```
 fn print_all_tokens(mut s: &str) {

@@ -116,261 +116,261 @@ fn num_days_in_month(year: u32, month: u32) -> u32 {
 }
 
 #[test]
+fn num_days_in_month_00() {
+	assert!(num_days_in_month(1, 1) == 31);
+}
+
+#[test]
+fn num_days_in_month_01() {
+	assert!(num_days_in_month(1, 2) == 28);
+}
+
+#[test]
+fn num_days_in_month_02() {
+	assert!(num_days_in_month(1, 3) == 31);
+}
+
+#[test]
+fn num_days_in_month_03() {
+	assert!(num_days_in_month(1, 4) == 30);
+}
+
+#[test]
+fn num_days_in_month_04() {
+	assert!(num_days_in_month(1, 5) == 31);
+}
+
+#[test]
+fn num_days_in_month_05() {
+	assert!(num_days_in_month(1, 6) == 30);
+}
+
+#[test]
+fn num_days_in_month_06() {
+	assert!(num_days_in_month(1, 7) == 31);
+}
+
+#[test]
+fn num_days_in_month_07() {
+	assert!(num_days_in_month(1, 8) == 31);
+}
+
+#[test]
+fn num_days_in_month_08() {
+	assert!(num_days_in_month(1, 9) == 30);
+}
+
+#[test]
+fn num_days_in_month_09() {
+	assert!(num_days_in_month(1, 10) == 31);
+}
+
+#[test]
+fn num_days_in_month_10() {
+	assert!(num_days_in_month(1, 11) == 30);
+}
+
+#[test]
+fn num_days_in_month_11() {
+	assert!(num_days_in_month(1, 12) == 31);
+}
+
+#[test]
+fn num_days_in_month_12() {
+	assert!(num_days_in_month(4, 1) == 31);
+}
+
+#[test]
+fn num_days_in_month_13() {
+	assert!(num_days_in_month(4, 2) == 29);
+}
+
+#[test]
+fn num_days_in_month_14() {
+	assert!(num_days_in_month(4, 3) == 31);
+}
+
+#[test]
+fn num_days_in_month_15() {
+	assert!(num_days_in_month(4, 4) == 30);
+}
+
+#[test]
+fn num_days_in_month_16() {
+	assert!(num_days_in_month(4, 5) == 31);
+}
+
+#[test]
+fn num_days_in_month_17() {
+	assert!(num_days_in_month(4, 6) == 30);
+}
+
+#[test]
+fn num_days_in_month_18() {
+	assert!(num_days_in_month(4, 7) == 31);
+}
+
+#[test]
+fn num_days_in_month_19() {
+	assert!(num_days_in_month(4, 8) == 31);
+}
+
+#[test]
+fn num_days_in_month_20() {
+	assert!(num_days_in_month(4, 9) == 30);
+}
+
+#[test]
+fn num_days_in_month_21() {
+	assert!(num_days_in_month(4, 10) == 31);
+}
+
+#[test]
+fn num_days_in_month_22() {
+	assert!(num_days_in_month(4, 11) == 30);
+}
+
+#[test]
+fn num_days_in_month_23() {
+	assert!(num_days_in_month(4, 12) == 31);
+}
+
+#[test]
+fn num_days_in_month_24() {
+	assert!(num_days_in_month(100, 1) == 31);
+}
+
+#[test]
+fn num_days_in_month_25() {
+	assert!(num_days_in_month(100, 2) == 28);
+}
+
+#[test]
+fn num_days_in_month_26() {
+	assert!(num_days_in_month(100, 3) == 31);
+}
+
+#[test]
+fn num_days_in_month_27() {
+	assert!(num_days_in_month(100, 4) == 30);
+}
+
+#[test]
+fn num_days_in_month_28() {
+	assert!(num_days_in_month(100, 5) == 31);
+}
+
+#[test]
+fn num_days_in_month_29() {
+	assert!(num_days_in_month(100, 6) == 30);
+}
+
+#[test]
+fn num_days_in_month_30() {
+	assert!(num_days_in_month(100, 7) == 31);
+}
+
+#[test]
+fn num_days_in_month_31() {
+	assert!(num_days_in_month(100, 8) == 31);
+}
+
+#[test]
+fn num_days_in_month_32() {
+	assert!(num_days_in_month(100, 9) == 30);
+}
+
+#[test]
+fn num_days_in_month_33() {
+	assert!(num_days_in_month(100, 10) == 31);
+}
+
+#[test]
+fn num_days_in_month_34() {
+	assert!(num_days_in_month(100, 11) == 30);
+}
+
+#[test]
+fn num_days_in_month_35() {
+	assert!(num_days_in_month(100, 12) == 31);
+}
+
+#[test]
+fn num_days_in_month_36() {
+	assert!(num_days_in_month(400, 1) == 31);
+}
+
+#[test]
+fn num_days_in_month_37() {
+	assert!(num_days_in_month(400, 2) == 29);
+}
+
+#[test]
+fn num_days_in_month_38() {
+	assert!(num_days_in_month(400, 3) == 31);
+}
+
+#[test]
+fn num_days_in_month_39() {
+	assert!(num_days_in_month(400, 4) == 30);
+}
+
+#[test]
+fn num_days_in_month_40() {
+	assert!(num_days_in_month(400, 5) == 31);
+}
+
+#[test]
+fn num_days_in_month_41() {
+	assert!(num_days_in_month(400, 6) == 30);
+}
+
+#[test]
+fn num_days_in_month_42() {
+	assert!(num_days_in_month(400, 7) == 31);
+}
+
+#[test]
+fn num_days_in_month_43() {
+	assert!(num_days_in_month(400, 8) == 31);
+}
+
+#[test]
+fn num_days_in_month_44() {
+	assert!(num_days_in_month(400, 9) == 30);
+}
+
+#[test]
+fn num_days_in_month_45() {
+	assert!(num_days_in_month(400, 10) == 31);
+}
+
+#[test]
+fn num_days_in_month_46() {
+	assert!(num_days_in_month(400, 11) == 30);
+}
+
+#[test]
+fn num_days_in_month_47() {
+	assert!(num_days_in_month(400, 12) == 31);
+}
+
+#[test]
 #[should_panic(expected = "Invalid year")]
-fn num_days_in_month_0_1() {
+fn num_days_in_month_48() {
 	num_days_in_month(0, 1);
 }
 
 #[test]
 #[should_panic(expected = "Invalid month")]
-fn num_days_in_month_1_0() {
+fn num_days_in_month_49() {
 	num_days_in_month(1, 0);
 }
 
 #[test]
 #[should_panic(expected = "Invalid month")]
-fn num_days_in_month_1_13() {
+fn num_days_in_month_50() {
 	num_days_in_month(1, 13);
-}
-
-#[test]
-fn num_days_in_month_1_1() {
-	assert!(num_days_in_month(1, 1) == 31);
-}
-
-#[test]
-fn num_days_in_month_1_2() {
-	assert!(num_days_in_month(1, 2) == 28);
-}
-
-#[test]
-fn num_days_in_month_1_3() {
-	assert!(num_days_in_month(1, 3) == 31);
-}
-
-#[test]
-fn num_days_in_month_1_4() {
-	assert!(num_days_in_month(1, 4) == 30);
-}
-
-#[test]
-fn num_days_in_month_1_5() {
-	assert!(num_days_in_month(1, 5) == 31);
-}
-
-#[test]
-fn num_days_in_month_1_6() {
-	assert!(num_days_in_month(1, 6) == 30);
-}
-
-#[test]
-fn num_days_in_month_1_7() {
-	assert!(num_days_in_month(1, 7) == 31);
-}
-
-#[test]
-fn num_days_in_month_1_8() {
-	assert!(num_days_in_month(1, 8) == 31);
-}
-
-#[test]
-fn num_days_in_month_1_9() {
-	assert!(num_days_in_month(1, 9) == 30);
-}
-
-#[test]
-fn num_days_in_month_1_10() {
-	assert!(num_days_in_month(1, 10) == 31);
-}
-
-#[test]
-fn num_days_in_month_1_11() {
-	assert!(num_days_in_month(1, 11) == 30);
-}
-
-#[test]
-fn num_days_in_month_1_12() {
-	assert!(num_days_in_month(1, 12) == 31);
-}
-
-#[test]
-fn num_days_in_month_4_1() {
-	assert!(num_days_in_month(4, 1) == 31);
-}
-
-#[test]
-fn num_days_in_month_4_2() {
-	assert!(num_days_in_month(4, 2) == 29);
-}
-
-#[test]
-fn num_days_in_month_4_3() {
-	assert!(num_days_in_month(4, 3) == 31);
-}
-
-#[test]
-fn num_days_in_month_4_4() {
-	assert!(num_days_in_month(4, 4) == 30);
-}
-
-#[test]
-fn num_days_in_month_4_5() {
-	assert!(num_days_in_month(4, 5) == 31);
-}
-
-#[test]
-fn num_days_in_month_4_6() {
-	assert!(num_days_in_month(4, 6) == 30);
-}
-
-#[test]
-fn num_days_in_month_4_7() {
-	assert!(num_days_in_month(4, 7) == 31);
-}
-
-#[test]
-fn num_days_in_month_4_8() {
-	assert!(num_days_in_month(4, 8) == 31);
-}
-
-#[test]
-fn num_days_in_month_4_9() {
-	assert!(num_days_in_month(4, 9) == 30);
-}
-
-#[test]
-fn num_days_in_month_4_10() {
-	assert!(num_days_in_month(4, 10) == 31);
-}
-
-#[test]
-fn num_days_in_month_4_11() {
-	assert!(num_days_in_month(4, 11) == 30);
-}
-
-#[test]
-fn num_days_in_month_4_12() {
-	assert!(num_days_in_month(4, 12) == 31);
-}
-
-#[test]
-fn num_days_in_month_100_1() {
-	assert!(num_days_in_month(100, 1) == 31);
-}
-
-#[test]
-fn num_days_in_month_100_2() {
-	assert!(num_days_in_month(100, 2) == 28);
-}
-
-#[test]
-fn num_days_in_month_100_3() {
-	assert!(num_days_in_month(100, 3) == 31);
-}
-
-#[test]
-fn num_days_in_month_100_4() {
-	assert!(num_days_in_month(100, 4) == 30);
-}
-
-#[test]
-fn num_days_in_month_100_5() {
-	assert!(num_days_in_month(100, 5) == 31);
-}
-
-#[test]
-fn num_days_in_month_100_6() {
-	assert!(num_days_in_month(100, 6) == 30);
-}
-
-#[test]
-fn num_days_in_month_100_7() {
-	assert!(num_days_in_month(100, 7) == 31);
-}
-
-#[test]
-fn num_days_in_month_100_8() {
-	assert!(num_days_in_month(100, 8) == 31);
-}
-
-#[test]
-fn num_days_in_month_100_9() {
-	assert!(num_days_in_month(100, 9) == 30);
-}
-
-#[test]
-fn num_days_in_month_100_10() {
-	assert!(num_days_in_month(100, 10) == 31);
-}
-
-#[test]
-fn num_days_in_month_100_11() {
-	assert!(num_days_in_month(100, 11) == 30);
-}
-
-#[test]
-fn num_days_in_month_100_12() {
-	assert!(num_days_in_month(100, 12) == 31);
-}
-
-#[test]
-fn num_days_in_month_400_1() {
-	assert!(num_days_in_month(400, 1) == 31);
-}
-
-#[test]
-fn num_days_in_month_400_2() {
-	assert!(num_days_in_month(400, 2) == 29);
-}
-
-#[test]
-fn num_days_in_month_400_3() {
-	assert!(num_days_in_month(400, 3) == 31);
-}
-
-#[test]
-fn num_days_in_month_400_4() {
-	assert!(num_days_in_month(400, 4) == 30);
-}
-
-#[test]
-fn num_days_in_month_400_5() {
-	assert!(num_days_in_month(400, 5) == 31);
-}
-
-#[test]
-fn num_days_in_month_400_6() {
-	assert!(num_days_in_month(400, 6) == 30);
-}
-
-#[test]
-fn num_days_in_month_400_7() {
-	assert!(num_days_in_month(400, 7) == 31);
-}
-
-#[test]
-fn num_days_in_month_400_8() {
-	assert!(num_days_in_month(400, 8) == 31);
-}
-
-#[test]
-fn num_days_in_month_400_9() {
-	assert!(num_days_in_month(400, 9) == 30);
-}
-
-#[test]
-fn num_days_in_month_400_10() {
-	assert!(num_days_in_month(400, 10) == 31);
-}
-
-#[test]
-fn num_days_in_month_400_11() {
-	assert!(num_days_in_month(400, 11) == 30);
-}
-
-#[test]
-fn num_days_in_month_400_12() {
-	assert!(num_days_in_month(400, 12) == 31);
 }
 
 fn month_name(month: u32) -> &'static str {
@@ -391,6 +391,84 @@ fn month_name(month: u32) -> &'static str {
 	}
 }
 
+#[test]
+fn month_name_00() {
+	assert_eq!(month_name(1), "Januaray");
+}
+
+#[test]
+fn month_name_01() {
+	assert_eq!(month_name(2), "February");
+}
+
+#[test]
+fn month_name_02() {
+	assert_eq!(month_name(3), "March");
+}
+
+#[test]
+fn month_name_03() {
+	assert_eq!(month_name(4), "April");
+}
+
+#[test]
+fn month_name_04() {
+	assert_eq!(month_name(5), "May");
+}
+
+#[test]
+fn month_name_05() {
+	assert_eq!(month_name(6), "June");
+}
+
+#[test]
+fn month_name_06() {
+	assert_eq!(month_name(7), "July");
+}
+
+#[test]
+fn month_name_07() {
+	assert_eq!(month_name(8), "August");
+}
+
+#[test]
+fn month_name_08() {
+	assert_eq!(month_name(9), "September");
+}
+
+#[test]
+fn month_name_09() {
+	assert_eq!(month_name(10), "October");
+}
+
+#[test]
+fn month_name_10() {
+	assert_eq!(month_name(11), "November");
+}
+
+#[test]
+fn month_name_11() {
+	assert_eq!(month_name(12), "December");
+}
+
+#[test]
+#[should_panic(expected = "Invalid month")]
+fn month_name_12() {
+	month_name(0);
+}
+
+#[test]
+#[should_panic(expected = "Invalid month")]
+fn month_name_13() {
+	month_name(13);
+}
+
+#[test]
+#[should_panic(expected = "Invalid month")]
+fn month_name_14() {
+	month_name(u32::MAX);
+}
+
 fn main() {
 	let mut total: u32 = 0;
 
@@ -403,4 +481,3 @@ fn main() {
 		}
 	}
 }
-

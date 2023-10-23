@@ -3,14 +3,14 @@ fn __get_index_of_the_after_last_word_of_the_line(
 	column_number: usize,
 	begin: usize,
 ) -> usize {
-	use unicode_width::UnicodeWidthStr;
+	use unicode_width::UnicodeWidthStr::width;
 
 	let mut line_end: usize = begin + 1;
-	let mut line_len: usize = UnicodeWidthStr::width(paragraph_words[begin].as_str());
+	let mut line_len: usize = width(paragraph_words[begin].as_str());
 
 	if line_len < column_number {
 		while line_end < paragraph_words.len() {
-			line_len += 1 + UnicodeWidthStr::width(paragraph_words[line_end].as_str());
+			line_len += 1 + width(paragraph_words[line_end].as_str());
 			if line_len > column_number {
 				break;
 			}

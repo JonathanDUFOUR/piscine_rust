@@ -1,7 +1,14 @@
-fn print_all_things<Collection>(collection: Collection)
+/// Prints every element of a collection.
+///
+/// # Type parameters
+/// * `C` - The type of the collection to print.
+///
+/// # Parameters
+/// * `collection` - The collection to print.
+fn print_all_things<C>(collection: C)
 where
-	Collection: IntoIterator,
-	Collection::Item: std::fmt::Debug,
+	C: IntoIterator,
+	C::Item: std::fmt::Debug,
 {
 	print!("[ ");
 	for item in collection.into_iter() {

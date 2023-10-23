@@ -6,33 +6,29 @@ pub struct Color {
 }
 
 impl Color {
-	/// Calculate the distance with another color.
+	/// Calculates the distance with another color.
 	///
 	/// # Parameters
+	/// * `other` - The color to calculate the distance with.
 	///
-	/// - `other`: The color to calculate the distance with.
-	///
-	/// # Returns
-	///
+	/// # Return
 	/// The distance between the two colors.
 	fn distance(self: &Self, other: &Self) -> u32 {
 		let diff_red: i32 = self.red as i32 - other.red as i32;
 		let diff_green: i32 = self.green as i32 - other.green as i32;
 		let diff_blue: i32 = self.blue as i32 - other.blue as i32;
 
-		return (diff_red * diff_red + diff_green * diff_green + diff_blue * diff_blue) as u32;
+		(diff_red * diff_red + diff_green * diff_green + diff_blue * diff_blue) as u32
 	}
 
-	/// Add a color to the canvas, and return the resulting color.
+	/// Adds a color to the canvas, and returns the resulting color.
 	/// The canvas is assumed to be completly opaque.
 	///
 	/// # Parameters
-	///
-	/// - `color`: The color to add to the canvas,
+	/// * `color` - The color to add to the canvas,
 	/// represented by a tuple containing the Color instance and its opacity.
 	///
-	/// # Returns
-	///
+	/// # Return
 	/// The resulting color.
 	fn mix_color_to_canvas(self: &Self, canvas: &Self, opacity: u8) -> Self {
 		#[inline(always)]
@@ -41,25 +37,23 @@ impl Color {
 				/ u8::MAX as u16) as u8;
 		}
 
-		return Self::new(
+		Self::new(
 			mix_component(self.red, canvas.red, opacity),
 			mix_component(self.green, canvas.green, opacity),
 			mix_component(self.blue, canvas.blue, opacity),
-		);
+		)
 	}
 
-	/// Find out the mix of colors that results in the closest color to the calling instance,
+	/// Finds out the mix of colors that results in the closest color to the calling instance,
 	/// using a well defined number of colors to mix.
 	///
 	/// # Parameters
+	/// * `canvas` - The current color of the canvas we are painting on.
+	/// * `closest` - The closest resulting mixed color we found so far.
+	/// * `palette` - The palette of colors to mix.
+	/// * `number_of_colors_to_mix` - The remaining number of colors we must add to the mix.
 	///
-	/// - `canvas`: The current color of the canvas we are painting on.
-	/// - `closest`: The closest resulting mixed color we found so far.
-	/// - `palette`: The palette of colors to mix.
-	/// - `number_of_colors_to_mix`: The remaining number of colors we must add to the mix.
-	///
-	/// # Returns
-	///
+	/// # Return
 	/// The resulting mixed color that is closest to the `self` color.
 	fn mix_recursively(
 		self: &Self,
@@ -88,7 +82,7 @@ impl Color {
 			}
 		}
 
-		return closest.clone();
+		closest.clone()
 	}
 
 	pub const RED: Self = Self::new(0xff, 0x00, 0x00);
@@ -96,16 +90,14 @@ impl Color {
 	pub const BLUE: Self = Self::new(0x00, 0x00, 0xff);
 	pub const WHITE: Self = Self::new(0xff, 0xff, 0xff);
 
-	/// Create a new Color instance, and initialize it with the given RGB values.
+	/// Creates a new Color instance and initializes its attributes.
 	///
 	/// # Parameters
+	/// * `red` - The red component of the color.
+	/// * `green` - The green component of the color.
+	/// * `blue` - The blue component of the color.
 	///
-	/// - `red`: The red component of the color.
-	/// - `green`: The green component of the color.
-	/// - `blue`: The blue component of the color.
-	///
-	/// # Returns
-	///
+	/// # Return
 	/// The newly created and initialized Color instance.
 	///
 	/// # Examples
@@ -113,23 +105,22 @@ impl Color {
 	/// use ex05::Color;
 	///
 	/// let color: Color = Color::new(255, 0, 0);
+	///
 	/// assert_eq!(color, Color::RED);
 	/// ```
 	#[inline(always)]
 	pub const fn new(red: u8, green: u8, blue: u8) -> Self {
-		return Self { red, green, blue };
+		Self { red, green, blue }
 	}
 
-	/// Try mixing colors as if painted on a white canvas to obtain a result as close as possible
+	/// Tries mixing colors as if painted on a white canvas to obtain a result as close as possible
 	/// to the calling instance.
 	///
 	/// # Parameters
+	/// * `palette` - The palette of colors to mix.
+	/// * `max` - The maximum number of colors to mix.
 	///
-	/// - `palette`: The palette of colors to mix.
-	/// - `max`: The maximum number of colors to mix.
-	///
-	/// # Returns
-	///
+	/// # Return
 	/// The resulting mixed color that is closest to the `self` color.
 	///
 	/// # Examples
@@ -164,7 +155,7 @@ impl Color {
 			}
 		}
 
-		return closest;
+		closest
 	}
 }
 
@@ -176,66 +167,31 @@ mod tests {
 	#[test]
 	#[timeout(25)]
 	fn new_00() {
-		assert_eq!(
-			Color::new(0x00, 0x00, 0x00),
-			Color {
-				red: 0x00,
-				green: 0x00,
-				blue: 0x00
-			}
-		);
+		assert_eq!(Color::new(0x00, 0x00, 0x00), Color { red: 0x00, green: 0x00, blue: 0x00 });
 	}
 
 	#[test]
 	#[timeout(25)]
 	fn new_01() {
-		assert_eq!(
-			Color::new(0xff, 0xff, 0xff),
-			Color {
-				red: 0xff,
-				green: 0xff,
-				blue: 0xff
-			}
-		);
+		assert_eq!(Color::new(0xff, 0xff, 0xff), Color { red: 0xff, green: 0xff, blue: 0xff });
 	}
 
 	#[test]
 	#[timeout(25)]
 	fn new_02() {
-		assert_eq!(
-			Color::new(0x11, 0x22, 0x33),
-			Color {
-				red: 0x11,
-				green: 0x22,
-				blue: 0x33
-			}
-		);
+		assert_eq!(Color::new(0x11, 0x22, 0x33), Color { red: 0x11, green: 0x22, blue: 0x33 });
 	}
 
 	#[test]
 	#[timeout(25)]
 	fn new_03() {
-		assert_eq!(
-			Color::new(0x12, 0x34, 0x56),
-			Color {
-				red: 0x12,
-				green: 0x34,
-				blue: 0x56
-			}
-		);
+		assert_eq!(Color::new(0x12, 0x34, 0x56), Color { red: 0x12, green: 0x34, blue: 0x56 });
 	}
 
 	#[test]
 	#[timeout(25)]
 	fn new_04() {
-		assert_eq!(
-			Color::new(0x78, 0x9a, 0xbc),
-			Color {
-				red: 0x78,
-				green: 0x9a,
-				blue: 0xbc
-			}
-		);
+		assert_eq!(Color::new(0x78, 0x9a, 0xbc), Color { red: 0x78, green: 0x9a, blue: 0xbc });
 	}
 
 	#[test]

@@ -6,20 +6,19 @@ pub trait Field: Sized {
 	/// # Parameters
 	/// * `field` - The field to decode.
 	///
-	/// # Returns
-	/// - `Ok(Self)` if the field was successfully decoded.
-	/// - `Err(DecodingError)` if the field could not be decoded.
+	/// # Return
+	/// * `Ok(Self)` - The decoded field.
+	/// * `Err(DecodingError)` - The field could not be decoded.
 	fn decode(field: &str) -> Result<Self, DecodingError>;
 
 	/// Encodes a field from its concrete type value to its `str` representation.
 	///
 	/// # Parameters
-	/// * `self` - The field to encode.
 	/// * `target` - The string to append the encoded field to.
 	///
-	/// # Returns
-	/// - `Ok(())` if the field was successfully encoded.
-	/// - `Err(EncodingError)` if the field could not be encoded.
+	/// # Return
+	/// * `Ok(())` - The field was successfully encoded.
+	/// * `Err(EncodingError)` - The field could not be encoded.
 	fn encode(self: &Self, target: &mut String) -> Result<(), EncodingError>;
 }
 
@@ -59,7 +58,7 @@ where
 }
 
 macro_rules! impl_field_for_int {
-	($($type:ty), * $(,)?) => {
+	($($type:ty)*) => {
 		$(
 			impl Field for $type {
 				fn decode(field: &str) -> Result<Self, DecodingError> {
@@ -82,4 +81,4 @@ macro_rules! impl_field_for_int {
 	};
 }
 
-impl_field_for_int!(u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize);
+impl_field_for_int!(u8 u16 u32 u64 u128 usize i8 i16 i32 i64 i128 isize);

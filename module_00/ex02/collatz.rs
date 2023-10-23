@@ -1,5 +1,15 @@
-#![deny(warnings)]
-
+/// Computes and prints the Collatz sequence (https://en.wikipedia.org/wiki/Collatz_conjecture)
+/// starting at a given number.
+///
+/// # Parameters
+/// * `start`: The starting number of the sequence.
+///
+/// # Examples
+/// ```
+/// use ex02::collatz;
+///
+/// collatz(42);
+/// ```
 fn collatz(mut start: u32) {
 	while start != 1 {
 		println!("{}", start);
@@ -13,5 +23,5 @@ fn collatz(mut start: u32) {
 }
 
 fn main() {
-	collatz(123u32);
+	collatz(123);
 }

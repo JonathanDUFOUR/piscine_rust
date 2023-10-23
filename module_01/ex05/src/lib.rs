@@ -1,11 +1,9 @@
-/// Remove every duplicate elements from a vector.
+/// Removes every duplicate element from a vector.
 ///
 /// # Parameters
-///
-/// * `v` - The vector of integers to remove duplicate elements from.
+/// * `v` - The vector of integers to remove the duplicate elements from.
 ///
 /// # Examples
-///
 /// ```
 /// use ex05::deduplicate;
 ///

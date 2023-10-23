@@ -5,13 +5,13 @@ struct Node<T> {
 }
 
 impl<T> Node<T> {
-	/// Create a new Node instance and initialize its attributes.
+	/// Creates a new Node instance and initializes its attributes.
 	///
 	/// # Parameters
 	/// * `value` - The value to be stored in the newly created Node instance.
 	/// * `next` - The eventual Node instance that follows the newly created Node instance.
 	///
-	/// # Returns
+	/// # Return
 	/// The newly created Node instance.
 	#[inline(always)]
 	const fn new(value: T, next: Option<Box<Node<T>>>) -> Self {
@@ -25,10 +25,10 @@ pub struct List<T> {
 }
 
 impl<T> List<T> {
-	/// Create a new List instance and initialize its attributes.
+	/// Creates a new List instance and initializes its attributes.
 	/// The newly created List instance is empty.
 	///
-	/// # Returns
+	/// # Return
 	/// The newly created List instance.
 	///
 	/// # Examples
@@ -42,8 +42,8 @@ impl<T> List<T> {
 		List { head: None }
 	}
 
-	/// Create a new Node instance, initialize its attributes,
-	/// and insert it at the beginning of the calling List instance.
+	/// Creates a new Node instance, initializes its attributes,
+	/// and inserts it at the beginning of the calling List instance.
 	///
 	/// # Parameters
 	/// * `value` - The value to be stored in the newly created Node instance.
@@ -68,8 +68,8 @@ impl<T> List<T> {
 		self.head = Some(node);
 	}
 
-	/// Create a new Node instance, initialize its attributes,
-	/// and insert it at the end of the calling List instance.
+	/// Creates a new Node instance, initializes its attributes,
+	/// and inserts it at the end of the calling List instance.
 	///
 	/// # Parameters
 	/// * `value` - The value to be stored in the newly created Node instance.
@@ -94,7 +94,7 @@ impl<T> List<T> {
 		*current = Some(Box::new(Node::new(value, None)));
 	}
 
-	/// # Returns
+	/// # Return
 	/// The number of elements present in the calling List instance.
 	///
 	/// # Example
@@ -123,14 +123,11 @@ impl<T> List<T> {
 		count
 	}
 
-	/// Get a reference
-	/// to the element located at a specific index in the calling List instance.
-	///
 	/// # Parameters
 	/// * `i` - The index of the wanted element.
 	///
-	/// # Returns
-	/// * `Some(&T)` - A reference to the wanted element in the calling List instance.
+	/// # Return
+	/// * `Some(&T)` - A reference to the wanted element.
 	/// * `None` - The index is out of bounds.
 	///
 	/// # Examples
@@ -163,14 +160,11 @@ impl<T> List<T> {
 		None
 	}
 
-	/// Get a mutable reference
-	/// to the element located at a specific index in the calling List instance.
-	///
 	/// # Parameters
 	/// * `i` - The index of the wanted element.
 	///
-	/// # Returns
-	/// * `Some(&mut T)` - A mutable reference to the wanted element in the calling List instance.
+	/// # Return
+	/// * `Some(&mut T)` - A mutable reference to the wanted element.
 	/// * `None` - The index is out of bounds.
 	///
 	/// # Examples
@@ -203,9 +197,9 @@ impl<T> List<T> {
 		None
 	}
 
-	/// Remove the first element of the calling List instance.
+	/// Removes the first element of the calling List instance.
 	///
-	/// # Returns
+	/// # Return
 	/// * `Some(T)` - The removed element.
 	/// * `None` - The calling List instance is empty.
 	///
@@ -233,9 +227,9 @@ impl<T> List<T> {
 		}
 	}
 
-	/// Remove the last element of the calling List instance.
+	/// Removes the last element of the calling List instance.
 	///
-	/// # Returns
+	/// # Return
 	/// * `Some(T)` - The removed element.
 	/// * `None` - The calling List instance is empty.
 	///
@@ -271,7 +265,7 @@ impl<T> List<T> {
 		}
 	}
 
-	/// Remove all the elements of the calling List instance.
+	/// Removes all the elements of the calling List instance.
 	///
 	/// # Examples
 	/// ```
@@ -292,16 +286,13 @@ impl<T> List<T> {
 impl<T> std::ops::Index<usize> for List<T> {
 	type Output = T;
 
-	/// Get a reference
-	/// to the element located at a specific index in the calling List instance.
-	///
 	/// # Parameters
 	/// * `i` - The index of the wanted element.
 	///
-	/// # Returns
+	/// # Return
 	/// A reference to the wanted element in the calling List instance.
 	///
-	/// # Panics
+	/// # Panic
 	/// The index is out of bounds.
 	///
 	/// # Examples
@@ -327,16 +318,13 @@ impl<T> std::ops::Index<usize> for List<T> {
 }
 
 impl<T> std::ops::IndexMut<usize> for List<T> {
-	/// Get a mutable reference
-	/// to the element located at a specific index in the calling List instance.
-	///
 	/// # Parameters
 	/// * `i` - The index of the wanted element.
 	///
-	/// # Returns
+	/// # Return
 	/// A mutable reference to the wanted element in the calling List instance.
 	///
-	/// # Panics
+	/// # Panic
 	/// The index is out of bounds.
 	///
 	/// # Examples
@@ -365,6 +353,7 @@ impl<T> std::ops::IndexMut<usize> for List<T> {
 mod tests {
 	use super::*;
 
+	// region: Struct A
 	#[derive(Clone, Debug, Default, Eq, PartialEq)]
 	struct A {}
 
@@ -374,7 +363,9 @@ mod tests {
 			Self {}
 		}
 	}
+	// endregion
 
+	// region: Struct B
 	#[derive(Clone, Debug, Default, Eq, PartialEq)]
 	struct B {
 		n: u8,
@@ -386,7 +377,9 @@ mod tests {
 			Self { n }
 		}
 	}
+	// endregion
 
+	// region: Struct C
 	#[derive(Clone, Debug, Default, Eq, PartialEq)]
 	struct C {
 		n: i8,
@@ -398,19 +391,14 @@ mod tests {
 			Self { n }
 		}
 	}
+	// endregion
 
 	// region: node_new_00
 	#[test]
 	fn node_new_00() {
 		let node: Node<A> = Node::new(A::new(), None);
 
-		assert_eq!(
-			node,
-			Node {
-				value: A::new(),
-				next: None
-			}
-		);
+		assert_eq!(node, Node { value: A::new(), next: None });
 	}
 	// endregion
 
@@ -424,10 +412,7 @@ mod tests {
 			node1,
 			Node {
 				value: B::new(0x23),
-				next: Some(Box::new(Node {
-					value: B::new(0x12),
-					next: None
-				}))
+				next: Some(Box::new(Node { value: B::new(0x12), next: None }))
 			}
 		);
 	}
@@ -446,10 +431,7 @@ mod tests {
 				value: C::new(101),
 				next: Some(Box::new(Node {
 					value: C::new(-51),
-					next: Some(Box::new(Node {
-						value: C::new(-17),
-						next: None
-					}))
+					next: Some(Box::new(Node { value: C::new(-17), next: None }))
 				}))
 			}
 		);
@@ -490,15 +472,7 @@ mod tests {
 
 		list.push_front(A::new());
 
-		assert_eq!(
-			list,
-			List {
-				head: Some(Box::new(Node {
-					value: A::new(),
-					next: None
-				}))
-			}
-		);
+		assert_eq!(list, List { head: Some(Box::new(Node { value: A::new(), next: None })) });
 	}
 	// endregion
 
@@ -515,10 +489,7 @@ mod tests {
 			List {
 				head: Some(Box::new(Node {
 					value: B::new(0x24),
-					next: Some(Box::new(Node {
-						value: B::new(0x42),
-						next: None,
-					}))
+					next: Some(Box::new(Node { value: B::new(0x42), next: None }))
 				}))
 			}
 		);
@@ -541,10 +512,7 @@ mod tests {
 					value: C::new(-19),
 					next: Some(Box::new(Node {
 						value: C::new(77),
-						next: Some(Box::new(Node {
-							value: C::new(-3),
-							next: None,
-						}))
+						next: Some(Box::new(Node { value: C::new(-3), next: None }))
 					}))
 				}))
 			}
@@ -559,15 +527,7 @@ mod tests {
 
 		list.push_back(A::new());
 
-		assert_eq!(
-			list,
-			List {
-				head: Some(Box::new(Node {
-					value: A::new(),
-					next: None
-				}))
-			}
-		);
+		assert_eq!(list, List { head: Some(Box::new(Node { value: A::new(), next: None })) });
 	}
 	// endregion
 
@@ -584,10 +544,7 @@ mod tests {
 			List {
 				head: Some(Box::new(Node {
 					value: B::new(0xbe),
-					next: Some(Box::new(Node {
-						value: B::new(0xaf),
-						next: None,
-					}))
+					next: Some(Box::new(Node { value: B::new(0xaf), next: None }))
 				}))
 			}
 		);
@@ -610,10 +567,7 @@ mod tests {
 					value: C::new(-5),
 					next: Some(Box::new(Node {
 						value: C::new(54),
-						next: Some(Box::new(Node {
-							value: C::new(26),
-							next: None,
-						}))
+						next: Some(Box::new(Node { value: C::new(26), next: None }))
 					}))
 				}))
 			}
@@ -636,10 +590,7 @@ mod tests {
 		let list: List<B> = List {
 			head: Some(Box::new(Node {
 				value: B::new(0x72),
-				next: Some(Box::new(Node {
-					value: B::new(0x27),
-					next: None,
-				})),
+				next: Some(Box::new(Node { value: B::new(0x27), next: None })),
 			})),
 		};
 
@@ -663,10 +614,7 @@ mod tests {
 								value: C::new(-126),
 								next: Some(Box::new(Node {
 									value: C::new(125),
-									next: Some(Box::new(Node {
-										value: C::new(-125),
-										next: None,
-									})),
+									next: Some(Box::new(Node { value: C::new(-125), next: None })),
 								})),
 							})),
 						})),
@@ -698,10 +646,7 @@ mod tests {
 					value: B::new(0x13),
 					next: Some(Box::new(Node {
 						value: B::new(0x1d),
-						next: Some(Box::new(Node {
-							value: B::new(0x27),
-							next: None,
-						})),
+						next: Some(Box::new(Node { value: B::new(0x27), next: None })),
 					})),
 				})),
 			})),
@@ -731,10 +676,7 @@ mod tests {
 								value: C::new(-55),
 								next: Some(Box::new(Node {
 									value: C::new(44),
-									next: Some(Box::new(Node {
-										value: C::new(-33),
-										next: None,
-									})),
+									next: Some(Box::new(Node { value: C::new(-33), next: None })),
 								})),
 							})),
 						})),
@@ -773,10 +715,7 @@ mod tests {
 					value: B::new(0x51),
 					next: Some(Box::new(Node {
 						value: B::new(0xc4),
-						next: Some(Box::new(Node {
-							value: B::new(0x23),
-							next: None,
-						})),
+						next: Some(Box::new(Node { value: B::new(0x23), next: None })),
 					})),
 				})),
 			})),
@@ -805,10 +744,7 @@ mod tests {
 								value: C::new(-45),
 								next: Some(Box::new(Node {
 									value: C::new(56),
-									next: Some(Box::new(Node {
-										value: C::new(-67),
-										next: None,
-									})),
+									next: Some(Box::new(Node { value: C::new(-67), next: None })),
 								})),
 							})),
 						})),
@@ -843,23 +779,12 @@ mod tests {
 		let mut list: List<B> = List {
 			head: Some(Box::new(Node {
 				value: B::new(0xd7),
-				next: Some(Box::new(Node {
-					value: B::new(0x66),
-					next: None,
-				})),
+				next: Some(Box::new(Node { value: B::new(0x66), next: None })),
 			})),
 		};
 
 		assert_eq!(list.remove_front(), Some(B::new(0xd7)));
-		assert_eq!(
-			list,
-			List {
-				head: Some(Box::new(Node {
-					value: B::new(0x66),
-					next: None,
-				})),
-			}
-		);
+		assert_eq!(list, List { head: Some(Box::new(Node { value: B::new(0x66), next: None })) });
 		assert_eq!(list.remove_front(), Some(B::new(0x66)));
 		assert_eq!(list, List { head: None });
 		assert_eq!(list.remove_front(), None);
@@ -883,10 +808,7 @@ mod tests {
 								value: C::new(-8),
 								next: Some(Box::new(Node {
 									value: C::new(-4),
-									next: Some(Box::new(Node {
-										value: C::new(2),
-										next: None,
-									})),
+									next: Some(Box::new(Node { value: C::new(2), next: None })),
 								})),
 							})),
 						})),
@@ -909,10 +831,7 @@ mod tests {
 								value: C::new(-8),
 								next: Some(Box::new(Node {
 									value: C::new(-4),
-									next: Some(Box::new(Node {
-										value: C::new(2),
-										next: None
-									})),
+									next: Some(Box::new(Node { value: C::new(2), next: None })),
 								})),
 							})),
 						})),
@@ -932,10 +851,7 @@ mod tests {
 							value: C::new(-8),
 							next: Some(Box::new(Node {
 								value: C::new(-4),
-								next: Some(Box::new(Node {
-									value: C::new(2),
-									next: None
-								})),
+								next: Some(Box::new(Node { value: C::new(2), next: None })),
 							})),
 						})),
 					})),
@@ -952,10 +868,7 @@ mod tests {
 						value: C::new(-8),
 						next: Some(Box::new(Node {
 							value: C::new(-4),
-							next: Some(Box::new(Node {
-								value: C::new(2),
-								next: None
-							})),
+							next: Some(Box::new(Node { value: C::new(2), next: None })),
 						})),
 					})),
 				})),
@@ -969,10 +882,7 @@ mod tests {
 					value: C::new(-8),
 					next: Some(Box::new(Node {
 						value: C::new(-4),
-						next: Some(Box::new(Node {
-							value: C::new(2),
-							next: None
-						})),
+						next: Some(Box::new(Node { value: C::new(2), next: None })),
 					})),
 				})),
 			}
@@ -983,23 +893,12 @@ mod tests {
 			List {
 				head: Some(Box::new(Node {
 					value: C::new(-4),
-					next: Some(Box::new(Node {
-						value: C::new(2),
-						next: None
-					})),
+					next: Some(Box::new(Node { value: C::new(2), next: None })),
 				})),
 			}
 		);
 		assert_eq!(list.remove_front(), Some(C::new(-4)));
-		assert_eq!(
-			list,
-			List {
-				head: Some(Box::new(Node {
-					value: C::new(2),
-					next: None
-				})),
-			}
-		);
+		assert_eq!(list, List { head: Some(Box::new(Node { value: C::new(2), next: None })) });
 		assert_eq!(list.remove_front(), Some(C::new(2)));
 		assert_eq!(list, List { head: None });
 		assert_eq!(list.remove_front(), None);
@@ -1023,23 +922,12 @@ mod tests {
 		let mut list: List<B> = List {
 			head: Some(Box::new(Node {
 				value: B::new(0x1a),
-				next: Some(Box::new(Node {
-					value: B::new(0x20),
-					next: None,
-				})),
+				next: Some(Box::new(Node { value: B::new(0x20), next: None })),
 			})),
 		};
 
 		assert_eq!(list.remove_back(), Some(B::new(0x20)));
-		assert_eq!(
-			list,
-			List {
-				head: Some(Box::new(Node {
-					value: B::new(0x1a),
-					next: None,
-				})),
-			}
-		);
+		assert_eq!(list, List { head: Some(Box::new(Node { value: B::new(0x1a), next: None })) });
 		assert_eq!(list.remove_back(), Some(B::new(0x1a)));
 		assert_eq!(list, List { head: None });
 		assert_eq!(list.remove_back(), None);
@@ -1063,10 +951,7 @@ mod tests {
 								value: C::new(89),
 								next: Some(Box::new(Node {
 									value: C::new(15),
-									next: Some(Box::new(Node {
-										value: C::new(-31),
-										next: None,
-									})),
+									next: Some(Box::new(Node { value: C::new(-31), next: None })),
 								})),
 							})),
 						})),
@@ -1089,10 +974,7 @@ mod tests {
 								value: C::new(-63),
 								next: Some(Box::new(Node {
 									value: C::new(89),
-									next: Some(Box::new(Node {
-										value: C::new(15),
-										next: None,
-									})),
+									next: Some(Box::new(Node { value: C::new(15), next: None })),
 								})),
 							})),
 						})),
@@ -1112,10 +994,7 @@ mod tests {
 							value: C::new(127),
 							next: Some(Box::new(Node {
 								value: C::new(-63),
-								next: Some(Box::new(Node {
-									value: C::new(89),
-									next: None,
-								})),
+								next: Some(Box::new(Node { value: C::new(89), next: None })),
 							})),
 						})),
 					})),
@@ -1132,10 +1011,7 @@ mod tests {
 						value: C::new(-12),
 						next: Some(Box::new(Node {
 							value: C::new(127),
-							next: Some(Box::new(Node {
-								value: C::new(-63),
-								next: None,
-							})),
+							next: Some(Box::new(Node { value: C::new(-63), next: None })),
 						})),
 					})),
 				})),
@@ -1149,10 +1025,7 @@ mod tests {
 					value: C::new(-91),
 					next: Some(Box::new(Node {
 						value: C::new(-12),
-						next: Some(Box::new(Node {
-							value: C::new(127),
-							next: None,
-						})),
+						next: Some(Box::new(Node { value: C::new(127), next: None })),
 					})),
 				})),
 			}
@@ -1163,23 +1036,12 @@ mod tests {
 			List {
 				head: Some(Box::new(Node {
 					value: C::new(-91),
-					next: Some(Box::new(Node {
-						value: C::new(-12),
-						next: None,
-					})),
+					next: Some(Box::new(Node { value: C::new(-12), next: None })),
 				})),
 			}
 		);
 		assert_eq!(list.remove_back(), Some(C::new(-12)));
-		assert_eq!(
-			list,
-			List {
-				head: Some(Box::new(Node {
-					value: C::new(-91),
-					next: None,
-				})),
-			}
-		);
+		assert_eq!(list, List { head: Some(Box::new(Node { value: C::new(-91), next: None })) });
 		assert_eq!(list.remove_back(), Some(C::new(-91)));
 		assert_eq!(list, List { head: None });
 		assert_eq!(list.remove_back(), None);
@@ -1200,12 +1062,8 @@ mod tests {
 	// region: list_clear_01
 	#[test]
 	fn list_clear_01() {
-		let mut list: List<B> = List {
-			head: Some(Box::new(Node {
-				value: B::new(0x1a),
-				next: None,
-			})),
-		};
+		let mut list: List<B> =
+			List { head: Some(Box::new(Node { value: B::new(0x1a), next: None })) };
 
 		list.clear();
 		assert_eq!(list, List { head: None });
@@ -1228,10 +1086,7 @@ mod tests {
 								value: C::new(112),
 								next: Some(Box::new(Node {
 									value: C::new(-53),
-									next: Some(Box::new(Node {
-										value: C::new(-95),
-										next: None,
-									})),
+									next: Some(Box::new(Node { value: C::new(-95), next: None })),
 								})),
 							})),
 						})),
@@ -1248,12 +1103,7 @@ mod tests {
 	// region: list_operator_index_00
 	#[test]
 	fn list_operator_index_00() {
-		let list: List<A> = List {
-			head: Some(Box::new(Node {
-				value: A::new(),
-				next: None,
-			})),
-		};
+		let list: List<A> = List { head: Some(Box::new(Node { value: A::new(), next: None })) };
 
 		assert_eq!(list[0], A::new());
 	}
@@ -1265,10 +1115,7 @@ mod tests {
 		let list: List<B> = List {
 			head: Some(Box::new(Node {
 				value: B::new(0x45),
-				next: Some(Box::new(Node {
-					value: B::new(0xd2),
-					next: None,
-				})),
+				next: Some(Box::new(Node { value: B::new(0xd2), next: None })),
 			})),
 		};
 
@@ -1293,10 +1140,7 @@ mod tests {
 								value: C::new(-6),
 								next: Some(Box::new(Node {
 									value: C::new(-3),
-									next: Some(Box::new(Node {
-										value: C::new(-1),
-										next: None,
-									})),
+									next: Some(Box::new(Node { value: C::new(-1), next: None })),
 								})),
 							})),
 						})),
@@ -1332,10 +1176,7 @@ mod tests {
 		let list: List<B> = List {
 			head: Some(Box::new(Node {
 				value: B::new(0x18),
-				next: Some(Box::new(Node {
-					value: B::new(0x7a),
-					next: None,
-				})),
+				next: Some(Box::new(Node { value: B::new(0x7a), next: None })),
 			})),
 		};
 
@@ -1382,12 +1223,7 @@ mod tests {
 	// region: list_operator_index_mut_00
 	#[test]
 	fn list_operator_index_mut_00() {
-		let mut list: List<A> = List {
-			head: Some(Box::new(Node {
-				value: A::new(),
-				next: None,
-			})),
-		};
+		let mut list: List<A> = List { head: Some(Box::new(Node { value: A::new(), next: None })) };
 
 		list[0] = A::new();
 		assert_eq!(list[0], A::new());
@@ -1404,10 +1240,7 @@ mod tests {
 					value: B::new(0x27),
 					next: Some(Box::new(Node {
 						value: B::new(0x9a),
-						next: Some(Box::new(Node {
-							value: B::new(0x3c),
-							next: None,
-						})),
+						next: Some(Box::new(Node { value: B::new(0x3c), next: None })),
 					})),
 				})),
 			})),
@@ -1423,10 +1256,7 @@ mod tests {
 						value: B::new(0x27),
 						next: Some(Box::new(Node {
 							value: B::new(0x9a),
-							next: Some(Box::new(Node {
-								value: B::new(0x3c),
-								next: None,
-							})),
+							next: Some(Box::new(Node { value: B::new(0x3c), next: None })),
 						})),
 					})),
 				}))
@@ -1442,10 +1272,7 @@ mod tests {
 						value: B::new(0x9a),
 						next: Some(Box::new(Node {
 							value: B::new(0x9a),
-							next: Some(Box::new(Node {
-								value: B::new(0x3c),
-								next: None,
-							})),
+							next: Some(Box::new(Node { value: B::new(0x3c), next: None })),
 						})),
 					})),
 				}))
@@ -1461,10 +1288,7 @@ mod tests {
 						value: B::new(0x9a),
 						next: Some(Box::new(Node {
 							value: B::new(0x27),
-							next: Some(Box::new(Node {
-								value: B::new(0x3c),
-								next: None,
-							})),
+							next: Some(Box::new(Node { value: B::new(0x3c), next: None })),
 						})),
 					})),
 				}))
@@ -1480,10 +1304,7 @@ mod tests {
 						value: B::new(0x9a),
 						next: Some(Box::new(Node {
 							value: B::new(0x27),
-							next: Some(Box::new(Node {
-								value: B::new(0x18),
-								next: None,
-							})),
+							next: Some(Box::new(Node { value: B::new(0x18), next: None })),
 						})),
 					})),
 				}))
@@ -1504,10 +1325,7 @@ mod tests {
 						value: C::new(-37),
 						next: Some(Box::new(Node {
 							value: C::new(-28),
-							next: Some(Box::new(Node {
-								value: C::new(-19),
-								next: None,
-							})),
+							next: Some(Box::new(Node { value: C::new(-19), next: None })),
 						})),
 					})),
 				})),
@@ -1526,10 +1344,7 @@ mod tests {
 							value: C::new(-37),
 							next: Some(Box::new(Node {
 								value: C::new(-28),
-								next: Some(Box::new(Node {
-									value: C::new(-19),
-									next: None
-								})),
+								next: Some(Box::new(Node { value: C::new(-19), next: None })),
 							})),
 						})),
 					})),
@@ -1548,10 +1363,7 @@ mod tests {
 							value: C::new(-37),
 							next: Some(Box::new(Node {
 								value: C::new(-28),
-								next: Some(Box::new(Node {
-									value: C::new(-19),
-									next: None
-								})),
+								next: Some(Box::new(Node { value: C::new(-19), next: None })),
 							})),
 						})),
 					})),
@@ -1570,10 +1382,7 @@ mod tests {
 							value: C::new(-37),
 							next: Some(Box::new(Node {
 								value: C::new(-28),
-								next: Some(Box::new(Node {
-									value: C::new(-19),
-									next: None
-								})),
+								next: Some(Box::new(Node { value: C::new(-19), next: None })),
 							})),
 						})),
 					})),
@@ -1592,10 +1401,7 @@ mod tests {
 							value: C::new(-37),
 							next: Some(Box::new(Node {
 								value: C::new(-46),
-								next: Some(Box::new(Node {
-									value: C::new(-19),
-									next: None
-								})),
+								next: Some(Box::new(Node { value: C::new(-19), next: None })),
 							})),
 						})),
 					})),
@@ -1614,10 +1420,7 @@ mod tests {
 							value: C::new(-37),
 							next: Some(Box::new(Node {
 								value: C::new(-46),
-								next: Some(Box::new(Node {
-									value: C::new(-55),
-									next: None
-								})),
+								next: Some(Box::new(Node { value: C::new(-55), next: None })),
 							})),
 						})),
 					})),
@@ -1648,10 +1451,7 @@ mod tests {
 					value: B::new(0x3d),
 					next: Some(Box::new(Node {
 						value: B::new(0x21),
-						next: Some(Box::new(Node {
-							value: B::new(0xa7),
-							next: None,
-						})),
+						next: Some(Box::new(Node { value: B::new(0xa7), next: None })),
 					})),
 				})),
 			})),
@@ -1670,10 +1470,7 @@ mod tests {
 				value: C::new(-2),
 				next: Some(Box::new(Node {
 					value: C::new(49),
-					next: Some(Box::new(Node {
-						value: C::new(28),
-						next: None,
-					})),
+					next: Some(Box::new(Node { value: C::new(28), next: None })),
 				})),
 			})),
 		};
@@ -1685,12 +1482,7 @@ mod tests {
 	// region: list_clone_00
 	#[test]
 	fn list_clone_00() {
-		let list: List<A> = List {
-			head: Some(Box::new(Node {
-				value: A::new(),
-				next: None,
-			})),
-		};
+		let list: List<A> = List { head: Some(Box::new(Node { value: A::new(), next: None })) };
 		let cloned: List<A> = list.clone();
 
 		assert_eq!(list, cloned);
@@ -1705,10 +1497,7 @@ mod tests {
 				value: B::new(0x7d),
 				next: Some(Box::new(Node {
 					value: B::new(0x11),
-					next: Some(Box::new(Node {
-						value: B::new(0x3a),
-						next: None,
-					})),
+					next: Some(Box::new(Node { value: B::new(0x3a), next: None })),
 				})),
 			})),
 		};
@@ -1734,10 +1523,7 @@ mod tests {
 								value: C::new(-8),
 								next: Some(Box::new(Node {
 									value: C::new(4),
-									next: Some(Box::new(Node {
-										value: C::new(2),
-										next: None,
-									})),
+									next: Some(Box::new(Node { value: C::new(2), next: None })),
 								})),
 							})),
 						})),
