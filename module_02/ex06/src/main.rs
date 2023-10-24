@@ -18,7 +18,7 @@ enum Token<'a> {
 /// - `Some(Token::Pipe)` - The next token is `|`.
 /// - `None` - There are no more tokens.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// let mut s: &str = "ls -l|<input.txt cat -e>output.txt";
 ///
@@ -67,7 +67,7 @@ fn next_token<'a>(s: &mut &'a str) -> Option<Token<'a>> {
 /// # Parameters
 /// * `s` - The string to search in.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// let mut s: &str = "ls -l|<input.txt cat -e>output.txt";
 ///

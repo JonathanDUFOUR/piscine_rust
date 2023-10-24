@@ -477,7 +477,7 @@ impl Board {
 	/// # Parameters
 	/// * `clear` - If `true`, clear a previously displayed board before displaying the new one.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// let board: Board = Board::new(42, 42, 42);
 	/// board.print(false);

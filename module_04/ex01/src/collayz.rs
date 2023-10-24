@@ -8,7 +8,7 @@
 /// * `start` - The number to start the Collatz conjecture with.
 /// * `f` - The function to call each time the number gets an odd value.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// collayz(11, |n| println!("{}", n));
 /// ```

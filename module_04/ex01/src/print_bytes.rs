@@ -7,7 +7,7 @@
 /// # Parameters
 /// * `f` - The function to repeatedly call.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// let mut chars: std::str::Chars<'static> = "foo".chars();
 ///

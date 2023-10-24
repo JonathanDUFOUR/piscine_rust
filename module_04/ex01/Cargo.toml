@@ -1,18 +1,18 @@
 [package]
-name		=	"ex01"
-version		=	"0.1.0"
-authors		=	["Jonathan DUFOUR"]
-edition		=	"2021"
-description	=	"Discovering function traits through 3 little functions"
+       name = "ex01"
+    version = "0.1.0"
+    authors = ["Jonathan DUFOUR"]
+    edition = "2021"
+description	= "Discovering function traits through 3 little functions"
 
 [[bin]]
-name		=	"collayz"
-path		=	"src/collayz.rs"
+name = "collayz"
+path = "src/collayz.rs"
 
 [[bin]]
-name		=	"print_bytes"
-path		=	"src/print_bytes.rs"
+name = "print_bytes"
+path = "src/print_bytes.rs"
 
 [[bin]]
-name		=	"yes"
-path		=	"src/yes.rs"
+name = "yes"
+path = "src/yes.rs"

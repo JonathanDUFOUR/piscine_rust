@@ -120,7 +120,13 @@ files to turn in:
 	src/main.rs  Cargo.toml
 
 allowed symbols:
-	std::{fmt::Debug, iter::{IntoIterator, Iterator}, ops::{Range, Range::*}, print, println}
+	std::{
+		fmt::Debug,
+		iter::{IntoIterator, IntoIterator::*, Iterator, Iterator::*},
+		ops::{Range, Range::*},
+		print,
+		println
+	}
 ```
 
 Create a **function** with the following signature.
@@ -393,14 +399,17 @@ files to turn in:
 
 allowed symbols:
 	std::{
-		iter::Iterator,
+		iter::{Iterator, Iterator::*},
 		option::{Option, Option::*},
 		cmp::{PartialOrd, Ordering, Ordering::*},
 		clone::Clone
 	}
+
+missing allowed symbols:
+	std::iter::{IntoIterator, IntoIterator::into_iter}
 ```
 
-Create a type named `Increasing<I>`.
+Create a type named `Increasing`.
 
 ```rust
 struct Increasing<I: Iterator> {
@@ -411,7 +420,7 @@ struct Increasing<I: Iterator> {
 impl<I> Increasing<I> {
 	pub fn new<J>(iter: J) -> Self
 	where
-	    J: IntoIterator<IntoIter = I>;
+		J: IntoIterator<IntoIter = I>;
 }
 ```
 

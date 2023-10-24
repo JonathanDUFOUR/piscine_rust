@@ -97,7 +97,7 @@ fn strstr(haystack: &[u8], needle: &[u8], i: &mut usize) -> bool {
 /// * `true` - The string matches the pattern.
 /// * `false` - The string does not match the pattern.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// use ex07::strpcmp;
 ///

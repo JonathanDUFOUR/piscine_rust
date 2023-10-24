@@ -3,7 +3,7 @@
 /// # Parameters
 /// * `v` - The vector of integers to remove the duplicate elements from.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// use ex05::deduplicate;
 ///

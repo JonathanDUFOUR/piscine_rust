@@ -16,7 +16,7 @@ impl PizzaStatus {
 	/// # Return
 	/// An instance of the predicted status.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex02::PizzaStatus;
 	///
@@ -40,7 +40,7 @@ impl PizzaStatus {
 	/// # Return
 	/// The estimated time before the pizza is delivered, in days.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex02::PizzaStatus;
 	///

@@ -4,7 +4,7 @@
 /// # Parameters
 /// * `start`: The starting number of the sequence.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// use ex02::collatz;
 ///

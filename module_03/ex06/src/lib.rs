@@ -31,7 +31,7 @@ impl<T> List<T> {
 	/// # Return
 	/// The newly created List instance.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -48,7 +48,7 @@ impl<T> List<T> {
 	/// # Parameters
 	/// * `value` - The value to be stored in the newly created Node instance.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -74,7 +74,7 @@ impl<T> List<T> {
 	/// # Parameters
 	/// * `value` - The value to be stored in the newly created Node instance.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -130,7 +130,7 @@ impl<T> List<T> {
 	/// * `Some(&T)` - A reference to the wanted element.
 	/// * `None` - The index is out of bounds.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -167,7 +167,7 @@ impl<T> List<T> {
 	/// * `Some(&mut T)` - A mutable reference to the wanted element.
 	/// * `None` - The index is out of bounds.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -203,7 +203,7 @@ impl<T> List<T> {
 	/// * `Some(T)` - The removed element.
 	/// * `None` - The calling List instance is empty.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -233,7 +233,7 @@ impl<T> List<T> {
 	/// * `Some(T)` - The removed element.
 	/// * `None` - The calling List instance is empty.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -267,7 +267,7 @@ impl<T> List<T> {
 
 	/// Removes all the elements of the calling List instance.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -295,7 +295,7 @@ impl<T> std::ops::Index<usize> for List<T> {
 	/// # Panic
 	/// The index is out of bounds.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -327,7 +327,7 @@ impl<T> std::ops::IndexMut<usize> for List<T> {
 	/// # Panic
 	/// The index is out of bounds.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex06::List;
 	///

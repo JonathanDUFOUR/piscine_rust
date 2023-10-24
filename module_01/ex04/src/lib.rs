@@ -35,7 +35,7 @@ fn __quicksort(boxes: &mut [[u32; 2]], low: usize, high: usize) {
 /// # Panic
 /// No such sorting is possible.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// use ex04::sort_boxes;
 ///

@@ -7,7 +7,7 @@
 /// # Parameters
 /// * `f` - The function to call only once to get the string to print.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// yes(|| "foo".to_string());
 /// ```

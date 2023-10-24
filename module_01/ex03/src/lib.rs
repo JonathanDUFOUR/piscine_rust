@@ -7,7 +7,7 @@
 /// # Return
 /// The largest subslice of `haystack` that contains all and only values in `needles`.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// use ex03::largest_group;
 ///

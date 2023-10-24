@@ -11,7 +11,7 @@
 /// # Return
 /// The sum of all odd positive integers in the string.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// use ex02::sum_of_odds;
 ///
@@ -43,7 +43,7 @@ use std::str::FromStr;
 /// # Return
 /// A `Vec` of pairs.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// use ex02::create_pairs;
 ///

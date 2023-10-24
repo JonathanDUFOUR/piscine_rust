@@ -3,7 +3,7 @@
 /// # Parameters
 /// * `s`: The string to print the bytes from.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// use ex02::print_bytes;
 ///

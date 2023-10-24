@@ -100,7 +100,7 @@ impl Color {
 	/// # Return
 	/// The newly created and initialized Color instance.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex05::Color;
 	///
@@ -123,7 +123,7 @@ impl Color {
 	/// # Return
 	/// The resulting mixed color that is closest to the `self` color.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex05::Color;
 	///

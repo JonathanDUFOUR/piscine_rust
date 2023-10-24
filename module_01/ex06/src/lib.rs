@@ -28,7 +28,7 @@ fn __most_significant_digit(n: &[u8]) -> usize {
 /// # Panic
 /// The input contains anything else than digits.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// use ex06::big_add;
 ///

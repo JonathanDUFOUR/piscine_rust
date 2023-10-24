@@ -7,7 +7,7 @@
 /// # Returns
 /// The sum of `a` and `b`.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// use ex00::add;
 ///

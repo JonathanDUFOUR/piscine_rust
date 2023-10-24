@@ -16,7 +16,7 @@ impl<T> Vector<T> {
 	/// # Return
 	/// The newly created Vector instance.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex05::Vector;
 	///
@@ -34,7 +34,7 @@ impl Vector<f32> {
 	/// # Return
 	/// The calculated length of the vector.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex05::Vector;
 	///

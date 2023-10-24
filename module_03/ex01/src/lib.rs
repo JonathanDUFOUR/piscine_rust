@@ -10,7 +10,7 @@
 /// # Return
 /// The lowest thing between `a` and `b`.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// use::ex01::min;
 ///

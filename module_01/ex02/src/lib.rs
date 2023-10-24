@@ -3,7 +3,7 @@
 /// # Parameters
 /// * `color` - A slice of RGB values.
 ///
-/// # Examples
+/// # Example
 /// ```
 /// use ex02::color_name;
 ///

@@ -13,7 +13,7 @@ impl Point {
 	/// # Return
 	/// The newly created Point instance.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex01::Point;
 	///
@@ -31,7 +31,7 @@ impl Point {
 	/// # Return
 	/// The newly created Point instance.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex01::Point;
 	///
@@ -52,7 +52,7 @@ impl Point {
 	/// # Return
 	/// The distance between the two points.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex01::Point;
 	///
@@ -93,7 +93,7 @@ impl Point {
 	/// * `dx` - The x coordinate to translate the point by.
 	/// * `dy` - The y coordinate to translate the point by.
 	///
-	/// # Examples
+	/// # Example
 	/// ```
 	/// use ex01::Point;
 	///
