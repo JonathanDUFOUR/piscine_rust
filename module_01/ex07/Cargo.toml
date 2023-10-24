@@ -1,10 +1,10 @@
 [package]
-name		=	"ex07"
-version		=	"0.1.0"
-authors		=	["Jonathan DUFOUR"]
-edition		=	"2021"
-description	=	"Justify a text passed through standard input using specified parameters"
+       name = "ex07"
+    version = "0.1.0"
+    authors = ["Jonathan DUFOUR"]
+    edition = "2021"
+description = "Justify a text passed through standard input using specified parameters"
 
 [dependencies]
-ftkit			=	"0.1.12"
-unicode-width	=	"0.1.10"
+        ftkit = "0.1.12"
+unicode-width = "0.1.10"

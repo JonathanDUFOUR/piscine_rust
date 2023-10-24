@@ -1,9 +1,9 @@
 [package]
-name		=	"ex04"
-version		=	"0.1.0"
-authors		=	["Jonathan DUFOUR"]
-edition		=	"2021"
-description	=	"My first TODO-List application in Rust!"
+       name = "ex04"
+    version = "0.1.0"
+    authors = ["Jonathan DUFOUR"]
+    edition = "2021"
+description = "My first TODO-List application in Rust!"
 
 [dependencies]
-ftkit		=	"0.1.12"
+ftkit = "0.1.12"

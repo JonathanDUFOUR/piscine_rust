@@ -414,7 +414,7 @@ Create a type named `Increasing`.
 ```rust
 struct Increasing<I: Iterator> {
 	inner: I,
-	last: Option<I::Item>,
+	previous: Option<I::Item>,
 }
 
 impl<I> Increasing<I> {

@@ -1,6 +1,6 @@
 [package]
-name		=	"ex03"
-version		=	"0.1.0"
-authors		=	["Jonathan DUFOUR"]
-edition		=	"2021"
-description	=	"Implementation of a research function to find the largest subslice, containing specific elements, in another slice"
+       name = "ex03"
+    version = "0.1.0"
+    authors = ["Jonathan DUFOUR"]
+    edition = "2021"
+description = "Implementation of a research function to find the largest subslice, containing specific elements, in another slice"

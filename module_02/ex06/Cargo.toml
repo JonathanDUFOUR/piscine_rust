@@ -1,9 +1,9 @@
 [package]
-name		=	"ex06"
-version		=	"0.1.0"
-authors		=	["Jonathan DUFOUR"]
-edition		=	"2021"
-description	=	"Implementing a baby parser."
+       name = "ex06"
+    version = "0.1.0"
+    authors = ["Jonathan DUFOUR"]
+    edition = "2021"
+description = "Implementing a baby parser."
 
 [dependencies]
-ftkit		=	"0.1.12"
+ftkit = "0.1.12"

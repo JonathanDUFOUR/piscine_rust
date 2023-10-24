@@ -1,7 +1,7 @@
 [package]
-name		=	"ex07"
-version		=	"0.1.0"
-authors 	=	["Jonathan DUFOUR"]
-edition		=	"2021"
-description	=	"Implementing our own generic CSV encoder and decoder"
+       name = "ex07"
+    version = "0.1.0"
+    authors = ["Jonathan DUFOUR"]
+    edition = "2021"
+description = "Implementing our own generic CSV encoder and decoder"
 

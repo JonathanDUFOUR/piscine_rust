@@ -1,6 +1,6 @@
 [package]
-name		=	"ex05"
-version		=	"0.1.0"
-authors		=	["Jonathan DUFOUR"]
-edition		=	"2021"
-description	=	"A little program designed to find out every Friday 13th"
+       name = "ex05"
+    version = "0.1.0"
+    authors = ["Jonathan DUFOUR"]
+    edition = "2021"
+description = "A little program designed to find out every Friday 13th"

@@ -1,6 +1,6 @@
 [package]
-name		=	"ex02"
-version		=	"0.1.0"
-authors		=	["Jonathan DUFOUR"]
-edition		=	"2021"
-description	=	"Implementation of a small color name dictionary using references"
+       name = "ex02"
+    version = "0.1.0"
+    authors = ["Jonathan DUFOUR"]
+    edition = "2021"
+description = "Implementation of a small color name dictionary using references"

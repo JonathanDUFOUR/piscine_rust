@@ -1,6 +1,6 @@
 [package]
-name		=	"ex02"
-version		=	"0.1.0"
-authors		=	["Jonathan DUFOUR"]
-edition		=	"2021"
-description	=	"Implementing methods for an enum to get informations about ordered pizzas"
+       name = "ex02"
+    version = "0.1.0"
+    authors = ["Jonathan DUFOUR"]
+    edition = "2021"
+description = "Implementing methods for an enum to get informations about ordered pizzas"

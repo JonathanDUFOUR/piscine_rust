@@ -1,6 +1,6 @@
 [package]
-name		=	"ex03"
-version		=	"0.1.0"
-authors		=	["Jonathan DUFOUR"]
-edition		=	"2021"
-description	=	"Implementing our own trait for several already existing types"
+       name = "ex03"
+    version = "0.1.0"
+    authors = ["Jonathan DUFOUR"]
+    edition = "2021"
+description = "Implementing our own trait for several already existing types"

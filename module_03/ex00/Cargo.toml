@@ -1,9 +1,9 @@
 [package]
-name		=	"ex00"
-version		=	"0.1.0"
-authors		=	["Jonathan DUFOUR"]
-edition		=	"2021"
-description	=	"My very first generic function to randomly choose an element from a slice"
+       name = "ex00"
+    version = "0.1.0"
+    authors = ["Jonathan DUFOUR"]
+    edition = "2021"
+description = "My very first generic function to randomly choose an element from a slice"
 
 [dependencies]
-ftkit		=	"0.1.12"
+ftkit = "0.1.12"

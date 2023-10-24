@@ -1,5 +1,6 @@
 [package]
-name		=	"ex06"
-version		=	"0.1.0"
-edition		=	"2021"
-description	=	"Implementing our own linked list using generics"
+       name = "ex06"
+    version = "0.1.0"
+    authors = ["Jonathan DUFOUR"]
+    edition = "2021"
+description = "Implementing our own linked list using generics"
