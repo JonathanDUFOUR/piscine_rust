@@ -3,4 +3,4 @@
     version = "0.1.0"
     authors = ["Jonathan DUFOUR"]
     edition = "2021"
-description = "Implementing our own linked list using generics"
+description = "Implementation of our own linked list using generics"

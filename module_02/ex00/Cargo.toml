@@ -3,4 +3,4 @@
     version = "0.1.0"
     authors = ["Jonathan DUFOUR"]
     edition = "2021"
-description = "Using Rust type aliasing for the first time"
+description = "Use Rust type aliasing for the first time"

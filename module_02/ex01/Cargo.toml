@@ -3,4 +3,4 @@
     version = "0.1.0"
     authors = ["Jonathan DUFOUR"]
     edition = "2021"
-description = "Designing our first structures, methods, and associated functions"
+description = "Design our first structures, methods, and associated functions"

@@ -3,7 +3,7 @@
     version = "0.1.0"
     authors = ["Jonathan DUFOUR"]
     edition = "2021"
-description = "Implementing a baby parser."
+description = "Implementation of a mini-lexer."
 
 [dependencies]
 ftkit = "0.1.12"

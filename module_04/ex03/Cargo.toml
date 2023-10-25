@@ -3,4 +3,4 @@
     version = "0.1.0"
     authors = ["Jonathan DUFOUR"]
     edition = "2021"
-description = "Implementing our own iterator to iterate over only strictly increasing elements"
+description = "Implementation of our own iterator to iterate over only strictly increasing elements"

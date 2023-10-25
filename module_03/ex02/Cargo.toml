@@ -3,4 +3,4 @@
     version = "0.1.0"
     authors = ["Jonathan DUFOUR"]
     edition = "2021"
-description = "Implementing already exising traits for our own type"
+description = "Implementation of already exising traits for our own type"

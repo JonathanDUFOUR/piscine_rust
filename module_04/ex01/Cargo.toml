@@ -3,7 +3,7 @@
     version = "0.1.0"
     authors = ["Jonathan DUFOUR"]
     edition = "2021"
-description	= "Discovering function traits through 3 little functions"
+description	= "Discover function traits through 3 little functions"
 
 [[bin]]
 name = "collayz"
