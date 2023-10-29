@@ -1,11 +1,13 @@
 use std::collections::BTreeSet;
 
+const STARTING_PRIMES: [u32; 4] = [2, 3, 5, 7];
 const SIEVE_COUNT: usize = 42;
 
 pub struct Prime {
 	n: u32,
 	primes: Vec<u32>,
 	sieve: BTreeSet<u32>, // See https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes
+	chunk_first: u32,
 }
 
 impl Prime {
@@ -33,7 +35,14 @@ impl Prime {
 			_ => panic!("SIEVE_COUNT must be in [1, {MAX_SIEVE_COUNT}]."),
 		}
 
-		Prime { n, primes: vec![2, 3, 5, 7], sieve: BTreeSet::new() }
+		let primes: Vec<u32> = STARTING_PRIMES.to_vec();
+		let sieve: BTreeSet<u32> = BTreeSet::new();
+		let chunk_first: u32 = match STARTING_PRIMES.len() {
+			0 => 2,
+			len => STARTING_PRIMES[len - 1] + 1,
+		};
+
+		Prime { n, primes, sieve, chunk_first }
 	}
 
 	/// Fills the sieve with the next chunk of numbers.
@@ -46,24 +55,53 @@ impl Prime {
 	fn fill_sieve_with_next_chunk(self: &mut Self) -> Option<()> {
 		const SIEVE_COUNT_U32: u32 = SIEVE_COUNT as u32;
 
-		let primes_last: u32 = *self.primes.last().unwrap();
-		let remaining_numbers_count: u32 = u32::MAX - primes_last;
-		let chunk_count: usize = match remaining_numbers_count {
+		let remaining_numbers: u32 = u32::MAX - self.chunk_first;
+		let chunk_count: usize = match remaining_numbers {
 			0 => return None,
-			1..=SIEVE_COUNT_U32 => remaining_numbers_count as usize,
+			1..=SIEVE_COUNT_U32 => remaining_numbers as usize,
 			_ => SIEVE_COUNT,
 		};
 
-		self.sieve.extend(primes_last..primes_last + chunk_count as u32);
+		self.sieve.extend(self.chunk_first..self.chunk_first + chunk_count as u32);
+		self.chunk_first += chunk_count as u32;
 
 		Some(())
 	}
 
 	/// Removes the non-prime numbers from the sieve.
 	/// The non-prime numbers are found by removing the multiples of the prime numbers
-	/// that are already in `self.primes`.
+	/// that are already in `self.primes`, and then removing the multiples of the remaining
+	/// numbers in the sieve from the sieve. (Yes, it sounds like an Inception)
 	fn remove_non_prime_from_sieve(self: &mut Self) {
-		// TODO
+		for prime in self.primes.iter() {
+			let mut multiple: u32 =
+				*self.sieve.first().unwrap() - *self.sieve.first().unwrap() % *prime + *prime;
+
+			while multiple <= *self.sieve.last().unwrap() {
+				self.sieve.remove(&multiple);
+				multiple = match multiple.checked_add(*prime) {
+					Some(multiple) => multiple,
+					None => break,
+				}
+			}
+		}
+
+		// TODO: Remove from the sieve the multiples of the remaining numbers in the sieve.
+		// Hint: You can use the same logic as above. (but you may encounter some borrow checker issues)
+		for prime in self.sieve.iter() {
+			let mut multiple: u32 = match prime.checked_pow(2) {
+				Some(multiple) => multiple,
+				None => break,
+			};
+
+			while multiple <= *self.sieve.last().unwrap() {
+				self.sieve.remove(&multiple);
+				multiple = match multiple.checked_add(*prime) {
+					Some(multiple) => multiple,
+					None => break,
+				}
+			}
+		}
 	}
 }
 
@@ -96,7 +134,7 @@ impl Iterator for Prime {
 			self.n = self.primes[upper_bound(&self.primes, self.n).unwrap()];
 		} else {
 			while self.n > *self.primes.last().unwrap() {
-				if self.sieve.is_empty() {
+				while self.sieve.is_empty() {
 					self.fill_sieve_with_next_chunk()?;
 					self.remove_non_prime_from_sieve();
 				}
@@ -107,6 +145,13 @@ impl Iterator for Prime {
 			next_prime = *self.primes.last().unwrap();
 			// TODO: Find and append the next prime number to `self.primes` only once,
 			// and give `self.n` its value.
+			if self.sieve.is_empty() {
+				self.fill_sieve_with_next_chunk();
+				self.remove_non_prime_from_sieve();
+			}
+			if let Some(first) = self.sieve.pop_first() {
+				self.primes.push(first);
+			}
 		}
 
 		Some(next_prime)
