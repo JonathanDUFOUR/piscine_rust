@@ -88,20 +88,21 @@ impl Prime {
 
 		// TODO: Remove from the sieve the multiples of the remaining numbers in the sieve.
 		// Hint: You can use the same logic as above. (but you may encounter some borrow checker issues)
-		for prime in self.sieve.iter() {
-			let mut multiple: u32 = match prime.checked_pow(2) {
-				Some(multiple) => multiple,
-				None => break,
-			};
 
-			while multiple <= *self.sieve.last().unwrap() {
-				self.sieve.remove(&multiple);
-				multiple = match multiple.checked_add(*prime) {
-					Some(multiple) => multiple,
-					None => break,
-				}
-			}
-		}
+		// for prime in self.sieve.iter() {
+		// 	let mut multiple: u32 = match prime.checked_pow(2) {
+		// 		Some(multiple) => multiple,
+		// 		None => break,
+		// 	};
+
+		// 	while multiple <= *self.sieve.last().unwrap() {
+		// 		self.sieve.remove(&multiple);
+		// 		multiple = match multiple.checked_add(*prime) {
+		// 			Some(multiple) => multiple,
+		// 			None => break,
+		// 		}
+		// 	}
+		// }
 	}
 }
 
@@ -143,6 +144,7 @@ impl Iterator for Prime {
 			}
 
 			next_prime = *self.primes.last().unwrap();
+
 			// TODO: Find and append the next prime number to `self.primes` only once,
 			// and give `self.n` its value.
 			if self.sieve.is_empty() {
