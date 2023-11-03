@@ -1,13 +1,55 @@
-use std::collections::BTreeSet;
+type Inner = u32;
+type BitField = u16;
 
-const STARTING_PRIMES: [u32; 4] = [2, 3, 5, 7];
-const SIEVE_COUNT: usize = 42;
+/// The maximum number of bits that can be used to represent the numbers in the sieve.
+const SIEVE_BITS: Inner = 42;
 
+const SIEVE_LEN: usize = {
+	const LEN: Inner = SIEVE_BITS / BitField::BITS;
+
+	match LEN * BitField::BITS {
+		SIEVE_BITS => LEN as usize,
+		_ => LEN as usize + 1,
+	}
+};
+
+trait IsFullOfOnes {
+	/// Checks if every bit is set to 1 in the binary representation of `self`.
+	///
+	/// # Return
+	/// * `true` - Every bit is set to 1.
+	/// * `false` - There is at least 1 bit that is set to 0.
+	fn is_full_of_ones(self: &Self) -> bool;
+}
+
+impl IsFullOfOnes for [BitField; SIEVE_LEN] {
+	fn is_full_of_ones(self: &Self) -> bool {
+		self.iter().all(|bit_field| bit_field.count_zeros() == 0)
+	}
+}
+
+/// An iterator that generates prime numbers.
 pub struct Prime {
-	n: u32,
-	primes: Vec<u32>,
-	sieve: BTreeSet<u32>, // See https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes
-	chunk_first: u32,
+	/// The number to find the next prime from.
+	n: Inner,
+
+	/// A vector that contains the prime numbers that have already been found,
+	/// sorted in ascending order.
+	primes: Vec<Inner>,
+
+	/// A bit set where each bit represents a number, starting at `self.offset`.
+	/// First, each bit is set to 0, then the bits representing non-prime numbers are set to 1.
+	/// These non-prime numbers are found by removing the multiples
+	/// of the already known prime numbers, and then removing the multiples
+	/// of the remaining numbers in the sieve from the sieve.
+	/// See https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes for more information.
+	sieve: [BitField; SIEVE_LEN],
+
+	/// The number represented by the first bit of `self.sieve`.
+	sieve_first: Inner,
+
+	/// The effective number of bits that `self.sieve` uses.
+	sieve_bits: Inner,
 }
 
 impl Prime {
@@ -27,82 +69,104 @@ impl Prime {
 	///
 	/// let mut prime: Prime = Prime::new(0);
 	/// ```
-	pub fn new(n: u32) -> Prime {
-		const MAX_SIEVE_COUNT: usize = u32::MAX as usize;
+	pub fn new(n: Inner) -> Self {
+		let primes: Vec<Inner> = Vec::new();
+		let sieve: [BitField; SIEVE_LEN] = [0; SIEVE_LEN];
+		let sieve_first: Inner = 2;
+		let remaining_numbers: Inner = Inner::MAX - sieve_first + 1;
+		let sieve_bits: Inner = Inner::min(SIEVE_BITS, remaining_numbers);
 
-		match SIEVE_COUNT {
-			1..=MAX_SIEVE_COUNT => (),
-			_ => panic!("SIEVE_COUNT must be in [1, {MAX_SIEVE_COUNT}]."),
-		}
-
-		let primes: Vec<u32> = STARTING_PRIMES.to_vec();
-		let sieve: BTreeSet<u32> = BTreeSet::new();
-		let chunk_first: u32 = match STARTING_PRIMES.len() {
-			0 => 2,
-			len => STARTING_PRIMES[len - 1] + 1,
-		};
-
-		Prime { n, primes, sieve, chunk_first }
+		Self { n, primes, sieve, sieve_first, sieve_bits }
 	}
 
-	/// Fills the sieve with the next chunk of numbers.
-	/// The next chunk of numbers is composed by the `SIEVE_COUNT` numbers that directly
-	/// follow the last number of `self.primes`.
+	/// Sets the bits of `self.sieve` to 0,
+	/// and update `self.sieve_first` to represent the first number of the next chunk of numbers.
 	///
 	/// # Return
-	/// * `Some(())` - The sieve has been filled with the next chunk of numbers.
-	/// * `None` - There is no next chunk of numbers to fill the sieve with.
+	/// * `Some(())` - The bits of the `self.sieve` have been set
+	/// and `self.offset` has been updated.
+	/// * `None` - The last chunk of numbers has already been computed.
 	fn fill_sieve_with_next_chunk(self: &mut Self) -> Option<()> {
-		const SIEVE_COUNT_U32: u32 = SIEVE_COUNT as u32;
+		if self.sieve_bits == 0 {
+			return None;
+		}
 
-		let remaining_numbers: u32 = u32::MAX - self.chunk_first;
-		let chunk_count: usize = match remaining_numbers {
-			0 => return None,
-			1..=SIEVE_COUNT_U32 => remaining_numbers as usize,
-			_ => SIEVE_COUNT,
-		};
+		self.sieve = [0; SIEVE_LEN];
+		self.sieve_first += self.sieve_bits;
 
-		self.sieve.extend(self.chunk_first..self.chunk_first + chunk_count as u32);
-		self.chunk_first += chunk_count as u32;
+		let remaining_numbers: Inner = Inner::MAX - self.sieve_first + 1;
+
+		self.sieve_bits = Inner::min(SIEVE_BITS, remaining_numbers);
 
 		Some(())
 	}
 
-	/// Removes the non-prime numbers from the sieve.
-	/// The non-prime numbers are found by removing the multiples of the prime numbers
-	/// that are already in `self.primes`, and then removing the multiples of the remaining
+	/// Sets the bits of the non-prime numbers in the sieve to 1.
+	/// The non-prime numbers are found by the multiplying the prime numbers
+	/// that are already in `self.primes`, and then multiplying the remaining
 	/// numbers in the sieve from the sieve. (Yes, it sounds like an Inception)
 	fn remove_non_prime_from_sieve(self: &mut Self) {
-		for prime in self.primes.iter() {
-			let mut multiple: u32 =
-				*self.sieve.first().unwrap() - *self.sieve.first().unwrap() % *prime + *prime;
+		#[inline(always)]
+		fn set_bit_to_one(multiple: Inner, sieve: &mut [BitField; SIEVE_LEN], sieve_first: Inner) {
+			let absolute_bit_index: usize = (multiple - sieve_first) as usize;
+			let relative_bit_index: usize = absolute_bit_index % BitField::BITS as usize;
+			let sieve_index: usize = absolute_bit_index / BitField::BITS as usize;
 
-			while multiple <= *self.sieve.last().unwrap() {
-				self.sieve.remove(&multiple);
-				multiple = match multiple.checked_add(*prime) {
-					Some(multiple) => multiple,
-					None => break,
-				}
+			sieve[sieve_index] |= 1 << relative_bit_index;
+		}
+
+		for prime in &self.primes {
+			let mut multiple: Inner = match self.sieve_first.checked_next_multiple_of(*prime) {
+				Some(multiple) => multiple,
+				None => continue,
+			};
+
+			while multiple - self.sieve_first < self.sieve_bits {
+				set_bit_to_one(multiple, &mut self.sieve, self.sieve_first);
+				multiple += *prime;
 			}
 		}
 
-		// TODO: Remove from the sieve the multiples of the remaining numbers in the sieve.
-		// Hint: You can use the same logic as above. (but you may encounter some borrow checker issues)
+		for i in 0..self.sieve.len() {
+			for bit in 0..BitField::BITS {
+				if self.sieve[i] & (1 << bit) == 0 {
+					let prime: Inner =
+						self.sieve_first + i as Inner * BitField::BITS as Inner + bit as Inner;
 
-		// for prime in self.sieve.iter() {
-		// 	let mut multiple: u32 = match prime.checked_pow(2) {
-		// 		Some(multiple) => multiple,
-		// 		None => break,
-		// 	};
+					let mut multiple: Inner = match prime.checked_mul(prime) {
+						Some(square) => square,
+						None => continue,
+					};
 
-		// 	while multiple <= *self.sieve.last().unwrap() {
-		// 		self.sieve.remove(&multiple);
-		// 		multiple = match multiple.checked_add(*prime) {
-		// 			Some(multiple) => multiple,
-		// 			None => break,
-		// 		}
-		// 	}
-		// }
+					while multiple - self.sieve_first < self.sieve_bits {
+						set_bit_to_one(multiple, &mut self.sieve, self.sieve_first);
+						multiple += prime;
+					}
+				}
+			}
+		}
+	}
+
+	/// Transfers the first prime number from `self.sieve` to `self.primes`.
+	/// The prime number is found by searching for the first bit that is set to 0
+	/// in the binary representation of `self.sieve`.
+	/// It is assumed that `self.sieve` contains at least 1 of it.
+	/// Once the prime number has been found, it is removed from `self.sieve`,
+	/// and appended to `self.primes`.
+	fn transfer_first_from_sieve_to_primes(self: &mut Self) {
+		for i in 0..self.sieve.len() {
+			for bit in 0..BitField::BITS {
+				let mask: BitField = 1 << bit;
+
+				if self.sieve[i] & mask == 0 {
+					let prime: Inner =
+						self.sieve_first + i as Inner * BitField::BITS as Inner + bit as Inner;
+					self.sieve[i] |= mask;
+					self.primes.push(prime);
+					return;
+				}
+			}
+		}
 	}
 }
 
@@ -128,93 +192,27 @@ impl Iterator for Prime {
 	/// assert_eq!(prime.next(), Some(11));
 	/// ```
 	fn next(self: &mut Self) -> Option<Self::Item> {
-		let next_prime: u32;
+		let next_prime: Inner;
 
-		if self.n < *self.primes.last().unwrap() {
-			next_prime = self.primes[lower_bound(&self.primes, self.n).unwrap()];
-			self.n = self.primes[upper_bound(&self.primes, self.n).unwrap()];
-		} else {
-			while self.n > *self.primes.last().unwrap() {
-				while self.sieve.is_empty() {
-					self.fill_sieve_with_next_chunk()?;
-					self.remove_non_prime_from_sieve();
-				}
-
-				self.primes.push(self.sieve.pop_first().unwrap());
-			}
-
-			next_prime = *self.primes.last().unwrap();
-
-			// TODO: Find and append the next prime number to `self.primes` only once,
-			// and give `self.n` its value.
-			if self.sieve.is_empty() {
-				self.fill_sieve_with_next_chunk();
+		while self.primes.is_empty() || self.n > *self.primes.last().unwrap() {
+			while self.sieve.is_full_of_ones() {
+				self.fill_sieve_with_next_chunk()?;
 				self.remove_non_prime_from_sieve();
 			}
-			if let Some(first) = self.sieve.pop_first() {
-				self.primes.push(first);
-			}
+			self.transfer_first_from_sieve_to_primes();
+		}
+		next_prime = *self.primes.last().unwrap();
+
+		if self.sieve.is_full_of_ones() {
+			self.fill_sieve_with_next_chunk();
+			self.remove_non_prime_from_sieve();
+		}
+		if !self.sieve.is_full_of_ones() {
+			self.transfer_first_from_sieve_to_primes();
+			self.n = *self.primes.last().unwrap();
 		}
 
 		Some(next_prime)
-	}
-}
-
-/// Searches in `v` for the first element that is __greater or equal__ to `n`.
-/// It is assumed that `v` is sorted in ascending order.
-///
-/// # Parameters
-/// * `v` - The vector to search in.
-/// * `n` - The number to search the lower bound for.
-///
-/// # Return
-/// * `Some(i)` - The index of the first element in `v` that is greater or equal to `n`.
-/// * `None` - There is no element in `v` that is greater or equal to `n`.
-fn lower_bound(v: &Vec<u32>, n: u32) -> Option<usize> {
-	if v.is_empty() || *v.last().unwrap() < n {
-		return None;
-	}
-
-	let mut left: usize = 0;
-	let mut right: usize = v.len();
-
-	while left < right {
-		let middle: usize = left + (right - left) / 2;
-
-		if v[middle] < n {
-			left = middle + 1;
-		} else {
-			right = middle;
-		}
-	}
-
-	Some(left)
-}
-
-/// Searches in `v` for the first element that is __strictly greater__ than `n`.
-/// It is assumed that `v` is sorted in ascending order.
-///
-/// # Parameters
-/// * `v` - The vector to search in.
-/// * `n` - The number to search the upper bound for.
-///
-/// # Return
-/// * `Some(i)` - The index of the first element in `v` that is strictly greater than `n`.
-/// * `None` - There is no element in `v` that is strictly greater than `n`.
-fn upper_bound(v: &Vec<u32>, n: u32) -> Option<usize> {
-	match lower_bound(v, n) {
-		Some(i) => {
-			if v[i] == n {
-				if i + 1 < v.len() {
-					Some(i + 1)
-				} else {
-					None
-				}
-			} else {
-				Some(i)
-			}
-		}
-		None => None,
 	}
 }
 
