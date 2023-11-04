@@ -1,30 +1,115 @@
 type Inner = u32;
 type BitField = u16;
 
-/// The maximum number of bits that can be used to represent the numbers in the sieve.
-const SIEVE_BITS: Inner = 42;
+/// The maximum number of usable bits in each BitSet instance.
+const BITSET_BITS: Inner = 42;
 
-const SIEVE_LEN: usize = {
-	const LEN: Inner = SIEVE_BITS / BitField::BITS;
+const BITSET_LEN: usize = {
+	const LEN: Inner = BITSET_BITS / BitField::BITS;
 
 	match LEN * BitField::BITS {
-		SIEVE_BITS => LEN as usize,
-		_ => LEN as usize + 1,
+		BITSET_BITS => LEN as usize,
+		___________ => LEN as usize + 1,
 	}
 };
 
-trait IsFullOfOnes {
-	/// Checks if every bit is set to 1 in the binary representation of `self`.
-	///
-	/// # Return
-	/// * `true` - Every bit is set to 1.
-	/// * `false` - There is at least 1 bit that is set to 0.
-	fn is_full_of_ones(self: &Self) -> bool;
+enum BitValue {
+	ZERO,
+	ONE,
 }
 
-impl IsFullOfOnes for [BitField; SIEVE_LEN] {
-	fn is_full_of_ones(self: &Self) -> bool {
-		self.iter().all(|bit_field| bit_field.count_zeros() == 0)
+impl PartialEq<u8> for BitValue {
+	fn eq(self: &Self, rhs: &u8) -> bool {
+		match (self, rhs) {
+			(&Self::ZERO, 0) | (&Self::ONE, 1) => true,
+			__________________________________ => false,
+		}
+	}
+}
+
+/// A fixed sized bitset.
+struct BitSet([BitField; BITSET_LEN]);
+
+impl BitSet {
+	const BITS: Inner = BITSET_BITS;
+	const LEN: usize = BITSET_LEN;
+
+	/// Creates a new BitSet instance and initializes it as entierly filled with zeros.
+	///
+	/// # Return
+	/// The newly created BitSet instance.
+	///
+	/// # Example
+	/// ```
+	/// use ex04::BitSet;
+	///
+	/// let bit_set: BitSet = BitSet::new();
+	/// ```
+	pub const fn new() -> Self {
+		Self([0; Self::LEN])
+	}
+
+	/// Checks if the `n` first bits are all set to 0 in the binary representation of `self`.
+	///
+	/// # Parameteres
+	/// * `n` - The number of bits to check.
+	///
+	/// # Return
+	/// * `true` - The `n` first bits are all set to 0.
+	/// * `false` - There is at least 1 bit that is set to 1 in the `n` first bits.
+	///
+	/// # Panic
+	/// `n` is greater than the number of bits in `self`.
+	fn are_first_bits_zeros(self: &Self, n: Inner) -> bool {
+		if n > Self::BITS {
+			panic!("n({}) is greater than the number of bits in the BitSet({}).", n, Self::BITS);
+		}
+
+		let len: usize = (n / BitField::BITS) as usize;
+
+		for i in 0..len {
+			if self.0[i] != 0 {
+				return false;
+			}
+		}
+
+		let checked_bits_so_far: Inner = len as Inner * BitField::BITS as Inner;
+
+		if checked_bits_so_far < n {
+			let mask: BitField = !0 >> (BitField::BITS - (n - checked_bits_so_far));
+
+			if self.0[len] & mask != 0 {
+				return false;
+			}
+		}
+
+		true
+	}
+}
+
+impl std::ops::Index<Inner> for BitSet {
+	type Output = BitValue;
+
+	/// # Parameters
+	/// * `i` - The index of the wanted bit.
+	///
+	/// # Return
+	/// A reference to the wanted bit in the calling BitSet.
+	///
+	/// # Panic
+	/// The index is out of bound.
+	fn index(self: &Self, i: Inner) -> &Self::Output {
+		if i >= Self::BITS {
+			panic!("index {} is out of bounds.", i);
+		}
+
+		let j: usize = (i / BitField::BITS) as usize;
+		let mask: BitField = 1 << i % BitField::BITS;
+
+		match self.0[j] & mask {
+			0 => &BitValue::ZERO,
+			_ => &BitValue::ONE,
+		}
 	}
 }
 
@@ -43,7 +128,7 @@ pub struct Prime {
 	/// of the already known prime numbers, and then removing the multiples
 	/// of the remaining numbers in the sieve from the sieve.
 	/// See https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes for more information.
-	sieve: [BitField; SIEVE_LEN],
+	sieve: BitSet,
 
 	/// The number represented by the first bit of `self.sieve`.
 	sieve_first: Inner,
@@ -71,34 +156,18 @@ impl Prime {
 	/// ```
 	pub fn new(n: Inner) -> Self {
 		let primes: Vec<Inner> = Vec::new();
-		let sieve: [BitField; SIEVE_LEN] = [0; SIEVE_LEN];
+		let sieve: BitSet = BitSet::new();
 		let sieve_first: Inner = 2;
 		let remaining_numbers: Inner = Inner::MAX - sieve_first + 1;
-		let sieve_bits: Inner = Inner::min(SIEVE_BITS, remaining_numbers);
+		let sieve_bits: Inner = Inner::min(BitSet::BITS, remaining_numbers);
 
 		Self { n, primes, sieve, sieve_first, sieve_bits }
 	}
 
 	/// Sets the bits of `self.sieve` to 0,
 	/// and update `self.sieve_first` to represent the first number of the next chunk of numbers.
-	///
-	/// # Return
-	/// * `Some(())` - The bits of the `self.sieve` have been set
-	/// and `self.offset` has been updated.
-	/// * `None` - The last chunk of numbers has already been computed.
-	fn fill_sieve_with_next_chunk(self: &mut Self) -> Option<()> {
-		if self.sieve_bits == 0 {
-			return None;
-		}
-
-		self.sieve = [0; SIEVE_LEN];
-		self.sieve_first += self.sieve_bits;
-
-		let remaining_numbers: Inner = Inner::MAX - self.sieve_first + 1;
-
-		self.sieve_bits = Inner::min(SIEVE_BITS, remaining_numbers);
-
-		Some(())
+	fn fill_sieve_with_next_chunk(self: &mut Self) {
+		// TODO
 	}
 
 	/// Sets the bits of the non-prime numbers in the sieve to 1.
