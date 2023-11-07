@@ -9,14 +9,14 @@ pub struct Vector<T> {
 impl<T> Vector<T> {
 	/// Creates a new Vector instance and initialize its attributes.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `x` - The x direction of the vector to create.
 	/// * `y` - The y direction of the vector to create.
 	///
-	/// # Return
+	/// ### Return
 	/// The newly created Vector instance.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex05::Vector;
 	///
@@ -31,10 +31,10 @@ impl<T> Vector<T> {
 impl Vector<f32> {
 	/// Calculates the length of the vector.
 	///
-	/// # Return
+	/// ### Return
 	/// The calculated length of the vector.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex05::Vector;
 	///
@@ -50,10 +50,10 @@ impl Vector<f32> {
 impl Vector<f64> {
 	/// Calculates the length of the vector.
 	///
-	/// # Return
+	/// ### Return
 	/// The calculated length of the vector.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex05::Vector;
 	///

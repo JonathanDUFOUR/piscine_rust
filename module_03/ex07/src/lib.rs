@@ -7,13 +7,13 @@ use crate::record::Record;
 
 /// Decodes a CSV content from its `str` representation to a collection of records.
 ///
-/// # Type parameters
+/// ### Type parameters
 /// * `R` - The type of the record to decode.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `content` - The CSV content to decode.
 ///
-/// # Return
+/// ### Return
 /// * `Ok(Vec<R>)` - The decoded records.
 /// * `Err(DecodingError)` - The CSV content could not be decoded.
 pub fn decode_csv<R: Record>(content: &str) -> Result<Vec<R>, DecodingError> {
@@ -31,13 +31,13 @@ pub fn decode_csv<R: Record>(content: &str) -> Result<Vec<R>, DecodingError> {
 
 /// Encodes a CSV content from a collection of records to its `str` representation.
 ///
-/// # Type parameters
+/// ### Type parameters
 /// * `R` - The type of the record to encode.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `records` - The records to encode.
 ///
-/// # Return
+/// ### Return
 /// * `Ok(String)` - The encoded records.
 /// * `Err(EncodingError)` - The CSV content could not be encoded.
 pub fn encode_csv<R: Record>(records: &[R]) -> Result<String, EncodingError> {

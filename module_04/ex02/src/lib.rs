@@ -5,13 +5,13 @@
 ///
 /// Whenever a word is not a valid positive integer, it is ignored.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `s` - The string to parse the positive integers from.
 ///
-/// # Return
+/// ### Return
 /// The sum of all odd positive integers in the string.
 ///
-/// # Example
+/// ### Example
 /// ```
 /// use ex02::sum_of_odds;
 ///
@@ -37,13 +37,13 @@ use std::str::FromStr;
 ///
 /// Whenever a line is not a valid pair, it is ignored.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `s` - The string to parse the pairs from.
 ///
-/// # Return
+/// ### Return
 /// A `Vec` of pairs.
 ///
-/// # Example
+/// ### Example
 /// ```
 /// use ex02::create_pairs;
 ///

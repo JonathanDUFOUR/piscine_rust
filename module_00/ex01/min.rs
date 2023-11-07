@@ -1,13 +1,13 @@
 /// Compares two numbers and returns the lowest one.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `a`: The first number to compare.
 /// * `b`: The second number to compare.
 ///
-/// # Return
+/// ### Return
 /// The lowest number between `a` and `b`.
 ///
-/// # Example
+/// ### Example
 /// ```
 /// use ex01::min;
 ///

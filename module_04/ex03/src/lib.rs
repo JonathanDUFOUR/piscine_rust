@@ -18,16 +18,16 @@ where
 	/// skipping every element that is not strictly greater than
 	/// the element that this same iterator was previously on.
 	///
-	/// # Type parameters
+	/// ### Type parameters
 	/// - `C`: the type of the collection to iterate over.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// - `collection`: the collection to iterate over.
 	///
-	/// # Return
+	/// ### Return
 	/// The newly created Increasing iterator instance.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex03::Increasing;
 	///
@@ -51,11 +51,11 @@ where
 	/// Advances the iterator to the next element that is strictly greater than
 	/// the element that this same iterator was previously on.
 	///
-	/// # Return
+	/// ### Return
 	/// * `Some(<I::Item>)` - The next element that fits the mentioned constraint.
 	/// * `None` - There are no more elements that fits the mentioned constraint.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex03::Increasing;
 	///

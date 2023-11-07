@@ -1,13 +1,13 @@
 /// Adds two numbers together.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `a` - The first number.
 /// * `b` - The second number.
 ///
-/// # Returns
+/// ### Returns
 /// The sum of `a` and `b`.
 ///
-/// # Example
+/// ### Example
 /// ```
 /// use ex00::add;
 ///
@@ -19,11 +19,11 @@ pub fn add(a: &i32, b: i32) -> i32 {
 
 /// Adds two numbers together, and store the result in the first given argument.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `a` - The first number.
 /// * `b` - The second number.
 ///
-/// # Examples
+/// ### Examples
 /// ```
 /// use ex00::add_assign;
 ///

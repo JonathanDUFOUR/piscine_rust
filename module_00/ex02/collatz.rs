@@ -1,10 +1,10 @@
 /// Computes and prints the Collatz sequence (https://en.wikipedia.org/wiki/Collatz_conjecture)
 /// starting at a given number.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `start`: The starting number of the sequence.
 ///
-/// # Example
+/// ### Example
 /// ```
 /// use ex02::collatz;
 ///

@@ -15,7 +15,7 @@ enum Cell {
 impl Cell {
 	/// Checks if the cell is alive.
 	///
-	/// # Return
+	/// ### Return
 	/// * `true` - The cell is alive.
 	/// * `false` - The cell is not alive.
 	#[inline(always)]
@@ -25,7 +25,7 @@ impl Cell {
 
 	/// Checks if the cell is dead.
 	///
-	/// # Return
+	/// ### Return
 	/// * `true` - The cell is dead.
 	/// * `false` - The cell is not dead.
 	#[allow(dead_code)]
@@ -46,12 +46,12 @@ impl Board {
 	/// The generated board will contains a certain percentage of alive cells,
 	/// and their posistions will be random.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `width` - The width of the board.
 	/// * `height` - The height of the board.
 	/// * `percentage` - The percentage of alive cells.
 	///
-	/// # Return
+	/// ### Return
 	/// The newly created Board instance.
 	#[inline(always)]
 	fn new(width: usize, height: usize, percentage: u8) -> Self {
@@ -90,7 +90,7 @@ impl Board {
 	/// Parses the command-line arguments passed to the application
 	/// and use them to create a Board instance.
 	///
-	/// # Return
+	/// ### Return
 	/// * `Ok(Self)` - The generated board.
 	/// * `Err(ParseError)` - The command-line arguments are invalid.
 	fn from_args() -> Result<Self, ParseError> {
@@ -474,10 +474,10 @@ impl Board {
 
 	/// Displays the board on stdout.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `clear` - If `true`, clear a previously displayed board before displaying the new one.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// let board: Board = Board::new(42, 42, 42);
 	/// board.print(false);

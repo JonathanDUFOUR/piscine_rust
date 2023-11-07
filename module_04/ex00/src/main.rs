@@ -1,9 +1,9 @@
 /// Prints every element of a collection.
 ///
-/// # Type parameters
+/// ### Type parameters
 /// * `C` - The type of the collection to print.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `collection` - The collection to print.
 fn print_all_things<C>(collection: C)
 where

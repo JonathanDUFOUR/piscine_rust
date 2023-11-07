@@ -1,6 +1,6 @@
 /// Print "y" forever.
 ///
-/// # Example
+/// ### Example
 /// ```
 /// use ex02::yes;
 ///

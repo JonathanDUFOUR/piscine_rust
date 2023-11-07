@@ -1,9 +1,9 @@
 /// Gets the name of a color from its RGB value.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `color` - A slice of RGB values.
 ///
-/// # Example
+/// ### Example
 /// ```
 /// use ex02::color_name;
 ///

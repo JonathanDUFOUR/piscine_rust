@@ -9,7 +9,7 @@ impl Command {
 	/// Displays a prompt, reads standard input until a valid command is entered,
 	/// and returns it's corresponding Command enum value.
 	///
-	/// # Return
+	/// ### Return
 	/// * `Command::Todo` - The user entered a valid TODO command.
 	/// * `Command::Done` - The user entered a valid DONE command.
 	/// * `Command::Purge` - The user entered a valid PURGE command.
@@ -43,7 +43,7 @@ impl TodoList {
 	/// Creates a new TodoList instance and initializes its attribute.
 	/// The newly created TodoList instance is empty.
 	///
-	/// # Return
+	/// ### Return
 	/// The newly created and initialized TodoList instance.
 	fn new() -> Self {
 		Self { todos: Vec::new(), dones: Vec::new() }
@@ -68,7 +68,7 @@ impl TodoList {
 
 	/// Adds a new TODO task to the calling TodoList instance.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `todo` - The TODO task to add.
 	fn add(self: &mut Self, todo: String) {
 		self.todos.push(todo);
@@ -76,7 +76,7 @@ impl TodoList {
 
 	/// Set an existing TODO task as done in the calling TodoList instance.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `index` - The task index to be set as done.
 	fn done(self: &mut Self, index: usize) {
 		if index < self.todos.len() {

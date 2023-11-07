@@ -7,11 +7,11 @@ struct Node<T> {
 impl<T> Node<T> {
 	/// Creates a new Node instance and initializes its attributes.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `value` - The value to be stored in the newly created Node instance.
 	/// * `next` - The eventual Node instance that follows the newly created Node instance.
 	///
-	/// # Return
+	/// ### Return
 	/// The newly created Node instance.
 	#[inline(always)]
 	const fn new(value: T, next: Option<Box<Node<T>>>) -> Self {
@@ -28,10 +28,10 @@ impl<T> List<T> {
 	/// Creates a new List instance and initializes its attributes.
 	/// The newly created List instance is empty.
 	///
-	/// # Return
+	/// ### Return
 	/// The newly created List instance.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -45,10 +45,10 @@ impl<T> List<T> {
 	/// Creates a new Node instance, initializes its attributes,
 	/// and inserts it at the beginning of the calling List instance.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `value` - The value to be stored in the newly created Node instance.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -71,10 +71,10 @@ impl<T> List<T> {
 	/// Creates a new Node instance, initializes its attributes,
 	/// and inserts it at the end of the calling List instance.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `value` - The value to be stored in the newly created Node instance.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -94,10 +94,10 @@ impl<T> List<T> {
 		*current = Some(Box::new(Node::new(value, None)));
 	}
 
-	/// # Return
+	/// ### Return
 	/// The number of elements present in the calling List instance.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -123,14 +123,14 @@ impl<T> List<T> {
 		count
 	}
 
-	/// # Parameters
+	/// ### Parameters
 	/// * `i` - The index of the wanted element.
 	///
-	/// # Return
+	/// ### Return
 	/// * `Some(&T)` - A reference to the wanted element.
 	/// * `None` - The index is out of bounds.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -160,14 +160,14 @@ impl<T> List<T> {
 		None
 	}
 
-	/// # Parameters
+	/// ### Parameters
 	/// * `i` - The index of the wanted element.
 	///
-	/// # Return
+	/// ### Return
 	/// * `Some(&mut T)` - A mutable reference to the wanted element.
 	/// * `None` - The index is out of bounds.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -199,11 +199,11 @@ impl<T> List<T> {
 
 	/// Removes the first element of the calling List instance.
 	///
-	/// # Return
+	/// ### Return
 	/// * `Some(T)` - The removed element.
 	/// * `None` - The calling List instance is empty.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -229,11 +229,11 @@ impl<T> List<T> {
 
 	/// Removes the last element of the calling List instance.
 	///
-	/// # Return
+	/// ### Return
 	/// * `Some(T)` - The removed element.
 	/// * `None` - The calling List instance is empty.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -267,7 +267,7 @@ impl<T> List<T> {
 
 	/// Removes all the elements of the calling List instance.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -286,16 +286,16 @@ impl<T> List<T> {
 impl<T> std::ops::Index<usize> for List<T> {
 	type Output = T;
 
-	/// # Parameters
+	/// ### Parameters
 	/// * `i` - The index of the wanted element.
 	///
-	/// # Return
+	/// ### Return
 	/// A reference to the wanted element in the calling List instance.
 	///
-	/// # Panic
+	/// ### Panic
 	/// The index is out of bounds.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex06::List;
 	///
@@ -318,16 +318,16 @@ impl<T> std::ops::Index<usize> for List<T> {
 }
 
 impl<T> std::ops::IndexMut<usize> for List<T> {
-	/// # Parameters
+	/// ### Parameters
 	/// * `i` - The index of the wanted element.
 	///
-	/// # Return
+	/// ### Return
 	/// A mutable reference to the wanted element in the calling List instance.
 	///
-	/// # Panic
+	/// ### Panic
 	/// The index is out of bounds.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex06::List;
 	///

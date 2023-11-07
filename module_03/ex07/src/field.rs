@@ -3,20 +3,20 @@ use crate::error::{DecodingError, EncodingError};
 pub trait Field: Sized {
 	/// Decodes a field from its `str` representation to its concrete type value.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `field` - The field to decode.
 	///
-	/// # Return
+	/// ### Return
 	/// * `Ok(Self)` - The decoded field.
 	/// * `Err(DecodingError)` - The field could not be decoded.
 	fn decode(field: &str) -> Result<Self, DecodingError>;
 
 	/// Encodes a field from its concrete type value to its `str` representation.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `target` - The string to append the encoded field to.
 	///
-	/// # Return
+	/// ### Return
 	/// * `Ok(())` - The field was successfully encoded.
 	/// * `Err(EncodingError)` - The field could not be encoded.
 	fn encode(self: &Self, target: &mut String) -> Result<(), EncodingError>;

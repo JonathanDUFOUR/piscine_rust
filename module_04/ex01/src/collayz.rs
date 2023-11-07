@@ -1,14 +1,14 @@
 /// Computes the Collatz sequence (https://en.wikipedia.org/wiki/Collatz_conjecture)
 /// for a given number, calling a given function each time the number gets an odd value.
 ///
-/// # Type parameters
+/// ### Type parameters
 /// * `F` - The type of the function to call.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `start` - The number to start the Collatz conjecture with.
 /// * `f` - The function to call each time the number gets an odd value.
 ///
-/// # Example
+/// ### Example
 /// ```
 /// collayz(11, |n| println!("{}", n));
 /// ```

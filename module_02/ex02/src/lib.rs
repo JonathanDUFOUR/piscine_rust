@@ -10,13 +10,13 @@ pub enum PizzaStatus {
 impl PizzaStatus {
 	/// Predicts the status of a pizza that was ordered days ago.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `ordered_days_ago` - The days number reprensenting how long ago the pizza was ordered.
 	///
-	/// # Return
+	/// ### Return
 	/// An instance of the predicted status.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex02::PizzaStatus;
 	///
@@ -37,10 +37,10 @@ impl PizzaStatus {
 	/// Estimates the time before a pizza is delivered, in days.
 	/// Always the worst case is returned.
 	///
-	/// # Return
+	/// ### Return
 	/// The estimated time before the pizza is delivered, in days.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex02::PizzaStatus;
 	///

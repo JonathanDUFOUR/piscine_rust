@@ -1,16 +1,16 @@
 /// Compares two things and returns the lowest one.
 ///
-/// # Type parameters
+/// ### Type parameters
 /// * `T` - The type of the two values to compare.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `a` - The first thing to compare.
 /// * `b` - The second thing to compare.
 ///
-/// # Return
+/// ### Return
 /// The lowest thing between `a` and `b`.
 ///
-/// # Example
+/// ### Example
 /// ```
 /// use::ex01::min;
 ///

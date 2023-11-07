@@ -1,13 +1,13 @@
 /// Prints each byte of any thing,
 /// calling repeatedly a given function that is supposed to return the next byte to print.
 ///
-/// # Type parameters
+/// ### Type parameters
 /// * `F` - The type of the function to repeatedly call.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `f` - The function to repeatedly call.
 ///
-/// # Example
+/// ### Example
 /// ```
 /// let mut chars: std::str::Chars<'static> = "foo".chars();
 ///

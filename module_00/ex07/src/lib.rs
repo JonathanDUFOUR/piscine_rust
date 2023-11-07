@@ -1,11 +1,11 @@
 /// Searches for the first occurence of a character in a string.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `haystack` - The string to search in.
 /// * `needle` - The character to search for.
 /// * `i` - The index of the first occurence of the character in the string.
 ///
-/// # Return
+/// ### Return
 /// * `true` - `needle` was found in `haystack`.
 /// * `false` - `needle` was not found in `haystack`.
 fn strchr(haystack: &[u8], needle: u8, i: &mut usize) -> bool {
@@ -23,12 +23,12 @@ fn strchr(haystack: &[u8], needle: u8, i: &mut usize) -> bool {
 
 /// Searches for the last occurence of a character in a string.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `haystack` - The string to search in.
 /// * `needle` - The character to search for.
 /// * `i` - The index of the last occurence of the character in the string.
 ///
-/// # Returns
+/// ### Returns
 /// * `true` - `needle` was found in `haystack`.
 /// * `false` - `needle` was not found in `haystack`.
 fn strrchr(haystack: &[u8], needle: u8, i: &mut usize) -> bool {
@@ -46,12 +46,12 @@ fn strrchr(haystack: &[u8], needle: u8, i: &mut usize) -> bool {
 
 /// Searches for the first occurence of a substring in a string.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `haystack` - The string to search in.
 /// * `needle` - The string to search for.
 /// * `i` - The index of the first character of the first occurence of the needle in the haystack.
 ///
-/// # Returns
+/// ### Returns
 /// * `true` - `needle` was found in `haystack`.
 /// * `false` - `needle` was not found in `haystack`.
 fn strstr(haystack: &[u8], needle: &[u8], i: &mut usize) -> bool {
@@ -89,15 +89,15 @@ fn strstr(haystack: &[u8], needle: &[u8], i: &mut usize) -> bool {
 
 /// Checks whether a string matches a pattern.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `query` - The string to check.
 /// * `pattern` - The pattern to check against.
 ///
-/// # Returns
+/// ### Returns
 /// * `true` - The string matches the pattern.
 /// * `false` - The string does not match the pattern.
 ///
-/// # Example
+/// ### Example
 /// ```
 /// use ex07::strpcmp;
 ///

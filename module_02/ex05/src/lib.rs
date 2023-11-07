@@ -8,10 +8,10 @@ pub struct Color {
 impl Color {
 	/// Calculates the distance with another color.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `other` - The color to calculate the distance with.
 	///
-	/// # Return
+	/// ### Return
 	/// The distance between the two colors.
 	fn distance(self: &Self, other: &Self) -> u32 {
 		let diff_red: i32 = self.red as i32 - other.red as i32;
@@ -24,11 +24,11 @@ impl Color {
 	/// Adds a color to the canvas, and returns the resulting color.
 	/// The canvas is assumed to be completly opaque.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `color` - The color to add to the canvas,
 	/// represented by a tuple containing the Color instance and its opacity.
 	///
-	/// # Return
+	/// ### Return
 	/// The resulting color.
 	fn mix_color_to_canvas(self: &Self, canvas: &Self, opacity: u8) -> Self {
 		#[inline(always)]
@@ -47,13 +47,13 @@ impl Color {
 	/// Finds out the mix of colors that results in the closest color to the calling instance,
 	/// using a well defined number of colors to mix.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `canvas` - The current color of the canvas we are painting on.
 	/// * `closest` - The closest resulting mixed color we found so far.
 	/// * `palette` - The palette of colors to mix.
 	/// * `number_of_colors_to_mix` - The remaining number of colors we must add to the mix.
 	///
-	/// # Return
+	/// ### Return
 	/// The resulting mixed color that is closest to the `self` color.
 	fn mix_recursively(
 		self: &Self,
@@ -92,15 +92,15 @@ impl Color {
 
 	/// Creates a new Color instance and initializes its attributes.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `red` - The red component of the color.
 	/// * `green` - The green component of the color.
 	/// * `blue` - The blue component of the color.
 	///
-	/// # Return
+	/// ### Return
 	/// The newly created and initialized Color instance.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex05::Color;
 	///
@@ -116,14 +116,14 @@ impl Color {
 	/// Tries mixing colors as if painted on a white canvas to obtain a result as close as possible
 	/// to the calling instance.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `palette` - The palette of colors to mix.
 	/// * `max` - The maximum number of colors to mix.
 	///
-	/// # Return
+	/// ### Return
 	/// The resulting mixed color that is closest to the `self` color.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex05::Color;
 	///

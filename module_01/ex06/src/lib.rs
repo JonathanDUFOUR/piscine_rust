@@ -18,17 +18,17 @@ fn __most_significant_digit(n: &[u8]) -> usize {
 
 /// Adds two big numbers.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `a` - The first big number to add.
 /// * `b` - The second big number to add.
 ///
-/// # Return
+/// ### Return
 /// The sum of `a` and `b`.
 ///
-/// # Panic
+/// ### Panic
 /// The input contains anything else than digits.
 ///
-/// # Example
+/// ### Example
 /// ```
 /// use ex06::big_add;
 ///

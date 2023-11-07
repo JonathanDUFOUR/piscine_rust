@@ -6,14 +6,14 @@ pub struct Point {
 impl Point {
 	/// Creates a new Point instance with given coordinates.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `x` - The x coordinate of the point to create.
 	/// * `y` - The y coordinate of the point to create.
 	///
-	/// # Return
+	/// ### Return
 	/// The newly created Point instance.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex01::Point;
 	///
@@ -28,10 +28,10 @@ impl Point {
 
 	/// Creates a new Point instance with coordinates (0, 0).
 	///
-	/// # Return
+	/// ### Return
 	/// The newly created Point instance.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex01::Point;
 	///
@@ -46,13 +46,13 @@ impl Point {
 
 	/// Calculates the distance with another given point.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `other` - The other point to calculate the distance with.
 	///
-	/// # Return
+	/// ### Return
 	/// The distance between the two points.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex01::Point;
 	///
@@ -89,11 +89,11 @@ impl Point {
 
 	/// Translates the point by given coordinates.
 	///
-	/// # Parameters
+	/// ### Parameters
 	/// * `dx` - The x coordinate to translate the point by.
 	/// * `dy` - The y coordinate to translate the point by.
 	///
-	/// # Example
+	/// ### Example
 	/// ```
 	/// use ex01::Point;
 	///

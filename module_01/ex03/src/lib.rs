@@ -1,13 +1,13 @@
 /// Searches for the largest subslice of a slice that contains all and only specified values.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `haystack` - The slice to search in.
 /// * `needle` - The slice of values to search for.
 ///
-/// # Return
+/// ### Return
 /// The largest subslice of `haystack` that contains all and only values in `needles`.
 ///
-/// # Example
+/// ### Example
 /// ```
 /// use ex03::largest_group;
 ///

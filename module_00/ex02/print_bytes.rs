@@ -1,9 +1,9 @@
 /// Prints the bytes of a string.
 ///
-/// # Parameters
+/// ### Parameters
 /// * `s`: The string to print the bytes from.
 ///
-/// # Example
+/// ### Example
 /// ```
 /// use ex02::print_bytes;
 ///
