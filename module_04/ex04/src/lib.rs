@@ -142,8 +142,12 @@ impl BitSet {
 	}
 }
 
-/// A data structure to represent a range of numbers, and find the prime numbers in it.
+/// An implementation of the Sieve of Eratosthenes.
 /// See https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes for more information.
+/// This implementation uses multiple limited chunks of numbers
+/// instead of a single huge chunk of numbers from 2 to N,
+/// allowing to find prime numbers to whatever limit we want, without having to allocate
+/// a huge chunk of memory.
 struct Sieve {
 	/// The inner bitset that represents the numbers in the range.
 	/// 0 means that the represented number is not prime.
@@ -180,17 +184,25 @@ impl Sieve {
 	/// ```
 	#[inline(always)]
 	const fn new() -> Self {
+		const fn min(a: Integer, b: Integer) -> Integer {
+			if a < b {
+				a
+			} else {
+				b
+			}
+		}
+
 		const INNER: BitSet = BitSet::new();
-		const FIRST: Integer = 2;
+		const FIRST: Integer = 3;
 		const REMAINING_NUMBERS: Integer = Integer::MAX - FIRST + 1;
-		const LEN: Integer = BitSet::BITS.min(REMAINING_NUMBERS);
+		const LEN: Integer = min(BitSet::BITS, REMAINING_NUMBERS);
 
 		Self {
 			inner: INNER,
 			first: FIRST,
 			remaining_numbers: REMAINING_NUMBERS,
 			len: LEN,
-			primes_found_so_far: Vec::new(),
+			primes_found_so_far: vec![2],
 		}
 	}
 
@@ -202,11 +214,23 @@ impl Sieve {
 	}
 
 	/// ### Return
-	/// * `Some(n)` - The last element of `self.primes_found_so_far`,
+	/// A copy of the last element of `self.primes_found_so_far`,
 	/// corresponding to the greatest prime number found so far.
-	/// * `None` - There is no prime number in `self.primes_found_so_far`.
-	const fn greatest_prime_found_so_far(self: &Self) -> Option<Integer> {
-		self.primes_found_so_far.last()
+	#[inline(always)]
+	fn greatest_prime_found_so_far(self: &Self) -> Integer {
+		self.primes_found_so_far.last().copied().unwrap()
+	}
+
+	/// Checks if `self.inner` contains at least 1 prime number
+	/// that has not yet been saved in `self.primes_found_so_far`.
+	///
+	/// ### Return
+	/// * `true` - At least 1 prime number is contained in `self.inner`
+	/// and has not yet been saved in `self.primes_found_so_far`.
+	/// * `false` - `self.inner` contains no more prime numbers to save,
+	/// and can be filled with the next chunk of numbers.
+	fn contains_unsaved_prime(self: &Self) -> bool {
+		// TODO
 	}
 
 	/// Sets all the bits of `self.sieve` to 1,
@@ -322,8 +346,12 @@ impl Iterator for Prime {
 	/// ```
 	fn next(self: &mut Self) -> Option<Self::Item> {
 		// TODO
-		while self.n > self.sieve.greatest_prime_found_so_far()
-		None
+		while self.n > self.sieve.greatest_prime_found_so_far() {
+			while self.sieve.len() == 0 {}
+			self.sieve.fill_with_next_chunk();
+			self.sieve.remove_non_primes();
+			self.sieve.primes_found_so_far.push(self.sieve.first);
+		}
 	}
 }
 
