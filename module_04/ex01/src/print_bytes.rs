@@ -30,7 +30,5 @@ where
 }
 
 fn main() {
-	let mut chars: std::str::Chars<'static> = "Hello, World!".chars();
-
-	print_bytes(|| chars.next().map(|c| c as u8));
+	print_bytes(|| "Hello, World!".chars().next().map(|c| c as u8));
 }
