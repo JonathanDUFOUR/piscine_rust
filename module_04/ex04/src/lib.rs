@@ -2,7 +2,6 @@ type Integer = u8;
 type BitField = u16;
 
 /// A fixed sized bitset.
-#[derive(Debug, PartialEq)]
 struct BitSet {
 	inner: [BitField; Self::LEN],
 }
@@ -407,12 +406,22 @@ impl Iterator for Prime {
 mod tests {
 	use super::*;
 
+	fn test_bit_set_clear_bit(bs: &mut BitSet) {
+		for bit_position in 0..BitSet::BITS {
+			let i: usize = (bit_position / BitField::BITS as Integer) as usize;
+			let bit_position_in_field: Integer = bit_position % BitField::BITS as Integer;
+
+			bs.clear_bit(bit_position);
+			assert_eq!(bs.inner[i] >> bit_position_in_field & 1, 0);
+		}
+	}
+
 	// region: bit_set_new_00
 	#[test]
 	fn bit_set_new_00() {
 		const BS: BitSet = BitSet::new();
 
-		assert_eq!(BS, BitSet { inner: [!0; BitSet::LEN] });
+		assert_eq!(BS.inner, [!0; BitSet::LEN]);
 	}
 	// endregion
 
@@ -437,17 +446,17 @@ mod tests {
 	// region: bit_set_get_bit_01
 	#[test]
 	fn bit_set_get_bit_01() {
-		const BS: BitSet = BitSet { inner: [0b_00101010; BitSet::LEN] };
+		const BS: BitSet = BitSet { inner: [!0; BitSet::LEN] };
 
 		for i in 0..BitSet::LEN {
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 7), false);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 6), false);
+			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 7), true);
+			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 6), true);
 			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 5), true);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 4), false);
+			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 4), true);
 			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 3), true);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 2), false);
+			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 2), true);
 			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 1), true);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 0), false);
+			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 0), true);
 		}
 	}
 	// endregion
@@ -455,12 +464,12 @@ mod tests {
 	// region: bit_set_get_bit_02
 	#[test]
 	fn bit_set_get_bit_02() {
-		const BS: BitSet = BitSet { inner: [0b_11001100; BitSet::LEN] };
+		const BS: BitSet = BitSet { inner: [0b_10101100; BitSet::LEN] };
 
 		for i in 0..BitSet::LEN {
 			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 7), true);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 6), true);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 5), false);
+			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 6), false);
+			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 5), true);
 			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 4), false);
 			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 3), true);
 			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 2), true);
@@ -470,23 +479,276 @@ mod tests {
 	}
 	// endregion
 
-	// region: bit_set_set_bit_00
+	// region: bit_set_clear_bit_00
 	#[test]
-	fn bit_set_set_bit_00() {
-		let mut bs: BitSet = BitSet { inner: [0b_00000000; BitSet::LEN] };
-
-		for i in 0..BitSet::LEN {
-			bs.clear_bit(i as Integer * BitField::BITS as Integer + 7);
-			bs.clear_bit(i as Integer * BitField::BITS as Integer + 6);
-			bs.clear_bit(i as Integer * BitField::BITS as Integer + 5);
-			bs.clear_bit(i as Integer * BitField::BITS as Integer + 4);
-			bs.clear_bit(i as Integer * BitField::BITS as Integer + 3);
-			bs.clear_bit(i as Integer * BitField::BITS as Integer + 2);
-			bs.clear_bit(i as Integer * BitField::BITS as Integer + 1);
-			bs.clear_bit(i as Integer * BitField::BITS as Integer + 0);
-		}
-
-		assert_eq!(bs, BitSet { inner: [0; BitSet::LEN] });
+	fn bit_set_clear_bit_00() {
+		test_bit_set_clear_bit(&mut BitSet { inner: [0; BitSet::LEN] });
 	}
 	// endregion
+
+	// region: bit_set_clear_bit_01
+	#[test]
+	fn bit_set_clear_bit_01() {
+		test_bit_set_clear_bit(&mut BitSet { inner: [!0; BitSet::LEN] });
+	}
+	// endregion
+
+	// region: bit_set_clear_bit_02
+	#[test]
+	fn bit_set_clear_bit_02() {
+		test_bit_set_clear_bit(&mut BitSet { inner: [0b_11100101; BitSet::LEN] });
+	}
+	// endregion
+
+	// region: bit_set_find_first_set_bit_00
+	#[test]
+	fn bit_set_find_first_set_bit_00() {
+		const BS: BitSet = BitSet { inner: [0; BitSet::LEN] };
+
+		for n in 0..=BitSet::BITS {
+			assert_eq!(BS.find_first_set_bit(n), None);
+		}
+	}
+	// endregion
+
+	// region: bit_set_find_first_set_bit_01
+	#[test]
+	fn bit_set_find_first_set_bit_01() {
+		const BS: BitSet = BitSet { inner: [!0; BitSet::LEN] };
+
+		assert_eq!(BS.find_first_set_bit(0), None);
+		for n in 1..=BitSet::BITS {
+			assert_eq!(BS.find_first_set_bit(n), Some(0));
+		}
+	}
+	// endregion
+
+	// region: bit_set_find_first_set_bit_02
+	#[test]
+	fn bit_set_find_first_set_bit_02() {
+		const BS: BitSet = BitSet { inner: [0b_00001000; BitSet::LEN] };
+
+		for n in 0..4 {
+			assert_eq!(BS.find_first_set_bit(n), None);
+		}
+		for n in 4..=BitSet::BITS {
+			assert_eq!(BS.find_first_set_bit(n), Some(3));
+		}
+	}
+	// endregion
+
+	// region: sieve_new_00
+	#[test]
+	fn sieve_new_00() {
+		const FIRST_PRIMES: [Integer; 11] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31];
+		let sieve: Sieve = Sieve::new();
+
+		assert_eq!(sieve.primes_found_so_far, Vec::new());
+		for bit_position in 0..sieve.len {
+			let i: usize = (bit_position / BitField::BITS as Integer) as usize;
+			let bit_position_in_field: Integer = bit_position % BitField::BITS as Integer;
+
+			if FIRST_PRIMES.binary_search(&(sieve.first + bit_position)).is_ok() {
+				assert_eq!(sieve.inner.inner[i] >> bit_position_in_field & 1, 1);
+			} else {
+				assert_eq!(sieve.inner.inner[i] >> bit_position_in_field & 1, 0);
+			}
+		}
+		assert_eq!(sieve.first, 2);
+		assert_eq!(sieve.remaining_numbers, Integer::MAX - 2 + 1);
+		assert_eq!(sieve.len, BitSet::BITS);
+	}
+	// endregion
+
+	// region: sieve_fill_with_next_chunk_00
+	#[test]
+	fn sieve_fill_with_next_chunk_00() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [0; BitSet::LEN] },
+			first: 0,
+			remaining_numbers: 0,
+			len: 0,
+		};
+
+		sieve.fill_with_next_chunk();
+
+		assert_eq!(sieve.primes_found_so_far, Vec::new());
+		assert_eq!(sieve.inner.inner, [!0; BitSet::LEN]);
+		assert_eq!(sieve.first, 0);
+		assert_eq!(sieve.remaining_numbers, 0);
+	}
+	// endregion
+
+	// region: sieve_fill_with_next_chunk_01
+	#[test]
+	fn sieve_fill_with_next_chunk_01() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [0; BitSet::LEN] },
+			first: 0,
+			remaining_numbers: BitSet::BITS,
+			len: BitSet::BITS,
+		};
+
+		sieve.fill_with_next_chunk();
+
+		assert_eq!(sieve.primes_found_so_far, Vec::new());
+		assert_eq!(sieve.inner.inner, [!0; BitSet::LEN]);
+		assert_eq!(sieve.first, BitSet::BITS);
+		assert_eq!(sieve.remaining_numbers, 0);
+		assert_eq!(sieve.len, 0);
+	}
+	// endregion
+
+	// region: sieve_fill_with_next_chunk_02
+	#[test]
+	fn sieve_fill_with_next_chunk_02() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [0; BitSet::LEN] },
+			first: 2,
+			remaining_numbers: Integer::MAX - 2 + 1,
+			len: BitSet::BITS.min(Integer::MAX - 2 + 1),
+		};
+
+		sieve.fill_with_next_chunk();
+
+		assert_eq!(sieve.primes_found_so_far, Vec::new());
+		assert_eq!(sieve.inner.inner, [!0; BitSet::LEN]);
+		assert_eq!(sieve.first, 2 + BitSet::BITS);
+		assert_eq!(sieve.remaining_numbers, Integer::MAX - 2 - BitSet::BITS + 1);
+		assert_eq!(sieve.len, BitSet::BITS.min(Integer::MAX - 2 - BitSet::BITS + 1));
+	}
+	// endregion
+
+	// region: sieve_fill_with_next_chunk_03
+	#[test]
+	fn sieve_fill_with_next_chunk_03() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [!0; BitSet::LEN] },
+			first: 0,
+			remaining_numbers: 0,
+			len: 0,
+		};
+
+		sieve.fill_with_next_chunk();
+
+		assert_eq!(sieve.primes_found_so_far, Vec::new());
+		assert_eq!(sieve.inner.inner, [!0; BitSet::LEN]);
+		assert_eq!(sieve.first, 0);
+		assert_eq!(sieve.remaining_numbers, 0);
+	}
+	// endregion
+
+	// region: sieve_fill_with_next_chunk_04
+	#[test]
+	fn sieve_fill_with_next_chunk_04() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [!0; BitSet::LEN] },
+			first: 0,
+			remaining_numbers: BitSet::BITS,
+			len: BitSet::BITS,
+		};
+
+		sieve.fill_with_next_chunk();
+
+		assert_eq!(sieve.primes_found_so_far, Vec::new());
+		assert_eq!(sieve.inner.inner, [!0; BitSet::LEN]);
+		assert_eq!(sieve.first, BitSet::BITS);
+		assert_eq!(sieve.remaining_numbers, 0);
+		assert_eq!(sieve.len, 0);
+	}
+	// endregion
+
+	// region: sieve_fill_with_next_chunk_05
+	#[test]
+	fn sieve_fill_with_next_chunk_05() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [!0; BitSet::LEN] },
+			first: 2,
+			remaining_numbers: Integer::MAX - 2 + 1,
+			len: BitSet::BITS.min(Integer::MAX - 2 + 1),
+		};
+
+		sieve.fill_with_next_chunk();
+
+		assert_eq!(sieve.primes_found_so_far, Vec::new());
+		assert_eq!(sieve.inner.inner, [!0; BitSet::LEN]);
+		assert_eq!(sieve.first, 2 + BitSet::BITS);
+		assert_eq!(sieve.remaining_numbers, Integer::MAX - 2 - BitSet::BITS + 1);
+		assert_eq!(sieve.len, BitSet::BITS.min(Integer::MAX - 2 - BitSet::BITS + 1));
+	}
+	// endregion
+
+	// region: sieve_fill_with_next_chunk_06
+	#[test]
+	fn sieve_fill_with_next_chunk_06() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [0b_00100111; BitSet::LEN] },
+			first: 0,
+			remaining_numbers: 0,
+			len: 0,
+		};
+
+		sieve.fill_with_next_chunk();
+
+		assert_eq!(sieve.primes_found_so_far, Vec::new());
+		assert_eq!(sieve.inner.inner, [!0; BitSet::LEN]);
+		assert_eq!(sieve.first, 0);
+		assert_eq!(sieve.remaining_numbers, 0);
+	}
+	// endregion
+
+	// region: sieve_fill_with_next_chunk_07
+	#[test]
+	fn sieve_fill_with_next_chunk_07() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [0b_00100111; BitSet::LEN] },
+			first: 0,
+			remaining_numbers: BitSet::BITS,
+			len: BitSet::BITS,
+		};
+
+		sieve.fill_with_next_chunk();
+
+		assert_eq!(sieve.primes_found_so_far, Vec::new());
+		assert_eq!(sieve.inner.inner, [!0; BitSet::LEN]);
+		assert_eq!(sieve.first, BitSet::BITS);
+		assert_eq!(sieve.remaining_numbers, 0);
+		assert_eq!(sieve.len, 0);
+	}
+	// endregion
+
+	// region: sieve_fill_with_next_chunk_08
+	#[test]
+	fn sieve_fill_with_next_chunk_08() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [0b_00100111; BitSet::LEN] },
+			first: 2,
+			remaining_numbers: Integer::MAX - 2 + 1,
+			len: BitSet::BITS.min(Integer::MAX - 2 + 1),
+		};
+
+		sieve.fill_with_next_chunk();
+
+		assert_eq!(sieve.primes_found_so_far, Vec::new());
+		assert_eq!(sieve.inner.inner, [!0; BitSet::LEN]);
+		assert_eq!(sieve.first, 2 + BitSet::BITS);
+		assert_eq!(sieve.remaining_numbers, Integer::MAX - 2 - BitSet::BITS + 1);
+		assert_eq!(sieve.len, BitSet::BITS.min(Integer::MAX - 2 - BitSet::BITS + 1));
+	}
+	// endregion
+
+	// region: sieve_remove_non_primes_00
+	#[test]
+	fn sieve_remove_non_primes_00() {
+		// TODO
+	}
 }
