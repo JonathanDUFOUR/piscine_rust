@@ -1,4 +1,4 @@
-type Int = u32;
+type Integer = u8;
 type BitField = u16;
 
 /// A fixed sized bitset.
@@ -8,13 +8,13 @@ struct BitSet {
 
 impl BitSet {
 	/// The maximum number of usable bits in each BitSet instance.
-	const BITS: Int = 42;
+	const BITS: Integer = 42;
 
 	/// The number of BitField required to store `BITS` bits.
 	const LEN: usize = {
-		const LEN: Int = BitSet::BITS / BitField::BITS;
+		const LEN: Integer = BitSet::BITS / BitField::BITS as Integer;
 
-		match LEN * BitField::BITS {
+		match LEN * BitField::BITS as Integer {
 			BitSet::BITS => LEN as usize,
 			____________ => LEN as usize + 1,
 		}
@@ -24,25 +24,9 @@ impl BitSet {
 	///
 	/// ### Return
 	/// The newly created BitSet instance.
-	///
-	/// ### Example
-	/// ```
-	/// use ex04::BitSet;
-	///
-	/// let bit_set: BitSet = BitSet::new();
-	/// ```
 	#[inline(always)]
 	const fn new() -> Self {
-		Self {
-			inner: [!0; Self::LEN],
-		}
-	}
-
-	/// ### Return
-	/// The number of bit fields in the BitSet.
-	#[inline(always)]
-	const fn len(self: &Self) -> usize {
-		self.inner.len()
+		Self { inner: [!0; Self::LEN] }
 	}
 
 	/// Get the value of the `n`th bit in the bit set.
@@ -57,34 +41,15 @@ impl BitSet {
 	/// ### Panic
 	/// `n` is out of bounds.
 	#[inline(always)]
-	fn get_bit(self: &Self, n: Int) -> bool {
-		if n < 0 || n >= Self::BITS {
-			panic!("n({n}) is out of bounds.");
-		}
-
-		let i: usize = (n / BitField::BITS) as usize;
-		let bit_position_in_field: Int = n % BitField::BITS;
-
-		self.inner[i] >> bit_position_in_field & 1 == 1
-	}
-
-	/// Sets the `n`th bit in the bit set to 1.
-	///
-	/// ### Parameters
-	/// * `n` - The position of the bit.
-	///
-	/// ### Panic
-	/// `n` is out of bounds.
-	#[inline(always)]
-	fn set_bit(self: &mut Self, n: Int) {
+	fn get_bit(self: &Self, n: Integer) -> bool {
 		if n >= Self::BITS {
 			panic!("n({n}) is out of bounds.");
 		}
 
-		let i: usize = (n / BitField::BITS) as usize;
-		let mask: BitField = 1 << n % BitField::BITS;
+		let i: usize = (n / BitField::BITS as Integer) as usize;
+		let bit_position_in_field: Integer = n % BitField::BITS as Integer;
 
-		self.inner[i] |= mask;
+		self.inner[i] >> bit_position_in_field & 1 == 1
 	}
 
 	/// Clears the `n`th bit in the bit set to 0.
@@ -95,65 +60,43 @@ impl BitSet {
 	/// ### Panic
 	/// `n` is out of bounds.
 	#[inline(always)]
-	fn clear_bit(self: &mut Self, n: Int) {
+	fn clear_bit(self: &mut Self, n: Integer) {
 		if n >= Self::BITS {
 			panic!("n({n}) is out of bounds.");
 		}
 
-		let i: usize = (n / BitField::BITS) as usize;
-		let mask: BitField = !(1 << n % BitField::BITS);
+		let i: usize = (n / BitField::BITS as Integer) as usize;
+		let mask: BitField = !(1 << n % BitField::BITS as Integer);
 
 		self.inner[i] &= mask;
 	}
 
-	/// Checks if the `n` first bits are all set to 0 in the bit set.
+	/// Searches for the first bit that is set to 1 in the `n` first bits of the bit set.
 	///
-	/// ### Parameteres
+	/// ### Parameters
 	/// * `n` - The number of bits to check.
-	///
-	/// ### Return
-	/// * `true` - The `n` first bits are all set to 0.
-	/// * `false` - There is at least 1 bit that is set to 1 in the `n` first bits.
-	///
-	/// ### Panic
-	/// `n` is greater than the number of bits in `self`.
-	fn are_first_bits_zeros(self: &Self, n: Int) -> bool {
-		if n > Self::BITS {
-			panic!("n({n}) is greater than the number of bits in the BitSet({}).", Self::BITS);
-		}
-
-		let len: usize = (n / BitField::BITS) as usize;
-
-		for i in 0..len {
-			if self.inner[i] != 0 {
-				return false;
-			}
-		}
-
-		let checked_bits_so_far: Int = len as Int * BitField::BITS as Int;
-
-		if checked_bits_so_far < n {
-			let mask: BitField = !0 >> (BitField::BITS - (n - checked_bits_so_far));
-
-			if self.inner[len] & mask != 0 {
-				return false;
-			}
-		}
-
-		true
-	}
-
-	/// Searches for the first bit that is set to 1 in the bit set.
 	///
 	/// ### Return
 	/// * `Some(n)` - The position of the first bit that is set to 1.
 	/// * `None` - There is no bit that is set to 1.
-	fn find_first_set_bit(self: &Self) -> Option<Int> {
-		for i in 0..self.len() {
+	///
+	/// ### Panic
+	/// `n` is greater than the number of bits in `self`.
+	fn find_first_set_bit(self: &Self, n: Integer) -> Option<Integer> {
+		if n > Self::BITS {
+			panic!("n({n}) is greater than the number of bits in the BitSet({}).", Self::BITS);
+		}
+
+		let len: usize = (n / BitField::BITS as Integer) as usize;
+
+		for i in 0..len {
 			if self.inner[i] != 0 {
 				for bit_position_in_field in 0..BitField::BITS {
 					if self.inner[i] >> bit_position_in_field & 1 == 1 {
-						return Some(i as Int * BitField::BITS as Int + bit_position_in_field);
+						return Some(
+							i as Integer * BitField::BITS as Integer
+								+ bit_position_in_field as Integer,
+						);
 					}
 				}
 			}
@@ -169,30 +112,30 @@ impl BitSet {
 /// instead of a single huge chunk of numbers from 2 to N,
 /// allowing to find prime numbers to whatever limit we want, without having to allocate
 /// a huge chunk of memory.
-struct Sieve {
+pub struct Sieve {
 	/// The inner bitset that represents the numbers in the range.
 	/// * 0 means that the represented number is not prime.
 	/// * 1 means that the represented number is prime.
 	inner: BitSet,
 
 	/// The number represented by the first bit of `self.inner`.
-	first: Int,
+	first: Integer,
 
 	/// The number of remaining numbers that have not yet been computed by the sieve.
-	remaining_numbers: Int,
+	remaining_numbers: Integer,
 
 	/// The number of numbers that are considered by the sieve for the current chunk.
-	len: Int,
+	len: Integer,
 
 	/// A vector that contains the prime numbers that have already been found,
 	/// sorted in ascending order.
-	primes_found_so_far: Vec<Int>,
+	primes_found_so_far: Vec<Integer>,
 }
 
 impl Sieve {
 	/// Creates a new Sieve instance and initializes its attributes.
-	/// The newly created Sieve instance is used to find the prime numbers
-	/// in the range `[first, first + len[`.
+	/// The newly created Sieve instance is used to find all the prime numbers
+	/// up to whatever limit we want.
 	///
 	/// ### Return
 	/// The newly created Sieve instance.
@@ -204,8 +147,8 @@ impl Sieve {
 	/// let sieve: Sieve = Sieve::new();
 	/// ```
 	#[inline(always)]
-	const fn new() -> Self {
-		const fn min(a: Int, b: Int) -> Int {
+	pub fn new() -> Self {
+		const fn min(a: Integer, b: Integer) -> Integer {
 			if a < b {
 				a
 			} else {
@@ -214,36 +157,26 @@ impl Sieve {
 		}
 
 		const INNER: BitSet = BitSet::new();
-		const FIRST: Int = 3;
-		const REMAINING_NUMBERS: Int = Int::MAX - FIRST + 1;
-		const LEN: Int = min(BitSet::BITS, REMAINING_NUMBERS);
-
-		Self {
+		const FIRST: Integer = 2;
+		const REMAINING_NUMBERS: Integer = Integer::MAX - FIRST + 1;
+		const LEN: Integer = min(BitSet::BITS, REMAINING_NUMBERS);
+		let mut sieve: Self = Self {
 			inner: INNER,
 			first: FIRST,
 			remaining_numbers: REMAINING_NUMBERS,
 			len: LEN,
+			// REMIND: `primes_found_so_far` must NOT be empty.
 			primes_found_so_far: vec![2],
-		}
+		};
+
+		sieve.remove_non_primes();
+
+		sieve
 	}
 
-	/// ### Return
-	/// The number of numbers that are considered by the sieve for the current chunk.
-	#[inline(always)]
-	const fn len(self: &Self) -> Int {
-		self.len
-	}
-
-	/// ### Return
-	/// A copy of the last element of `self.primes_found_so_far`,
-	/// corresponding to the greatest prime number found so far.
-	#[inline(always)]
-	fn greatest_prime_found_so_far(self: &Self) -> Int {
-		self.primes_found_so_far.last().copied().unwrap()
-	}
-
-	/// Sets all the bits of `self.sieve` to 1,
-	/// and update `self.sieve_first` to represent the first number of the next chunk of numbers.
+	/// Update inner attributes to consider the next chunk of numbers.
+	/// All the numbers of the next chunk are considered prime by default.
+	/// The non-prime numbers will be removed later.
 	fn fill_with_next_chunk(self: &mut Self) {
 		self.inner = BitSet::new();
 		if let Some(sum) = self.first.checked_add(self.len) {
@@ -253,23 +186,20 @@ impl Sieve {
 		self.len = BitSet::BITS.min(self.remaining_numbers);
 	}
 
-	/// Sets the bits of the non-prime numbers in the sieve to 0.
+	/// Remove the non-prime numbers from the current chunk of numbers.
 	/// The non-prime numbers are found by multiplying the prime numbers
-	/// that are already in `primes`, and then multiplying the remaining
-	/// numbers in the sieve from the sieve. (Yes, it sounds like an Inception)
-	///
-	/// ### Parameters
-	/// * `primes` - The prime numbers that have already been found.
+	/// that we have found so far, and then multiplying the remaining
+	/// numbers in the chunk from the itself (Yes, it sounds like an Inception).
 	fn remove_non_primes(self: &mut Self) {
 		#[inline(always)]
 		fn remove_prime_multiples(
-			mut multiple: Int,
-			first: Int,
+			mut multiple: Integer,
+			first: Integer,
 			inner: &mut BitSet,
-			prime: Int,
-			len: Int,
+			prime: Integer,
+			len: Integer,
 		) {
-			let mut bit_position: Int = multiple - first;
+			let mut bit_position: Integer = multiple - first;
 
 			while bit_position < len {
 				inner.clear_bit(bit_position);
@@ -279,7 +209,7 @@ impl Sieve {
 		}
 
 		for prime in &self.primes_found_so_far {
-			let multiple: Int = match self.first.checked_next_multiple_of(*prime) {
+			let multiple: Integer = match self.first.checked_next_multiple_of(*prime) {
 				Some(multiple) => multiple,
 				None => continue,
 			};
@@ -289,8 +219,8 @@ impl Sieve {
 
 		for bit_position in 0..self.len {
 			if !self.inner.get_bit(bit_position) {
-				let prime: Int = self.first + bit_position;
-				let multiple: Int = match prime.checked_mul(prime) {
+				let prime: Integer = self.first + bit_position;
+				let multiple: Integer = match prime.checked_mul(prime) {
 					Some(square) => square,
 					None => continue,
 				};
@@ -301,41 +231,80 @@ impl Sieve {
 	}
 
 	/// Searches for the first prime number that is greater
-	/// than the greatest prime number found so far,
-	/// and save it into `self.primes_found_so_far`.
+	/// than the greatest prime number found so far
+	/// and save it as the new greatest prime number found so far.
 	///
 	/// ### Return
-	/// * `true` - The next prime number has been found and saved into `self.primes_found_so_far`.
-	/// * `false` - There is no next prime number.
-	fn find_next_prime(self: &mut Self) -> bool {
+	/// * `Some(prime)` - The new greatest prime number found so far.
+	/// * `None` - There is no next prime number.
+	fn find_next_prime(self: &mut Self) -> Option<Integer> {
 		loop {
-			match self.inner.find_first_set_bit() {
+			match self.inner.find_first_set_bit(self.len) {
 				Some(bit_position) => {
-					self.inner.clear_bit(bit_position);
-					self.primes_found_so_far.push(self.first + bit_position);
+					let prime: Integer = self.first + bit_position;
 
-					return true;
-				},
+					self.inner.clear_bit(bit_position);
+					self.primes_found_so_far.push(prime);
+
+					return Some(prime);
+				}
 				None => {
 					if self.remaining_numbers == 0 {
-						return false;
+						return None;
 					}
 
 					self.fill_with_next_chunk();
 					self.remove_non_primes();
-				},
+				}
 			}
 		}
+	}
+}
+
+/// Searches in `v` for the first element that is __greater or equal__ to `n`.
+/// It is assumed that `v` is sorted in ascending order
+/// and that `n` is lower or equal to the last element of `v`.
+///
+/// # Parameters
+/// * `v` - The vector to search in.
+/// * `n` - The number to search the lower bound for.
+///
+/// # Panic
+/// `n` is strictly greater than the last elements of `v`.
+////
+/// # Return
+/// The value of the first element in `v` that is greater or equal to `n`.
+fn lower_bound(v: &Vec<Integer>, n: Integer) -> Option<Integer> {
+	let mut left: usize = 0;
+	let mut right: usize = v.len();
+
+	while left < right {
+		let mid: usize = left + (right - left) / 2;
+
+		if v[mid] < n {
+			left = mid + 1;
+		} else {
+			right = mid;
+		}
+	}
+
+	if left < v.len() {
+		Some(v[left])
+	} else {
+		None
 	}
 }
 
 /// An iterator that generates prime numbers.
 pub struct Prime {
 	/// The number to find the next prime from.
-	n: Int,
+	n: Integer,
 
 	/// The sieve of Eratosthenes that is used to find the next prime number.
 	sieve: Sieve,
+
+	/// A boolean that indicates if the end of the iterator has been reached.
+	is_end_reached: bool,
 }
 
 impl Prime {
@@ -355,17 +324,13 @@ impl Prime {
 	///
 	/// let mut prime: Prime = Prime::new(0);
 	/// ```
-	pub fn new(n: Int) -> Self {
-		let mut sieve: Sieve = Sieve::new();
-
-		sieve.remove_non_primes();
-
-		Self { n, sieve }
+	pub fn new(n: Integer) -> Self {
+		Self { n, sieve: Sieve::new(), is_end_reached: false }
 	}
 }
 
 impl Iterator for Prime {
-	type Item = Int;
+	type Item = Integer;
 
 	/// Generates the next prime number.
 	///
@@ -386,14 +351,44 @@ impl Iterator for Prime {
 	/// assert_eq!(prime.next(), Some(11));
 	/// ```
 	fn next(self: &mut Self) -> Option<Self::Item> {
-		// TODO
-		let next_prime: Int;
-
-		while self.n > self.sieve.greatest_prime_found_so_far() {
-			self.sieve.find_next_prime();
+		if self.is_end_reached {
+			return None;
 		}
 
-		next_prime = self.sieve.greatest_prime_found_so_far();
+		let next_prime: Integer;
+
+		if let Some(lb) = lower_bound(&self.sieve.primes_found_so_far, self.n) {
+			next_prime = lb;
+			if let Some(sum) = lb.checked_add(1) {
+				if let Some(lb) = lower_bound(&self.sieve.primes_found_so_far, sum) {
+					self.n = lb;
+				} else if let Some(prime) = self.sieve.find_next_prime() {
+					self.n = prime;
+				} else {
+					self.is_end_reached = true;
+				}
+			} else {
+				self.is_end_reached = true;
+			}
+		} else {
+			loop {
+				if let Some(prime) = self.sieve.find_next_prime() {
+					if prime >= self.n {
+						next_prime = prime;
+						break;
+					}
+				} else {
+					self.is_end_reached = true;
+					return None;
+				}
+			}
+
+			if let Some(prime) = self.sieve.find_next_prime() {
+				self.n = prime;
+			} else {
+				self.is_end_reached = true;
+			}
+		}
 
 		Some(next_prime)
 	}
