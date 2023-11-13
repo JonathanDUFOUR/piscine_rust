@@ -10,6 +10,9 @@ impl BitSet {
 	/// The maximum number of usable bits in each BitSet instance.
 	const BITS: Integer = 42;
 
+	/// This guard is here to ensure that `Self::BITS` is strictly greater than 0.
+	const _BITS_GUARD: Integer = Self::BITS - 1;
+
 	/// The number of BitField required to store `BITS` bits.
 	const LEN: usize = {
 		const LEN: Integer = BitSet::BITS / BitField::BITS as Integer;
@@ -212,7 +215,10 @@ impl Sieve {
 
 			while bit_position < len {
 				inner.clear_bit(bit_position);
-				bit_position += prime;
+				match bit_position.checked_add(prime) {
+					Some(sum) => bit_position = sum,
+					None => break,
+				}
 			}
 		}
 
@@ -228,6 +234,12 @@ impl Sieve {
 		for bit_position in 0..self.len {
 			if self.inner.get_bit(bit_position) {
 				let prime: Integer = self.first + bit_position;
+
+				if prime < 2 {
+					self.inner.clear_bit(prime - self.first);
+					continue;
+				}
+
 				let multiple: Integer = match prime.checked_mul(prime) {
 					Some(square) => square,
 					None => continue,
@@ -406,6 +418,15 @@ impl Iterator for Prime {
 mod tests {
 	use super::*;
 
+	const PRIMES: [Integer; 54] = [
+		// region: PRIMES
+		2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89,
+		97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181,
+		191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251,
+		// endregion
+	];
+
+	#[inline(always)]
 	fn test_bit_set_clear_bit(bs: &mut BitSet) {
 		for bit_position in 0..BitSet::BITS {
 			let i: usize = (bit_position / BitField::BITS as Integer) as usize;
@@ -413,6 +434,19 @@ mod tests {
 
 			bs.clear_bit(bit_position);
 			assert_eq!(bs.inner[i] >> bit_position_in_field & 1, 0);
+		}
+	}
+
+	fn check_sieve_inner_bit_set(bs: &BitSet, len: Integer, first: Integer) {
+		for bit_position in 0..len.min(PRIMES[PRIMES.len() - 1] + 1) {
+			let i: usize = (bit_position / BitField::BITS as Integer) as usize;
+			let bit_position_in_field: Integer = bit_position % BitField::BITS as Integer;
+
+			if PRIMES.binary_search(&(first + bit_position)).is_ok() {
+				assert_eq!(bs.inner[i] >> bit_position_in_field & 1, 1);
+			} else {
+				assert_eq!(bs.inner[i] >> bit_position_in_field & 1, 0);
+			}
 		}
 	}
 
@@ -429,16 +463,24 @@ mod tests {
 	#[test]
 	fn bit_set_get_bit_00() {
 		const BS: BitSet = BitSet { inner: [0; BitSet::LEN] };
+		const LEN: Integer = match BitSet::BITS % BitField::BITS as Integer {
+			0 => BitSet::LEN as Integer,
+			_ => BitSet::LEN as Integer - 1,
+		};
+		const LAST_BIT_FIELD_BITS: Integer = BitSet::BITS as Integer - LEN;
 
-		for i in 0..BitSet::LEN {
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 7), false);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 6), false);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 5), false);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 4), false);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 3), false);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 2), false);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 1), false);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 0), false);
+		for i in 0..LEN {
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 7), false);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 6), false);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 5), false);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 4), false);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 3), false);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 2), false);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 1), false);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 0), false);
+		}
+		for bit_position_in_field in 0..LAST_BIT_FIELD_BITS {
+			assert_eq!(BS.get_bit(bit_position_in_field), false);
 		}
 	}
 	// endregion
@@ -447,16 +489,24 @@ mod tests {
 	#[test]
 	fn bit_set_get_bit_01() {
 		const BS: BitSet = BitSet { inner: [!0; BitSet::LEN] };
+		const LEN: Integer = match BitSet::BITS % BitField::BITS as Integer {
+			0 => BitSet::LEN as Integer,
+			_ => BitSet::LEN as Integer - 1,
+		};
+		const LAST_BIT_FIELD_BITS: Integer = BitSet::BITS as Integer - LEN;
 
-		for i in 0..BitSet::LEN {
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 7), true);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 6), true);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 5), true);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 4), true);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 3), true);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 2), true);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 1), true);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 0), true);
+		for i in 0..LEN {
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 7), true);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 6), true);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 5), true);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 4), true);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 3), true);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 2), true);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 1), true);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 0), true);
+		}
+		for bit_position_in_field in 0..LAST_BIT_FIELD_BITS {
+			assert_eq!(BS.get_bit(bit_position_in_field), true);
 		}
 	}
 	// endregion
@@ -465,16 +515,45 @@ mod tests {
 	#[test]
 	fn bit_set_get_bit_02() {
 		const BS: BitSet = BitSet { inner: [0b_10101100; BitSet::LEN] };
+		const LEN: Integer = match BitSet::BITS % BitField::BITS as Integer {
+			0 => BitSet::LEN as Integer,
+			_ => BitSet::LEN as Integer - 1,
+		};
+		const LAST_BIT_FIELD_BITS: Integer = BitSet::BITS as Integer - LEN;
 
-		for i in 0..BitSet::LEN {
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 7), true);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 6), false);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 5), true);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 4), false);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 3), true);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 2), true);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 1), false);
-			assert_eq!(BS.get_bit(i as Integer * BitField::BITS as Integer + 0), false);
+		for i in 0..LEN {
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 7), true);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 6), false);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 5), true);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 4), false);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 3), true);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 2), true);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 1), false);
+			assert_eq!(BS.get_bit(i * BitField::BITS as Integer + 0), false);
+		}
+		if LAST_BIT_FIELD_BITS > 7 {
+			assert_eq!(BS.get_bit(7), true);
+		}
+		if LAST_BIT_FIELD_BITS > 6 {
+			assert_eq!(BS.get_bit(6), false);
+		}
+		if LAST_BIT_FIELD_BITS > 5 {
+			assert_eq!(BS.get_bit(5), true);
+		}
+		if LAST_BIT_FIELD_BITS > 4 {
+			assert_eq!(BS.get_bit(4), false);
+		}
+		if LAST_BIT_FIELD_BITS > 3 {
+			assert_eq!(BS.get_bit(3), true);
+		}
+		if LAST_BIT_FIELD_BITS > 2 {
+			assert_eq!(BS.get_bit(2), true);
+		}
+		if LAST_BIT_FIELD_BITS > 1 {
+			assert_eq!(BS.get_bit(1), false);
+		}
+		if LAST_BIT_FIELD_BITS > 0 {
+			assert_eq!(BS.get_bit(0), false);
 		}
 	}
 	// endregion
@@ -528,7 +607,7 @@ mod tests {
 	fn bit_set_find_first_set_bit_02() {
 		const BS: BitSet = BitSet { inner: [0b_00001000; BitSet::LEN] };
 
-		for n in 0..4 {
+		for n in 0..4.min(BitSet::BITS) {
 			assert_eq!(BS.find_first_set_bit(n), None);
 		}
 		for n in 4..=BitSet::BITS {
@@ -540,23 +619,14 @@ mod tests {
 	// region: sieve_new_00
 	#[test]
 	fn sieve_new_00() {
-		const FIRST_PRIMES: [Integer; 11] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31];
+		const REMAINING_NUMBERS: Integer = Integer::MAX - 2 + 1;
 		let sieve: Sieve = Sieve::new();
 
 		assert_eq!(sieve.primes_found_so_far, Vec::new());
-		for bit_position in 0..sieve.len {
-			let i: usize = (bit_position / BitField::BITS as Integer) as usize;
-			let bit_position_in_field: Integer = bit_position % BitField::BITS as Integer;
-
-			if FIRST_PRIMES.binary_search(&(sieve.first + bit_position)).is_ok() {
-				assert_eq!(sieve.inner.inner[i] >> bit_position_in_field & 1, 1);
-			} else {
-				assert_eq!(sieve.inner.inner[i] >> bit_position_in_field & 1, 0);
-			}
-		}
+		check_sieve_inner_bit_set(&sieve.inner, sieve.len, sieve.first);
 		assert_eq!(sieve.first, 2);
-		assert_eq!(sieve.remaining_numbers, Integer::MAX - 2 + 1);
-		assert_eq!(sieve.len, BitSet::BITS);
+		assert_eq!(sieve.remaining_numbers, REMAINING_NUMBERS);
+		assert_eq!(sieve.len, REMAINING_NUMBERS.min(BitSet::BITS));
 	}
 	// endregion
 
@@ -577,6 +647,7 @@ mod tests {
 		assert_eq!(sieve.inner.inner, [!0; BitSet::LEN]);
 		assert_eq!(sieve.first, 0);
 		assert_eq!(sieve.remaining_numbers, 0);
+		assert_eq!(sieve.len, 0);
 	}
 	// endregion
 
@@ -604,21 +675,29 @@ mod tests {
 	// region: sieve_fill_with_next_chunk_02
 	#[test]
 	fn sieve_fill_with_next_chunk_02() {
+		const FIRST: Integer = 2;
+		const REMAINING_NUMBERS: Integer = Integer::MAX - FIRST + 1;
 		let mut sieve: Sieve = Sieve {
 			primes_found_so_far: Vec::new(),
 			inner: BitSet { inner: [0; BitSet::LEN] },
-			first: 2,
-			remaining_numbers: Integer::MAX - 2 + 1,
-			len: BitSet::BITS.min(Integer::MAX - 2 + 1),
+			first: FIRST,
+			remaining_numbers: REMAINING_NUMBERS,
+			len: REMAINING_NUMBERS.min(BitSet::BITS),
 		};
 
 		sieve.fill_with_next_chunk();
 
 		assert_eq!(sieve.primes_found_so_far, Vec::new());
 		assert_eq!(sieve.inner.inner, [!0; BitSet::LEN]);
-		assert_eq!(sieve.first, 2 + BitSet::BITS);
-		assert_eq!(sieve.remaining_numbers, Integer::MAX - 2 - BitSet::BITS + 1);
-		assert_eq!(sieve.len, BitSet::BITS.min(Integer::MAX - 2 - BitSet::BITS + 1));
+		match FIRST.checked_add(BitSet::BITS) {
+			Some(sum) => assert_eq!(sieve.first, sum),
+			None => assert_eq!(sieve.first, FIRST),
+		}
+		match REMAINING_NUMBERS.checked_sub(BitSet::BITS) {
+			Some(diff) => assert_eq!(sieve.remaining_numbers, diff),
+			None => assert_eq!(sieve.remaining_numbers, 0),
+		}
+		assert_eq!(sieve.len, sieve.remaining_numbers.min(BitSet::BITS));
 	}
 	// endregion
 
@@ -666,21 +745,29 @@ mod tests {
 	// region: sieve_fill_with_next_chunk_05
 	#[test]
 	fn sieve_fill_with_next_chunk_05() {
+		const FIRST: Integer = 2;
+		const REMAINING_NUMBERS: Integer = Integer::MAX - FIRST + 1;
 		let mut sieve: Sieve = Sieve {
 			primes_found_so_far: Vec::new(),
 			inner: BitSet { inner: [!0; BitSet::LEN] },
-			first: 2,
-			remaining_numbers: Integer::MAX - 2 + 1,
-			len: BitSet::BITS.min(Integer::MAX - 2 + 1),
+			first: FIRST,
+			remaining_numbers: REMAINING_NUMBERS,
+			len: REMAINING_NUMBERS.min(BitSet::BITS),
 		};
 
 		sieve.fill_with_next_chunk();
 
 		assert_eq!(sieve.primes_found_so_far, Vec::new());
 		assert_eq!(sieve.inner.inner, [!0; BitSet::LEN]);
-		assert_eq!(sieve.first, 2 + BitSet::BITS);
-		assert_eq!(sieve.remaining_numbers, Integer::MAX - 2 - BitSet::BITS + 1);
-		assert_eq!(sieve.len, BitSet::BITS.min(Integer::MAX - 2 - BitSet::BITS + 1));
+		match FIRST.checked_add(BitSet::BITS) {
+			Some(sum) => assert_eq!(sieve.first, sum),
+			None => assert_eq!(sieve.first, FIRST),
+		}
+		match REMAINING_NUMBERS.checked_sub(BitSet::BITS) {
+			Some(diff) => assert_eq!(sieve.remaining_numbers, diff),
+			None => assert_eq!(sieve.remaining_numbers, 0),
+		}
+		assert_eq!(sieve.len, sieve.remaining_numbers.min(BitSet::BITS));
 	}
 	// endregion
 
@@ -728,27 +815,136 @@ mod tests {
 	// region: sieve_fill_with_next_chunk_08
 	#[test]
 	fn sieve_fill_with_next_chunk_08() {
+		const FIRST: Integer = 2;
+		const REMAINING_NUMBERS: Integer = Integer::MAX - FIRST + 1;
 		let mut sieve: Sieve = Sieve {
 			primes_found_so_far: Vec::new(),
 			inner: BitSet { inner: [0b_00100111; BitSet::LEN] },
-			first: 2,
-			remaining_numbers: Integer::MAX - 2 + 1,
-			len: BitSet::BITS.min(Integer::MAX - 2 + 1),
+			first: FIRST,
+			remaining_numbers: REMAINING_NUMBERS,
+			len: REMAINING_NUMBERS.min(BitSet::BITS),
 		};
 
 		sieve.fill_with_next_chunk();
 
 		assert_eq!(sieve.primes_found_so_far, Vec::new());
 		assert_eq!(sieve.inner.inner, [!0; BitSet::LEN]);
-		assert_eq!(sieve.first, 2 + BitSet::BITS);
-		assert_eq!(sieve.remaining_numbers, Integer::MAX - 2 - BitSet::BITS + 1);
-		assert_eq!(sieve.len, BitSet::BITS.min(Integer::MAX - 2 - BitSet::BITS + 1));
+		match FIRST.checked_add(BitSet::BITS) {
+			Some(sum) => assert_eq!(sieve.first, sum),
+			None => assert_eq!(sieve.first, FIRST),
+		}
+		match REMAINING_NUMBERS.checked_sub(BitSet::BITS) {
+			Some(diff) => assert_eq!(sieve.remaining_numbers, diff),
+			None => assert_eq!(sieve.remaining_numbers, 0),
+		}
+		assert_eq!(sieve.len, sieve.remaining_numbers.min(BitSet::BITS));
 	}
 	// endregion
 
 	// region: sieve_remove_non_primes_00
 	#[test]
 	fn sieve_remove_non_primes_00() {
-		// TODO
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [0; BitSet::LEN] },
+			first: 0,
+			remaining_numbers: 0,
+			len: 0,
+		};
+
+		sieve.remove_non_primes();
+
+		assert_eq!(sieve.primes_found_so_far, Vec::new());
+		assert_eq!(sieve.inner.inner, [0; BitSet::LEN]);
+		assert_eq!(sieve.first, 0);
+		assert_eq!(sieve.remaining_numbers, 0);
+		assert_eq!(sieve.len, 0);
 	}
+	// endregion
+
+	// region: sieve_remove_non_primes_01
+	#[test]
+	fn sieve_remove_non_primes_01() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [0; BitSet::LEN] },
+			first: 0,
+			remaining_numbers: BitSet::BITS,
+			len: BitSet::BITS,
+		};
+
+		sieve.remove_non_primes();
+
+		assert_eq!(sieve.primes_found_so_far, Vec::new());
+		assert_eq!(sieve.inner.inner, [0; BitSet::LEN]);
+		assert_eq!(sieve.first, 0);
+		assert_eq!(sieve.remaining_numbers, BitSet::BITS);
+		assert_eq!(sieve.len, BitSet::BITS);
+	}
+	// endregion
+
+	// region: sieve_remove_non_primes_02
+	#[test]
+	fn test_sieve_remove_non_primes_02() {
+		const FIRST: Integer = 2;
+		const REMAINING_NUMBERS: Integer = Integer::MAX - FIRST + 1;
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [0; BitSet::LEN] },
+			first: FIRST,
+			remaining_numbers: REMAINING_NUMBERS,
+			len: REMAINING_NUMBERS.min(BitSet::BITS),
+		};
+
+		sieve.remove_non_primes();
+
+		assert_eq!(sieve.primes_found_so_far, Vec::new());
+		assert_eq!(sieve.inner.inner, [0; BitSet::LEN]);
+		assert_eq!(sieve.first, FIRST);
+		assert_eq!(sieve.remaining_numbers, REMAINING_NUMBERS);
+		assert_eq!(sieve.len, REMAINING_NUMBERS.min(BitSet::BITS));
+	}
+	// endregion
+
+	// region: sieve_remove_non_primes_03
+	#[test]
+	fn test_sieve_remove_non_primes_03() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [!0; BitSet::LEN] },
+			first: 0,
+			remaining_numbers: 0,
+			len: 0,
+		};
+
+		sieve.remove_non_primes();
+
+		assert_eq!(sieve.primes_found_so_far, Vec::new());
+		assert_eq!(sieve.inner.inner, [!0; BitSet::LEN]);
+		assert_eq!(sieve.first, 0);
+		assert_eq!(sieve.remaining_numbers, 0);
+		assert_eq!(sieve.len, 0);
+	}
+	// endregion
+
+	// region: sieve_remove_non_primes_04
+	#[test]
+	fn test_sieve_remove_non_primes_04() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [!0; BitSet::LEN] },
+			first: 0,
+			remaining_numbers: BitSet::BITS,
+			len: BitSet::BITS,
+		};
+
+		sieve.remove_non_primes();
+
+		assert_eq!(sieve.primes_found_so_far, Vec::new());
+		check_sieve_inner_bit_set(&sieve.inner, sieve.len, sieve.first);
+		assert_eq!(sieve.first, 0);
+		assert_eq!(sieve.remaining_numbers, BitSet::BITS);
+		assert_eq!(sieve.len, BitSet::BITS);
+	}
+	// endregion
 }
