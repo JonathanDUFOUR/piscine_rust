@@ -280,19 +280,16 @@ impl Sieve {
 }
 // endregion
 
-/// Searches in `v` for the first element that is __greater or equal__ to `n`.
-/// It is assumed that `v` is sorted in ascending order
-/// and that `n` is lower or equal to the last element of `v`.
+/// Searches in `v` for the first element that is __greater or equal__ to `n`.<br>
+/// It is assumed that `v` is sorted in ascending order.
 ///
 /// # Parameters
 /// * `v` - The vector to search in.
 /// * `n` - The number to search the lower bound for.
 ///
-/// # Panic
-/// `n` is strictly greater than the last elements of `v`.
-////
 /// # Return
-/// The value of the first element in `v` that is greater or equal to `n`.
+/// * `Some(lb)` - The first element that is __greater or equal__ to `n` in `v`.
+/// * `None` - There is no element that is __greater or equal__ to `n` in `v`.
 fn lower_bound(v: &Vec<Integer>, n: Integer) -> Option<Integer> {
 	let mut left: usize = 0;
 	let mut right: usize = v.len();
@@ -1316,8 +1313,12 @@ mod tests {
 		};
 
 		match lower_bound(&PRIMES.to_vec(), FIRST) {
-			Some(lb) if lb - FIRST < sieve.remaining_numbers => assert_eq!(sieve.find_next_prime(), Some(lb)),
-			________________________________________________ => assert_eq!(sieve.find_next_prime(), None),
+			Some(lb) if lb - FIRST < sieve.remaining_numbers => {
+				assert_eq!(sieve.find_next_prime(), Some(lb))
+			}
+			________________________________________________ => {
+				assert_eq!(sieve.find_next_prime(), None)
+			}
 		}
 	}
 	// endregion
@@ -1551,8 +1552,12 @@ mod tests {
 		};
 
 		match lower_bound(&PRIMES.to_vec(), FIRST) {
-			Some(lb) if lb - FIRST < sieve.remaining_numbers => assert_eq!(sieve.find_next_prime(), Some(lb)),
-			________________________________________________ => assert_eq!(sieve.find_next_prime(), None),
+			Some(lb) if lb - FIRST < sieve.remaining_numbers => {
+				assert_eq!(sieve.find_next_prime(), Some(lb))
+			}
+			________________________________________________ => {
+				assert_eq!(sieve.find_next_prime(), None)
+			}
 		}
 	}
 	// endregion
@@ -1597,6 +1602,100 @@ mod tests {
 		assert_eq!(sieve.find_next_prime(), Some(PRIMES[PRIMES.len() - 1]));
 		assert_eq!(sieve.find_next_prime(), None);
 		assert_eq!(sieve.find_next_prime(), None);
+	}
+	// endregion
+
+	// region: lower_bound_00
+	#[test]
+	fn lower_bound_00() {
+		assert_eq!(lower_bound(&vec![], 0), None);
+	}
+	// endregion
+
+	// region: lower_bound_01
+	#[test]
+	fn lower_bound_01() {
+		assert_eq!(lower_bound(&vec![0], 0), Some(0));
+	}
+	// endregion
+
+	// region: lower_bound_02
+	#[test]
+	fn lower_bound_02() {
+		assert_eq!(lower_bound(&vec![0], 1), None);
+	}
+	// endregion
+
+	// region: lower_bound_03
+	#[test]
+	fn lower_bound_03() {
+		assert_eq!(lower_bound(&vec![1], 0), Some(1));
+	}
+	// endregion
+
+	// region: lower_bound_04
+	#[test]
+	fn lower_bound_04() {
+		assert_eq!(lower_bound(&vec![1, 2, 4, 8], 0), Some(1));
+	}
+	// endregion
+
+	// region: lower_bound_05
+	#[test]
+	fn lower_bound_05() {
+		assert_eq!(lower_bound(&vec![1, 2, 4, 8], 1), Some(1));
+	}
+	// endregion
+
+	// region: lower_bound_06
+	#[test]
+	fn lower_bound_06() {
+		assert_eq!(lower_bound(&vec![1, 2, 4, 8], 3), Some(4));
+	}
+	// endregion
+
+	// region: lower_bound_07
+	#[test]
+	fn lower_bound_07() {
+		assert_eq!(lower_bound(&vec![1, 2, 4, 8], 5), Some(8));
+	}
+	// endregion
+
+	// region: lower_bound_08
+	#[test]
+	fn lower_bound_08() {
+		assert_eq!(lower_bound(&vec![1, 2, 4, 8], 8), Some(8));
+	}
+	// endregion
+
+	// region: lower_bound_09
+	#[test]
+	fn lower_bound_09() {
+		assert_eq!(lower_bound(&vec![1, 2, 4, 8], 9), None);
+	}
+	// endregion
+
+	// region: lower_bound_10
+	#[test]
+	fn lower_bound_10() {
+		assert_eq!(
+			lower_bound(&vec![Integer::MAX - 42, Integer::MAX], Integer::MAX - 21),
+			Some(Integer::MAX)
+		);
+	}
+	// endregion
+
+	// region: lower_bound_11
+	#[test]
+	fn lower_bound_11() {
+		assert_eq!(lower_bound(&vec![1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5], 2), Some(2));
+	}
+	// endregion
+
+	// region: lower_bound_12
+	#[test]
+	fn lower_bound_12() {
+		assert_eq!(lower_bound(&vec![1, 3, 3, 3, 5, 5, 5, 5, 5, 7, 7, 7, 7, 7, 7, 7], 2), Some(3));
 	}
 	// endregion
 }
