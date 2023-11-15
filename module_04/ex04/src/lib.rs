@@ -9,7 +9,7 @@ struct BitSet {
 // region: impl BitSet
 impl BitSet {
 	/// The maximum number of usable bits in each BitSet instance.
-	const BITS: Integer = 42;
+	const BITS: Integer = 255;
 
 	/// This guard is here to ensure that `Self::BITS` is strictly greater than 0.
 	const _BITS_GUARD: Integer = Self::BITS - 1;
@@ -440,10 +440,11 @@ mod tests {
 		}
 	}
 
+	#[inline(always)]
 	fn check_sieve_inner_bit_set(bs: &BitSet, len: Integer, first: Integer) {
 		const PRIMES_LAST: Integer = PRIMES[PRIMES.len() - 1];
 
-		for bit_position in 0..len.min(PRIMES_LAST + 1) {
+		for bit_position in 0..min(len, PRIMES_LAST + 1) {
 			let i: usize = (bit_position / BitField::BITS as Integer) as usize;
 			let bit_position_in_field: Integer = bit_position % BitField::BITS as Integer;
 
@@ -451,6 +452,15 @@ mod tests {
 				Ok(__) => assert_eq!(bs.inner[i] >> bit_position_in_field & 1, 1),
 				Err(_) => assert_eq!(bs.inner[i] >> bit_position_in_field & 1, 0),
 			}
+		}
+	}
+
+	#[inline(always)]
+	const fn min(a: Integer, b: Integer) -> Integer {
+		if a < b {
+			a
+		} else {
+			b
 		}
 	}
 
@@ -611,7 +621,7 @@ mod tests {
 	fn bit_set_find_first_set_bit_02() {
 		const BS: BitSet = BitSet { inner: [0b_00001000; BitSet::LEN] };
 
-		for n in 0..4.min(BitSet::BITS) {
+		for n in 0..min(4, BitSet::BITS) {
 			assert_eq!(BS.find_first_set_bit(n), None);
 		}
 		for n in 4..=BitSet::BITS {
@@ -630,7 +640,7 @@ mod tests {
 		check_sieve_inner_bit_set(&sieve.inner, sieve.len, sieve.first);
 		assert_eq!(sieve.first, 2);
 		assert_eq!(sieve.remaining_numbers, REMAINING_NUMBERS);
-		assert_eq!(sieve.len, REMAINING_NUMBERS.min(BitSet::BITS));
+		assert_eq!(sieve.len, min(REMAINING_NUMBERS, BitSet::BITS));
 	}
 	// endregion
 
@@ -707,7 +717,7 @@ mod tests {
 			inner: BitSet { inner: [0; BitSet::LEN] },
 			first: FIRST,
 			remaining_numbers: REMAINING_NUMBERS,
-			len: REMAINING_NUMBERS.min(BitSet::BITS),
+			len: min(REMAINING_NUMBERS, BitSet::BITS),
 		};
 
 		sieve.fill_with_next_chunk();
@@ -722,7 +732,7 @@ mod tests {
 			Some(diff) => assert_eq!(sieve.remaining_numbers, diff),
 			None => assert_eq!(sieve.remaining_numbers, 0),
 		}
-		assert_eq!(sieve.len, sieve.remaining_numbers.min(BitSet::BITS));
+		assert_eq!(sieve.len, min(sieve.remaining_numbers, BitSet::BITS));
 	}
 	// endregion
 
@@ -798,7 +808,7 @@ mod tests {
 			inner: BitSet { inner: [!0; BitSet::LEN] },
 			first: FIRST,
 			remaining_numbers: REMAINING_NUMBERS,
-			len: REMAINING_NUMBERS.min(BitSet::BITS),
+			len: min(REMAINING_NUMBERS, BitSet::BITS),
 		};
 
 		sieve.fill_with_next_chunk();
@@ -813,7 +823,7 @@ mod tests {
 			Some(diff) => assert_eq!(sieve.remaining_numbers, diff),
 			None => assert_eq!(sieve.remaining_numbers, 0),
 		}
-		assert_eq!(sieve.len, sieve.remaining_numbers.min(BitSet::BITS));
+		assert_eq!(sieve.len, min(sieve.remaining_numbers, BitSet::BITS));
 	}
 	// endregion
 
@@ -889,7 +899,7 @@ mod tests {
 			inner: BitSet { inner: [0b_00100111; BitSet::LEN] },
 			first: FIRST,
 			remaining_numbers: REMAINING_NUMBERS,
-			len: REMAINING_NUMBERS.min(BitSet::BITS),
+			len: min(REMAINING_NUMBERS, BitSet::BITS),
 		};
 
 		sieve.fill_with_next_chunk();
@@ -904,7 +914,7 @@ mod tests {
 			Some(diff) => assert_eq!(sieve.remaining_numbers, diff),
 			None => assert_eq!(sieve.remaining_numbers, 0),
 		}
-		assert_eq!(sieve.len, sieve.remaining_numbers.min(BitSet::BITS));
+		assert_eq!(sieve.len, min(sieve.remaining_numbers, BitSet::BITS));
 	}
 	// endregion
 
@@ -1148,13 +1158,14 @@ mod tests {
 	#[test]
 	fn sieve_remove_non_primes_11() {
 		const FIRST: Integer = 42;
+		const LEN: Integer = min(Integer::MAX - FIRST + 1, BitSet::BITS);
 		let primes: Vec<Integer> = PRIMES.into_iter().filter(|prime| *prime < FIRST).collect();
 		let mut sieve: Sieve = Sieve {
 			primes_found_so_far: primes.clone(),
 			inner: BitSet { inner: [!0; BitSet::LEN] },
 			first: FIRST,
 			remaining_numbers: 0,
-			len: BitSet::BITS,
+			len: LEN,
 		};
 
 		sieve.remove_non_primes();
@@ -1163,7 +1174,7 @@ mod tests {
 		check_sieve_inner_bit_set(&sieve.inner, sieve.len, sieve.first);
 		assert_eq!(sieve.first, FIRST);
 		assert_eq!(sieve.remaining_numbers, 0);
-		assert_eq!(sieve.len, BitSet::BITS);
+		assert_eq!(sieve.len, LEN);
 	}
 	// endregion
 
@@ -1193,13 +1204,14 @@ mod tests {
 	#[test]
 	fn sieve_remove_non_primes_13() {
 		const FIRST: Integer = 42;
+		const LEN: Integer = min(Integer::MAX - FIRST + 1, BitSet::BITS);
 		let primes: Vec<Integer> = PRIMES.into_iter().filter(|prime| *prime < FIRST).collect();
 		let mut sieve: Sieve = Sieve {
 			primes_found_so_far: primes.clone(),
 			inner: BitSet { inner: [!0; BitSet::LEN] },
 			first: FIRST,
 			remaining_numbers: BitSet::BITS,
-			len: BitSet::BITS,
+			len: LEN,
 		};
 
 		sieve.remove_non_primes();
@@ -1208,7 +1220,7 @@ mod tests {
 		check_sieve_inner_bit_set(&sieve.inner, sieve.len, sieve.first);
 		assert_eq!(sieve.first, FIRST);
 		assert_eq!(sieve.remaining_numbers, BitSet::BITS);
-		assert_eq!(sieve.len, BitSet::BITS);
+		assert_eq!(sieve.len, LEN);
 	}
 	// endregion
 
@@ -1299,11 +1311,14 @@ mod tests {
 			primes_found_so_far: primes.clone(),
 			inner: BitSet { inner: [0; BitSet::LEN] },
 			first: FIRST,
-			remaining_numbers: BitSet::BITS,
+			remaining_numbers: min(Integer::MAX - FIRST + 1, BitSet::BITS),
 			len: 0,
 		};
 
-		assert_eq!(sieve.find_next_prime(), Some(43));
+		match lower_bound(&PRIMES.to_vec(), FIRST) {
+			Some(lb) if lb - FIRST < sieve.remaining_numbers => assert_eq!(sieve.find_next_prime(), Some(lb)),
+			________________________________________________ => assert_eq!(sieve.find_next_prime(), None),
+		}
 	}
 	// endregion
 
@@ -1320,6 +1335,267 @@ mod tests {
 			len: BitSet::BITS,
 		};
 
+		assert_eq!(sieve.find_next_prime(), None);
+	}
+	// endregion
+
+	// region: sieve_find_next_prime_07
+	#[test]
+	fn sieve_find_next_prime_07() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [!0; BitSet::LEN] },
+			first: 0,
+			remaining_numbers: 0,
+			len: 0,
+		};
+
+		assert_eq!(sieve.find_next_prime(), None);
+	}
+	// endregion
+
+	// region: sieve_find_next_prime_08
+	#[test]
+	fn sieve_find_next_prime_08() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [!0; BitSet::LEN] },
+			first: 0,
+			remaining_numbers: 0,
+			len: BitSet::BITS,
+		};
+
+		assert_eq!(sieve.find_next_prime(), Some(0));
+	}
+	// endregion
+
+	// region: sieve_find_next_prime_09
+	#[test]
+	fn sieve_find_next_prime_09() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [!0; BitSet::LEN] },
+			first: 0,
+			remaining_numbers: BitSet::BITS,
+			len: BitSet::BITS,
+		};
+
+		assert_eq!(sieve.find_next_prime(), Some(0));
+	}
+	// endregion
+
+	// region: sieve_find_next_prime_10
+	#[test]
+	fn sieve_find_next_prime_10() {
+		const FIRST: Integer = 42;
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [!0; BitSet::LEN] },
+			first: FIRST,
+			remaining_numbers: 0,
+			len: 0,
+		};
+
+		assert_eq!(sieve.find_next_prime(), None);
+	}
+	// endregion
+
+	// region: sieve_find_next_prime_11
+	#[test]
+	fn sieve_find_next_prime_11() {
+		const FIRST: Integer = 42;
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [!0; BitSet::LEN] },
+			first: FIRST,
+			remaining_numbers: 0,
+			len: BitSet::BITS,
+		};
+
+		assert_eq!(sieve.find_next_prime(), Some(FIRST));
+	}
+	// endregion
+
+	// region: sieve_find_next_prime_12
+	#[test]
+	fn sieve_find_next_prime_12() {
+		const FIRST: Integer = 42;
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [!0; BitSet::LEN] },
+			first: FIRST,
+			remaining_numbers: min(Integer::MAX - FIRST + 1, BitSet::BITS),
+			len: 0,
+		};
+
+		assert_eq!(sieve.find_next_prime(), Some(FIRST));
+	}
+	// endregion
+
+	// region: sieve_find_next_prime_13
+	#[test]
+	fn sieve_find_next_prime_13() {
+		const FIRST: Integer = 42;
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [!0; BitSet::LEN] },
+			first: FIRST,
+			remaining_numbers: BitSet::BITS,
+			len: BitSet::BITS,
+		};
+
+		assert_eq!(sieve.find_next_prime(), Some(FIRST));
+	}
+	// endregion
+
+	// region: sieve_find_next_prime_14
+	#[test]
+	fn sieve_find_next_prime_14() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [0b_00101000; BitSet::LEN] },
+			first: 0,
+			remaining_numbers: 0,
+			len: 0,
+		};
+
+		assert_eq!(sieve.find_next_prime(), None);
+	}
+	// endregion
+
+	// region: sieve_find_next_prime_15
+	#[test]
+	fn sieve_find_next_prime_15() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [0b_00101000; BitSet::LEN] },
+			first: 0,
+			remaining_numbers: 0,
+			len: BitSet::BITS,
+		};
+
+		if BitSet::BITS < 4 {
+			assert_eq!(sieve.find_next_prime(), None);
+		} else {
+			assert_eq!(sieve.find_next_prime(), Some(3));
+		}
+	}
+	// endregion
+
+	// region: sieve_find_next_prime_16
+	#[test]
+	fn sieve_find_next_prime_16() {
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [0b_00101000; BitSet::LEN] },
+			first: 0,
+			remaining_numbers: BitSet::BITS,
+			len: BitSet::BITS,
+		};
+
+		if BitSet::BITS < 4 {
+			assert_eq!(sieve.find_next_prime(), None);
+		} else {
+			assert_eq!(sieve.find_next_prime(), Some(3));
+		}
+	}
+	// endregion
+
+	// region: sieve_find_next_prime_17
+	#[test]
+	fn sieve_find_next_prime_17() {
+		const FIRST: Integer = 42;
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [0b_00101000; BitSet::LEN] },
+			first: FIRST,
+			remaining_numbers: 0,
+			len: 0,
+		};
+
+		assert_eq!(sieve.find_next_prime(), None);
+	}
+	// endregion
+
+	// region: sieve_find_next_prime_18
+	#[test]
+	fn sieve_find_next_prime_18() {
+		const FIRST: Integer = 42;
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: Vec::new(),
+			inner: BitSet { inner: [0b_00101000; BitSet::LEN] },
+			first: FIRST,
+			remaining_numbers: 0,
+			len: BitSet::BITS,
+		};
+
+		if BitSet::BITS < 4 {
+			assert_eq!(sieve.find_next_prime(), None);
+		} else {
+			assert_eq!(sieve.find_next_prime(), Some(FIRST + 3));
+		}
+	}
+	// endregion
+
+	// region: sieve_find_next_prime_19
+	#[test]
+	fn sieve_find_next_prime_19() {
+		const FIRST: Integer = 42;
+		let primes: Vec<Integer> = PRIMES.into_iter().filter(|prime| *prime < FIRST).collect();
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: primes.clone(),
+			inner: BitSet { inner: [0b_00101000; BitSet::LEN] },
+			first: FIRST,
+			remaining_numbers: min(Integer::MAX - FIRST + 1, BitSet::BITS),
+			len: 0,
+		};
+
+		match lower_bound(&PRIMES.to_vec(), FIRST) {
+			Some(lb) if lb - FIRST < sieve.remaining_numbers => assert_eq!(sieve.find_next_prime(), Some(lb)),
+			________________________________________________ => assert_eq!(sieve.find_next_prime(), None),
+		}
+	}
+	// endregion
+
+	// region: sieve_find_next_prime_20
+	#[test]
+	fn sieve_find_next_prime_20() {
+		const FIRST: Integer = 42;
+		let primes: Vec<Integer> = PRIMES.into_iter().filter(|prime| *prime < FIRST).collect();
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: primes.clone(),
+			inner: BitSet { inner: [0b_00101000; BitSet::LEN] },
+			first: FIRST,
+			remaining_numbers: BitSet::BITS,
+			len: BitSet::BITS,
+		};
+
+		if BitSet::BITS < 4 {
+			assert_eq!(sieve.find_next_prime(), None);
+		} else {
+			assert_eq!(sieve.find_next_prime(), Some(FIRST + 3));
+		}
+	}
+	// endregion
+
+	// region: sieve_find_next_prime_21
+	#[test]
+	fn sieve_find_next_prime_21() {
+		const FIRST: Integer = PRIMES[PRIMES.len() - 3];
+		const REMAINING_NUMBERS: Integer = Integer::MAX - FIRST + 1;
+		let primes: Vec<Integer> = PRIMES.into_iter().filter(|prime| *prime < FIRST).collect();
+		let mut sieve: Sieve = Sieve {
+			primes_found_so_far: primes.clone(),
+			inner: BitSet { inner: [0; BitSet::LEN] },
+			first: FIRST,
+			remaining_numbers: REMAINING_NUMBERS,
+			len: 0,
+		};
+
+		assert_eq!(sieve.find_next_prime(), Some(PRIMES[PRIMES.len() - 3]));
+		assert_eq!(sieve.find_next_prime(), Some(PRIMES[PRIMES.len() - 2]));
+		assert_eq!(sieve.find_next_prime(), Some(PRIMES[PRIMES.len() - 1]));
+		assert_eq!(sieve.find_next_prime(), None);
 		assert_eq!(sieve.find_next_prime(), None);
 	}
 	// endregion
