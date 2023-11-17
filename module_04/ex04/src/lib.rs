@@ -1,5 +1,7 @@
 type Integer = u8;
 type BitField = u16;
+type Exponent = u8;
+type PrimeFactor = (Integer, Exponent);
 
 /// A fixed sized bitset.
 struct BitSet {
@@ -121,10 +123,12 @@ impl BitSet {
 }
 // endregion
 
+const STARTING_PRIMES: [Integer; 8] = [2, 3, 5, 7, 11, 13, 17, 19];
+
 /// An implementation of the Sieve of Eratosthenes.
 /// See https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes for more information.
-/// This implementation uses multiple limited chunks of numbers
-/// instead of a single huge chunk, allowing to find prime numbers to whatever limit we want,
+/// This implementation uses multiple limited chunks of numbers instead of a single huge chunk,
+/// allowing to find prime numbers to whatever limit we want
 /// without having to allocate a huge memory area.
 pub struct Sieve {
 	/// A vector that contains the prime numbers that have already been found,
@@ -172,12 +176,18 @@ impl Sieve {
 		}
 
 		const INNER: BitSet = BitSet::new();
-		const FIRST: Integer = 2;
-		const REMAINING_NUMBERS: Integer = Integer::MAX - FIRST + 1;
+		const FIRST: Integer = match STARTING_PRIMES.last() {
+			Some(last) if *last < Integer::MAX => *last + 1,
+			__________________________________ => 0,
+		};
+		const REMAINING_NUMBERS: Integer = match FIRST {
+			0 => 0,
+			_ => Integer::MAX - FIRST + 1,
+		};
 		const LEN: Integer = min(BitSet::BITS, REMAINING_NUMBERS);
 
 		let mut sieve: Self = Self {
-			primes_found_so_far: Vec::new(),
+			primes_found_so_far: STARTING_PRIMES.to_vec(),
 			inner: INNER,
 			first: FIRST,
 			remaining_numbers: REMAINING_NUMBERS,
@@ -414,6 +424,48 @@ impl Iterator for Prime {
 }
 // endregion
 
+/// Decompose `n` into its prime factors, with for each, its exponent.
+/// The prime factors are sorted in ascending order.
+///
+/// ### Parameters
+/// * `n` - The number to decompose.
+///
+/// ### Return
+/// A vector that contains the prime factors of `n`, with for each, its exponent.
+///
+/// ### Example
+/// ```
+/// use ex04::prime_decomposition;
+///
+/// assert_eq!(prime_decomposition(0), vec![]);
+/// assert_eq!(prime_decomposition(2), vec![(2, 1)]);
+/// assert_eq!(prime_decomposition(5), vec![(5, 1)]);
+/// assert_eq!(prime_decomposition(42), vec![(2, 1), (3, 1), (7, 1)]);
+/// assert_eq!(prime_decomposition(72), vec![(2, 3), (3, 2)]);
+/// ```
+pub fn prime_decomposition(mut n: Integer) -> Vec<PrimeFactor> {
+	let mut prime_factors: Vec<PrimeFactor> = Vec::new();
+
+	for prime in Prime::new(2) {
+		if prime > n {
+			break;
+		}
+
+		let mut exponent: u8 = 0;
+
+		while n % prime == 0 {
+			n /= prime;
+			exponent += 1;
+		}
+
+		if exponent > 0 {
+			prime_factors.push((prime, exponent));
+		}
+	}
+
+	prime_factors
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;
@@ -630,14 +682,21 @@ mod tests {
 	// region: sieve_new_00
 	#[test]
 	fn sieve_new_00() {
-		const REMAINING_NUMBERS: Integer = Integer::MAX - 2 + 1;
 		let sieve: Sieve = Sieve::new();
 
-		assert_eq!(sieve.primes_found_so_far, Vec::new());
+		assert_eq!(sieve.primes_found_so_far, STARTING_PRIMES.to_vec());
 		check_sieve_inner_bit_set(&sieve.inner, sieve.len, sieve.first);
-		assert_eq!(sieve.first, 2);
-		assert_eq!(sieve.remaining_numbers, REMAINING_NUMBERS);
-		assert_eq!(sieve.len, min(REMAINING_NUMBERS, BitSet::BITS));
+		match STARTING_PRIMES.last() {
+			Some(last) if *last < Integer::MAX => {
+				assert_eq!(sieve.first, *last + 1);
+				assert_eq!(sieve.remaining_numbers, Integer::MAX - *last);
+			}
+			__________________________________ => {
+				assert_eq!(sieve.first, 0);
+				assert_eq!(sieve.remaining_numbers, 0);
+			}
+		}
+		assert_eq!(sieve.len, min(sieve.remaining_numbers, BitSet::BITS));
 	}
 	// endregion
 
@@ -1696,6 +1755,287 @@ mod tests {
 	#[test]
 	fn lower_bound_12() {
 		assert_eq!(lower_bound(&vec![1, 3, 3, 3, 5, 5, 5, 5, 5, 7, 7, 7, 7, 7, 7, 7], 2), Some(3));
+	}
+	// endregion
+
+	// region: prime_new_00
+	#[test]
+	fn prime_new_00() {
+		let prime: Prime = Prime::new(0);
+
+		assert_eq!(prime.n, 0);
+		assert_eq!(prime.sieve.primes_found_so_far, STARTING_PRIMES.to_vec());
+		check_sieve_inner_bit_set(&prime.sieve.inner, prime.sieve.len, prime.sieve.first);
+		match STARTING_PRIMES.last() {
+			Some(last) if *last < Integer::MAX => {
+				assert_eq!(prime.sieve.first, *last + 1);
+				assert_eq!(prime.sieve.remaining_numbers, Integer::MAX - *last);
+			}
+			__________________________________ => {
+				assert_eq!(prime.sieve.first, 0);
+				assert_eq!(prime.sieve.remaining_numbers, 0);
+			}
+		}
+		assert_eq!(prime.sieve.len, min(prime.sieve.remaining_numbers, BitSet::BITS));
+		assert_eq!(prime.is_end_reached, false);
+	}
+	// endregion
+
+	// region: prime_new_01
+	#[test]
+	fn prime_new_01() {
+		let prime: Prime = Prime::new(1);
+
+		assert_eq!(prime.n, 1);
+		assert_eq!(prime.sieve.primes_found_so_far, STARTING_PRIMES.to_vec());
+		check_sieve_inner_bit_set(&prime.sieve.inner, prime.sieve.len, prime.sieve.first);
+		match STARTING_PRIMES.last() {
+			Some(last) if *last < Integer::MAX => {
+				assert_eq!(prime.sieve.first, *last + 1);
+				assert_eq!(prime.sieve.remaining_numbers, Integer::MAX - *last);
+			}
+			__________________________________ => {
+				assert_eq!(prime.sieve.first, 0);
+				assert_eq!(prime.sieve.remaining_numbers, 0);
+			}
+		}
+		assert_eq!(prime.sieve.len, min(prime.sieve.remaining_numbers, BitSet::BITS));
+		assert_eq!(prime.is_end_reached, false);
+	}
+	// endregion
+
+	// region: prime_new_02
+	#[test]
+	fn prime_new_02() {
+		let prime: Prime = Prime::new(2);
+
+		assert_eq!(prime.n, 2);
+		assert_eq!(prime.sieve.primes_found_so_far, STARTING_PRIMES.to_vec());
+		check_sieve_inner_bit_set(&prime.sieve.inner, prime.sieve.len, prime.sieve.first);
+		match STARTING_PRIMES.last() {
+			Some(last) if *last < Integer::MAX => {
+				assert_eq!(prime.sieve.first, *last + 1);
+				assert_eq!(prime.sieve.remaining_numbers, Integer::MAX - *last);
+			}
+			__________________________________ => {
+				assert_eq!(prime.sieve.first, 0);
+				assert_eq!(prime.sieve.remaining_numbers, 0);
+			}
+		}
+		assert_eq!(prime.sieve.len, min(prime.sieve.remaining_numbers, BitSet::BITS));
+		assert_eq!(prime.is_end_reached, false);
+	}
+	// endregion
+
+	// region: prime_new_03
+	#[test]
+	fn prime_new_03() {
+		let prime: Prime = Prime::new(42);
+
+		assert_eq!(prime.n, 42);
+		assert_eq!(prime.sieve.primes_found_so_far, STARTING_PRIMES.to_vec());
+		check_sieve_inner_bit_set(&prime.sieve.inner, prime.sieve.len, prime.sieve.first);
+		match STARTING_PRIMES.last() {
+			Some(last) if *last < Integer::MAX => {
+				assert_eq!(prime.sieve.first, *last + 1);
+				assert_eq!(prime.sieve.remaining_numbers, Integer::MAX - *last);
+			}
+			__________________________________ => {
+				assert_eq!(prime.sieve.first, 0);
+				assert_eq!(prime.sieve.remaining_numbers, 0);
+			}
+		}
+		assert_eq!(prime.sieve.len, min(prime.sieve.remaining_numbers, BitSet::BITS));
+		assert_eq!(prime.is_end_reached, false);
+	}
+	// endregion
+
+	// region: prime_new_04
+	#[test]
+	fn prime_new_04() {
+		let prime: Prime = Prime::new(Integer::MAX);
+
+		assert_eq!(prime.n, Integer::MAX);
+		assert_eq!(prime.sieve.primes_found_so_far, STARTING_PRIMES.to_vec());
+		check_sieve_inner_bit_set(&prime.sieve.inner, prime.sieve.len, prime.sieve.first);
+		match STARTING_PRIMES.last() {
+			Some(last) if *last < Integer::MAX => {
+				assert_eq!(prime.sieve.first, *last + 1);
+				assert_eq!(prime.sieve.remaining_numbers, Integer::MAX - *last);
+			}
+			__________________________________ => {
+				assert_eq!(prime.sieve.first, 0);
+				assert_eq!(prime.sieve.remaining_numbers, 0);
+			}
+		}
+		assert_eq!(prime.sieve.len, min(prime.sieve.remaining_numbers, BitSet::BITS));
+		assert_eq!(prime.is_end_reached, false);
+	}
+	// endregion
+
+	// region: prime_next_00
+	#[test]
+	fn prime_next_00() {
+		let mut prime: Prime = Prime::new(0);
+
+		assert_eq!(prime.next(), Some(2));
+		assert_eq!(prime.next(), Some(3));
+		assert_eq!(prime.next(), Some(5));
+		assert_eq!(prime.next(), Some(7));
+		assert_eq!(prime.next(), Some(11));
+	}
+	// endregion
+
+	// region: prime_next_01
+	#[test]
+	fn prime_next_01() {
+		let mut prime: Prime = Prime::new(1);
+
+		assert_eq!(prime.next(), Some(2));
+		assert_eq!(prime.next(), Some(3));
+		assert_eq!(prime.next(), Some(5));
+		assert_eq!(prime.next(), Some(7));
+		assert_eq!(prime.next(), Some(11));
+	}
+	// endregion
+
+	// region: prime_next_02
+	#[test]
+	fn prime_next_02() {
+		let mut prime: Prime = Prime::new(2);
+
+		assert_eq!(prime.next(), Some(2));
+		assert_eq!(prime.next(), Some(3));
+		assert_eq!(prime.next(), Some(5));
+		assert_eq!(prime.next(), Some(7));
+		assert_eq!(prime.next(), Some(11));
+	}
+	// endregion
+
+	// region: prime_next_03
+	#[test]
+	fn prime_next_03() {
+		let mut prime: Prime = Prime::new(8);
+
+		assert_eq!(prime.next(), Some(11));
+		assert_eq!(prime.next(), Some(13));
+		assert_eq!(prime.next(), Some(17));
+		assert_eq!(prime.next(), Some(19));
+		assert_eq!(prime.next(), Some(23));
+	}
+	// endregion
+
+	// region: prime_next_04
+	#[test]
+	fn prime_next_04() {
+		let mut prime: Prime = Prime::new(42);
+
+		assert_eq!(prime.next(), Some(43));
+		assert_eq!(prime.next(), Some(47));
+		assert_eq!(prime.next(), Some(53));
+		assert_eq!(prime.next(), Some(59));
+		assert_eq!(prime.next(), Some(61));
+	}
+	// endregion
+
+	// region: prime_next_05
+	#[test]
+	fn prime_next_05() {
+		const FIRST: Integer = Integer::MAX - 10;
+		let mut prime: Prime = Prime::new(FIRST);
+
+		for n in FIRST..=Integer::MAX {
+			if primes::is_prime(n as u64) {
+				assert_eq!(prime.next(), Some(n));
+			}
+		}
+		for _ in 0..3 {
+			assert_eq!(prime.next(), None);
+		}
+	}
+	// endregion
+
+	// region: prime_decomposition_00
+	#[test]
+	fn prime_decomposition_00() {
+		assert_eq!(prime_decomposition(0), vec![]);
+	}
+	// endregion
+
+	// region: prime_decomposition_01
+	#[test]
+	fn prime_decomposition_01() {
+		assert_eq!(prime_decomposition(1), vec![]);
+	}
+	// endregion
+
+	// region: prime_decomposition_02
+	#[test]
+	fn prime_decomposition_02() {
+		assert_eq!(prime_decomposition(2), vec![(2, 1)]);
+	}
+	// endregion
+
+	// region: prime_decomposition_03
+	#[test]
+	fn prime_decomposition_03() {
+		assert_eq!(prime_decomposition(3), vec![(3, 1)]);
+	}
+	// endregion
+
+	// region: prime_decomposition_04
+	#[test]
+	fn prime_decomposition_04() {
+		assert_eq!(prime_decomposition(4), vec![(2, 2)]);
+	}
+	// endregion
+
+	// region: prime_decomposition_05
+	#[test]
+	fn prime_decomposition_05() {
+		assert_eq!(prime_decomposition(250), vec![(2, 1), (5, 3)]);
+	}
+	// endregion
+
+	// region: prime_decomposition_06
+	#[test]
+	fn prime_decomposition_06() {
+		assert_eq!(prime_decomposition(251), vec![(251, 1)]);
+	}
+	// endregion
+
+	// region: prime_decomposition_07
+	#[test]
+	fn prime_decomposition_07() {
+		assert_eq!(prime_decomposition(252), vec![(2, 2), (3, 2), (7, 1)]);
+	}
+	// endregion
+
+	// region: prime_decomposition_08
+	#[test]
+	fn prime_decomposition_08() {
+		assert_eq!(prime_decomposition(253), vec![(11, 1), (23, 1)]);
+	}
+	// endregion
+
+	// region: prime_decomposition_09
+	#[test]
+	fn prime_decomposition_09() {
+		assert_eq!(prime_decomposition(254), vec![(2, 1), (127, 1)]);
+	}
+	// endregion
+
+	// region: prime_decomposition_10
+	#[test]
+	fn prime_decomposition_10() {
+		assert_eq!(prime_decomposition(255), vec![(3, 1), (5, 1), (17, 1)]);
+	}
+	// endregion
+
+	// region: prime_decomposition_11
+	#[test]
+	fn prime_decomposition_11() {
+		assert_eq!(prime_decomposition(128), vec![(2, 7)]);
 	}
 	// endregion
 }

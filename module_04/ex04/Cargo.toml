@@ -4,3 +4,6 @@
     authors = ["Jonathan DUFOUR"]
     edition = "2021"
 description = "Implementation of an iterator to generate prime numbers"
+
+[dependencies]
+primes = "0.3.0"
