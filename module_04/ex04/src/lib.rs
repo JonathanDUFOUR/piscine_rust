@@ -1,5 +1,5 @@
-type Integer = u8;
-type BitField = u16;
+pub type Integer = u16;
+type BitField = usize;
 type Exponent = u8;
 type PrimeFactor = (Integer, Exponent);
 
@@ -11,7 +11,7 @@ struct BitSet {
 // region: impl BitSet
 impl BitSet {
 	/// The maximum number of usable bits in each BitSet instance.
-	const BITS: Integer = 255;
+	const BITS: Integer = BitField::BITS as Integer;
 
 	/// This guard is here to ensure that `Self::BITS` is strictly greater than 0.
 	const _BITS_GUARD: Integer = Self::BITS - 1;
@@ -468,6 +468,8 @@ pub fn prime_decomposition(mut n: Integer) -> Vec<PrimeFactor> {
 
 #[cfg(test)]
 mod tests {
+	use primes::PrimeSet;
+
 	use super::*;
 
 	const PRIMES: [Integer; 54] = [
@@ -493,7 +495,7 @@ mod tests {
 	fn check_sieve_inner_bit_set(bs: &BitSet, len: Integer, first: Integer) {
 		const PRIMES_LAST: Integer = PRIMES[PRIMES.len() - 1];
 
-		for bit_position in 0..min(len, PRIMES_LAST + 1) {
+		for bit_position in 0..min(len, PRIMES_LAST - first + 1) {
 			let i: usize = (bit_position / BitField::BITS as Integer) as usize;
 			let bit_position_in_field: Integer = bit_position % BitField::BITS as Integer;
 
@@ -1645,20 +1647,34 @@ mod tests {
 	// region: sieve_find_next_prime_21
 	#[test]
 	fn sieve_find_next_prime_21() {
-		const FIRST: Integer = PRIMES[PRIMES.len() - 3];
-		const REMAINING_NUMBERS: Integer = Integer::MAX - FIRST + 1;
-		let primes: Vec<Integer> = PRIMES.into_iter().filter(|prime| *prime < FIRST).collect();
+		let primes: Vec<Integer> = {
+			// region: primes
+			let mut v: Vec<Integer> = Vec::new();
+
+			for prime in primes::Sieve::new().iter() {
+				if prime > Integer::MAX as u64 {
+					break;
+				}
+				v.push(prime as Integer);
+			}
+
+			v
+			// endregion
+		};
+		let split: (&[Integer], &[Integer]) = primes.split_at(primes.len() - 3);
+		let first: Integer = split.1[0];
+		let remaining_numbers: Integer = Integer::MAX - first + 1;
 		let mut sieve: Sieve = Sieve {
-			primes_found_so_far: primes.clone(),
+			primes_found_so_far: split.0.to_vec(),
 			inner: BitSet { inner: [0; BitSet::LEN] },
-			first: FIRST,
-			remaining_numbers: REMAINING_NUMBERS,
+			first,
+			remaining_numbers,
 			len: 0,
 		};
 
-		assert_eq!(sieve.find_next_prime(), Some(PRIMES[PRIMES.len() - 3]));
-		assert_eq!(sieve.find_next_prime(), Some(PRIMES[PRIMES.len() - 2]));
-		assert_eq!(sieve.find_next_prime(), Some(PRIMES[PRIMES.len() - 1]));
+		assert_eq!(sieve.find_next_prime(), Some(split.1[0]));
+		assert_eq!(sieve.find_next_prime(), Some(split.1[1]));
+		assert_eq!(sieve.find_next_prime(), Some(split.1[2]));
 		assert_eq!(sieve.find_next_prime(), None);
 		assert_eq!(sieve.find_next_prime(), None);
 	}
