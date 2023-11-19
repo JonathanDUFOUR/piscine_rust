@@ -1,6 +1,8 @@
-pub type Integer = u8;
+pub type Integer = u32;
 
-const STARTING_PRIMES: [Integer; 8] = [2, 3, 5, 7, 11, 13, 17, 19];
+const STARTING_PRIMES: [Integer; 0] = [];
+// const STARTING_PRIMES: [Integer; 1] = [2];
+// const STARTING_PRIMES: [Integer; 8] = [2, 3, 5, 7, 11, 13, 17, 19];
 
 #[inline(always)]
 const fn min(a: Integer, b: Integer) -> Integer {
@@ -11,7 +13,7 @@ const fn min(a: Integer, b: Integer) -> Integer {
 	}
 }
 
-type BitField = u8;
+type BitField = usize;
 
 /// An implementation of the Sieve of Eratosthenes.
 /// See https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes for more information.
@@ -58,7 +60,8 @@ impl Sieve {
 	pub fn new() -> Self {
 		const FIRST: Integer = match STARTING_PRIMES.last() {
 			Some(last) if *last < Integer::MAX => *last + 1,
-			__________________________________ => 0,
+			None => 2,
+			_ => 0,
 		};
 		const REMAINING_NUMBERS: Integer = match FIRST {
 			0 => 0,
@@ -79,10 +82,10 @@ impl Sieve {
 		sieve
 	}
 
-	/// Update inner attributes to consider the next chunk of numbers.
-	/// All the numbers of the next chunk are considered prime by default.
+	/// Update inner attributes to consider the next range of numbers.
+	/// All the numbers of the next range are considered prime by default.
 	/// The non-prime numbers will be removed later.
-	fn fill_with_next_chunk(self: &mut Self) {
+	fn fill_with_next_range(self: &mut Self) {
 		self.range = !0;
 		if let Some(sum) = self.first.checked_add(self.len) {
 			self.first = sum;
@@ -91,10 +94,10 @@ impl Sieve {
 		self.len = self.remaining_numbers.min(BitField::BITS as Integer);
 	}
 
-	/// Remove the non-prime numbers from the current chunk of numbers.
+	/// Remove the non-prime numbers from the current range of numbers.
 	/// The non-prime numbers are found by multiplying the prime numbers
 	/// that we have found so far, and then multiplying the remaining
-	/// numbers in the chunk from the itself (Yes, it sounds like an Inception).
+	/// numbers in the range from the itself (Yes, it sounds like an Inception).
 	fn remove_non_primes(self: &mut Self) {
 		#[inline(always)]
 		fn remove_prime_multiples(
@@ -115,7 +118,16 @@ impl Sieve {
 			}
 		}
 
+		// TODO: Check if calculating the square root of `self.first` + `self.len` - 1
+		// and comparing it with each prime in `self.primes_found_so_far` is faster than
+		// checking if the square of each prime in `self.primes_found_so_far` is less than
+		// `self.first` + `self.len`.
+
 		for prime in &self.primes_found_so_far {
+			match prime.checked_mul(*prime) {
+				Some(square) if square < self.first || square - self.first < self.len => (),
+				_____________________________________________________________________ => break,
+			}
 			let multiple: Integer = match self.first.checked_next_multiple_of(*prime) {
 				Some(multiple) => multiple,
 				None => continue,
@@ -129,8 +141,8 @@ impl Sieve {
 				let prime: Integer = self.first + bit_position;
 
 				let multiple: Integer = match prime.checked_mul(prime) {
-					Some(square) => square,
-					None => continue,
+					Some(square) if square < self.first + self.len => square,
+					______________________________________________ => break,
 				};
 
 				remove_prime_multiples(multiple, self.first, &mut self.range, prime, self.len);
@@ -147,23 +159,20 @@ impl Sieve {
 	/// * `None` - There is no next prime number.
 	fn find_next_prime(self: &mut Self) -> Option<Integer> {
 		loop {
-			match self.range.leading_zeros() {
-				BitField::BITS => {
-					if self.remaining_numbers == 0 {
-						return None;
-					}
+			let n: Integer = self.range.trailing_zeros() as Integer;
 
-					self.fill_with_next_chunk();
-					self.remove_non_primes();
-				}
-				first_set_bit_position => {
-					let prime: Integer = self.first + first_set_bit_position as Integer;
+			if n < self.len {
+				let prime: Integer = self.first + n as Integer;
 
-					self.range &= !(1 << first_set_bit_position);
-					self.primes_found_so_far.push(prime);
+				self.range &= !(1 << n);
+				self.primes_found_so_far.push(prime);
 
-					return Some(prime);
-				}
+				return Some(prime);
+			} else if self.remaining_numbers != 0 {
+				self.fill_with_next_range();
+				self.remove_non_primes();
+			} else {
+				return None;
 			}
 		}
 	}
@@ -334,7 +343,7 @@ pub fn prime_decomposition(mut n: Integer) -> Vec<PrimeFactor> {
 			break;
 		}
 
-		let mut exponent: u8 = 0;
+		let mut exponent: Exponent = 0;
 
 		while n % prime == 0 {
 			n /= prime;
@@ -387,7 +396,11 @@ mod tests {
 				assert_eq!(sieve.first, *last + 1);
 				assert_eq!(sieve.remaining_numbers, Integer::MAX - *last);
 			}
-			__________________________________ => {
+			None => {
+				assert_eq!(sieve.first, 2);
+				assert_eq!(sieve.remaining_numbers, Integer::MAX - 1);
+			}
+			_ => {
 				assert_eq!(sieve.first, 0);
 				assert_eq!(sieve.remaining_numbers, 0);
 			}
@@ -407,7 +420,7 @@ mod tests {
 			len: 0,
 		};
 
-		sieve.fill_with_next_chunk();
+		sieve.fill_with_next_range();
 
 		assert_eq!(sieve.primes_found_so_far, Vec::new());
 		assert_eq!(sieve.range, !0);
@@ -428,7 +441,7 @@ mod tests {
 			len: 0,
 		};
 
-		sieve.fill_with_next_chunk();
+		sieve.fill_with_next_range();
 
 		assert_eq!(sieve.primes_found_so_far, Vec::new());
 		assert_eq!(sieve.range, !0);
@@ -449,7 +462,7 @@ mod tests {
 			len: BitField::BITS as Integer,
 		};
 
-		sieve.fill_with_next_chunk();
+		sieve.fill_with_next_range();
 
 		assert_eq!(sieve.primes_found_so_far, Vec::new());
 		assert_eq!(sieve.range, !0);
@@ -472,7 +485,7 @@ mod tests {
 			len: min(REMAINING_NUMBERS, BitField::BITS as Integer),
 		};
 
-		sieve.fill_with_next_chunk();
+		sieve.fill_with_next_range();
 
 		assert_eq!(sieve.primes_found_so_far, Vec::new());
 		assert_eq!(sieve.range, !0);
@@ -499,7 +512,7 @@ mod tests {
 			len: 0,
 		};
 
-		sieve.fill_with_next_chunk();
+		sieve.fill_with_next_range();
 
 		assert_eq!(sieve.primes_found_so_far, Vec::new());
 		assert_eq!(sieve.range, !0);
@@ -519,7 +532,7 @@ mod tests {
 			len: 0,
 		};
 
-		sieve.fill_with_next_chunk();
+		sieve.fill_with_next_range();
 
 		assert_eq!(sieve.primes_found_so_far, Vec::new());
 		assert_eq!(sieve.range, !0);
@@ -540,7 +553,7 @@ mod tests {
 			len: BitField::BITS as Integer,
 		};
 
-		sieve.fill_with_next_chunk();
+		sieve.fill_with_next_range();
 
 		assert_eq!(sieve.primes_found_so_far, Vec::new());
 		assert_eq!(sieve.range, !0);
@@ -563,7 +576,7 @@ mod tests {
 			len: min(REMAINING_NUMBERS, BitField::BITS as Integer),
 		};
 
-		sieve.fill_with_next_chunk();
+		sieve.fill_with_next_range();
 
 		assert_eq!(sieve.primes_found_so_far, Vec::new());
 		assert_eq!(sieve.range, !0);
@@ -590,7 +603,7 @@ mod tests {
 			len: 0,
 		};
 
-		sieve.fill_with_next_chunk();
+		sieve.fill_with_next_range();
 
 		assert_eq!(sieve.primes_found_so_far, Vec::new());
 		assert_eq!(sieve.range, !0);
@@ -610,7 +623,7 @@ mod tests {
 			len: 0,
 		};
 
-		sieve.fill_with_next_chunk();
+		sieve.fill_with_next_range();
 
 		assert_eq!(sieve.primes_found_so_far, Vec::new());
 		assert_eq!(sieve.range, !0);
@@ -631,7 +644,7 @@ mod tests {
 			len: BitField::BITS as Integer,
 		};
 
-		sieve.fill_with_next_chunk();
+		sieve.fill_with_next_range();
 
 		assert_eq!(sieve.primes_found_so_far, Vec::new());
 		assert_eq!(sieve.range, !0);
@@ -654,7 +667,7 @@ mod tests {
 			len: min(REMAINING_NUMBERS, BitField::BITS as Integer),
 		};
 
-		sieve.fill_with_next_chunk();
+		sieve.fill_with_next_range();
 
 		assert_eq!(sieve.primes_found_so_far, Vec::new());
 		assert_eq!(sieve.range, !0);
@@ -1058,7 +1071,20 @@ mod tests {
 	#[test]
 	fn sieve_find_next_prime_05() {
 		const FIRST: Integer = 42;
-		let primes: Vec<Integer> = PRIMES.into_iter().filter(|prime| *prime < FIRST).collect();
+		let primes: Vec<Integer> = {
+			// region: primes
+			let mut v: Vec<Integer> = Vec::new();
+
+			for prime in PRIMES {
+				if prime >= FIRST {
+					break;
+				}
+				v.push(prime);
+			}
+
+			v
+			// endregion
+		};
 		let mut sieve: Sieve = Sieve {
 			primes_found_so_far: primes.clone(),
 			range: 0,
@@ -1069,10 +1095,10 @@ mod tests {
 
 		match lower_bound(&PRIMES.to_vec(), FIRST) {
 			Some(lb) if lb - FIRST < sieve.remaining_numbers => {
-				assert_eq!(sieve.find_next_prime(), Some(lb))
+				assert_eq!(sieve.find_next_prime(), Some(lb));
 			}
 			________________________________________________ => {
-				assert_eq!(sieve.find_next_prime(), None)
+				assert_eq!(sieve.find_next_prime(), None);
 			}
 		}
 	}
@@ -1082,7 +1108,20 @@ mod tests {
 	#[test]
 	fn sieve_find_next_prime_06() {
 		const FIRST: Integer = 42;
-		let primes: Vec<Integer> = PRIMES.into_iter().filter(|prime| *prime < FIRST).collect();
+		let primes: Vec<Integer> = {
+			// region: primes
+			let mut v: Vec<Integer> = Vec::new();
+
+			for prime in PRIMES {
+				if prime >= FIRST {
+					break;
+				}
+				v.push(prime);
+			}
+
+			v
+			// endregion
+		};
 		let mut sieve: Sieve = Sieve {
 			primes_found_so_far: primes.clone(),
 			range: 0,
@@ -1481,7 +1520,11 @@ mod tests {
 				assert_eq!(prime.sieve.first, *last + 1);
 				assert_eq!(prime.sieve.remaining_numbers, Integer::MAX - *last);
 			}
-			__________________________________ => {
+			None => {
+				assert_eq!(prime.sieve.first, 2);
+				assert_eq!(prime.sieve.remaining_numbers, Integer::MAX - 1);
+			}
+			_ => {
 				assert_eq!(prime.sieve.first, 0);
 				assert_eq!(prime.sieve.remaining_numbers, 0);
 			}
@@ -1504,7 +1547,11 @@ mod tests {
 				assert_eq!(prime.sieve.first, *last + 1);
 				assert_eq!(prime.sieve.remaining_numbers, Integer::MAX - *last);
 			}
-			__________________________________ => {
+			None => {
+				assert_eq!(prime.sieve.first, 2);
+				assert_eq!(prime.sieve.remaining_numbers, Integer::MAX - 1);
+			}
+			_ => {
 				assert_eq!(prime.sieve.first, 0);
 				assert_eq!(prime.sieve.remaining_numbers, 0);
 			}
@@ -1527,7 +1574,11 @@ mod tests {
 				assert_eq!(prime.sieve.first, *last + 1);
 				assert_eq!(prime.sieve.remaining_numbers, Integer::MAX - *last);
 			}
-			__________________________________ => {
+			None => {
+				assert_eq!(prime.sieve.first, 2);
+				assert_eq!(prime.sieve.remaining_numbers, Integer::MAX - 1);
+			}
+			_ => {
 				assert_eq!(prime.sieve.first, 0);
 				assert_eq!(prime.sieve.remaining_numbers, 0);
 			}
@@ -1550,7 +1601,11 @@ mod tests {
 				assert_eq!(prime.sieve.first, *last + 1);
 				assert_eq!(prime.sieve.remaining_numbers, Integer::MAX - *last);
 			}
-			__________________________________ => {
+			None => {
+				assert_eq!(prime.sieve.first, 2);
+				assert_eq!(prime.sieve.remaining_numbers, Integer::MAX - 1);
+			}
+			_ => {
 				assert_eq!(prime.sieve.first, 0);
 				assert_eq!(prime.sieve.remaining_numbers, 0);
 			}
@@ -1573,7 +1628,11 @@ mod tests {
 				assert_eq!(prime.sieve.first, *last + 1);
 				assert_eq!(prime.sieve.remaining_numbers, Integer::MAX - *last);
 			}
-			__________________________________ => {
+			None => {
+				assert_eq!(prime.sieve.first, 2);
+				assert_eq!(prime.sieve.remaining_numbers, Integer::MAX - 1);
+			}
+			_ => {
 				assert_eq!(prime.sieve.first, 0);
 				assert_eq!(prime.sieve.remaining_numbers, 0);
 			}
