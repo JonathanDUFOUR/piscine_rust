@@ -1,4 +1,4 @@
-pub type Integer = u32;
+pub type Integer = u16;
 
 const STARTING_PRIMES: [Integer; 0] = [];
 // const STARTING_PRIMES: [Integer; 1] = [2];
@@ -118,16 +118,18 @@ impl Sieve {
 			}
 		}
 
-		// TODO: Check if calculating the square root of `self.first` + `self.len` - 1
-		// and comparing it with each prime in `self.primes_found_so_far` is faster than
-		// checking if the square of each prime in `self.primes_found_so_far` is less than
-		// `self.first` + `self.len`.
+		if self.len == 0 {
+			return;
+		}
+
+		// TODO: Replace `sqrt()` by `isqrt()` when it will be stable.
+		let sqrt: Integer = ((self.first + (self.len - 1)) as f32).sqrt() as Integer;
 
 		for prime in &self.primes_found_so_far {
-			match prime.checked_mul(*prime) {
-				Some(square) if square < self.first || square - self.first < self.len => (),
-				_____________________________________________________________________ => break,
+			if *prime > sqrt {
+				break;
 			}
+
 			let multiple: Integer = match self.first.checked_next_multiple_of(*prime) {
 				Some(multiple) => multiple,
 				None => continue,
@@ -140,10 +142,11 @@ impl Sieve {
 			if self.range >> bit_position & 1 == 1 {
 				let prime: Integer = self.first + bit_position;
 
-				let multiple: Integer = match prime.checked_mul(prime) {
-					Some(square) if square < self.first + self.len => square,
-					______________________________________________ => break,
-				};
+				if prime > sqrt {
+					break;
+				}
+
+				let multiple: Integer = prime * prime;
 
 				remove_prime_multiples(multiple, self.first, &mut self.range, prime, self.len);
 			}
@@ -924,7 +927,20 @@ mod tests {
 	fn sieve_remove_non_primes_11() {
 		const FIRST: Integer = 42;
 		const LEN: Integer = min(Integer::MAX - FIRST + 1, BitField::BITS as Integer);
-		let primes: Vec<Integer> = PRIMES.into_iter().filter(|prime| *prime < FIRST).collect();
+		let primes: Vec<Integer> = {
+			// region: primes
+			let mut v: Vec<Integer> = Vec::new();
+
+			for prime in PRIMES {
+				if prime >= FIRST {
+					break;
+				}
+				v.push(prime);
+			}
+
+			v
+			// endregion
+		};
 		let mut sieve: Sieve = Sieve {
 			primes_found_so_far: primes.clone(),
 			range: !0,
@@ -970,7 +986,20 @@ mod tests {
 	fn sieve_remove_non_primes_13() {
 		const FIRST: Integer = 42;
 		const LEN: Integer = min(Integer::MAX - FIRST + 1, BitField::BITS as Integer);
-		let primes: Vec<Integer> = PRIMES.into_iter().filter(|prime| *prime < FIRST).collect();
+		let primes: Vec<Integer> = {
+			// region: primes
+			let mut v: Vec<Integer> = Vec::new();
+
+			for prime in PRIMES {
+				if prime >= FIRST {
+					break;
+				}
+				v.push(prime);
+			}
+
+			v
+			// endregion
+		};
 		let mut sieve: Sieve = Sieve {
 			primes_found_so_far: primes.clone(),
 			range: !0,
@@ -1054,7 +1083,20 @@ mod tests {
 	#[test]
 	fn sieve_find_next_prime_04() {
 		const FIRST: Integer = 42;
-		let primes: Vec<Integer> = PRIMES.into_iter().filter(|prime| *prime < FIRST).collect();
+		let primes: Vec<Integer> = {
+			// region: primes
+			let mut v: Vec<Integer> = Vec::new();
+
+			for prime in PRIMES {
+				if prime >= FIRST {
+					break;
+				}
+				v.push(prime);
+			}
+
+			v
+			// endregion
+		};
 		let mut sieve: Sieve = Sieve {
 			primes_found_so_far: primes.clone(),
 			range: 0,
@@ -1336,7 +1378,20 @@ mod tests {
 	#[test]
 	fn sieve_find_next_prime_19() {
 		const FIRST: Integer = 42;
-		let primes: Vec<Integer> = PRIMES.into_iter().filter(|prime| *prime < FIRST).collect();
+		let primes: Vec<Integer> = {
+			// region: primes
+			let mut v: Vec<Integer> = Vec::new();
+
+			for prime in PRIMES {
+				if prime >= FIRST {
+					break;
+				}
+				v.push(prime);
+			}
+
+			v
+			// endregion
+		};
 		let mut sieve: Sieve = Sieve {
 			primes_found_so_far: primes.clone(),
 			range: 0b_00101000,
@@ -1360,7 +1415,20 @@ mod tests {
 	#[test]
 	fn sieve_find_next_prime_20() {
 		const FIRST: Integer = 42;
-		let primes: Vec<Integer> = PRIMES.into_iter().filter(|prime| *prime < FIRST).collect();
+		let primes: Vec<Integer> = {
+			// region: primes
+			let mut v: Vec<Integer> = Vec::new();
+
+			for prime in PRIMES {
+				if prime >= FIRST {
+					break;
+				}
+				v.push(prime);
+			}
+
+			v
+			// endregion
+		};
 		let mut sieve: Sieve = Sieve {
 			primes_found_so_far: primes.clone(),
 			range: 0b_00101000,
