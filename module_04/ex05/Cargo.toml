@@ -1,4 +1,6 @@
 [package]
-name = "ex05"
-version = "0.1.0"
-edition = "2021"
+       name = "ex05"
+    version = "0.1.0"
+    authors = ["Jonathan DUFOUR"]
+    edition = "2021"
+description = "Discover double ended iterators"
