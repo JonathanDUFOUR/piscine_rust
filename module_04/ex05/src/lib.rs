@@ -53,23 +53,24 @@ where
 	/// assert_eq!(groups.next(), None);
 	/// ```
 	fn next(&mut self) -> Option<Self::Item> {
-		for (i, c) in self.s.char_indices() {
-			if (self.f)(c) {
-				self.s = &self.s[i..];
-				break;
+		match self.s.char_indices().find(|(_, c)| (self.f)(*c)) {
+			Some((i0, _)) => {
+				self.s = &self.s[i0..];
+				match self.s.char_indices().find(|(_, c)| !(self.f)(*c)) {
+					Some((i1, _)) => {
+						let (group, rest) = self.s.split_at(i1);
+						self.s = rest;
+						Some(group)
+					}
+					None => {
+						let group = self.s;
+						self.s = "";
+						Some(group)
+					}
+				}
 			}
+			None => None,
 		}
-		for (i, c) in self.s.char_indices() {
-			if !(self.f)(c) {
-				let group: &str = &self.s[..i];
-
-				self.s = &self.s[i..];
-
-				return Some(group);
-			}
-		}
-
-		None
 	}
 }
 
